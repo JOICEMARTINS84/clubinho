@@ -1,0 +1,99 @@
+import turtle
+import math
+import random
+
+# Configuração da Tela
+screen = turtle.Screen()
+screen.setup(width=1.0, height=1.0)
+screen.bgcolor("black")
+screen.title("Sistema Solar Detalhado - Órbitas Visíveis")
+screen.tracer(0)
+
+# Dados: [Nome, Distância, Velocidade, Tamanho, Cor, Num_Luas]
+planetas_info = [
+    ["Mercúrio", 60, 0.04, 4, "gray", 0],
+    ["Vênus", 90, 0.03, 6, "white", 0],
+    ["Terra", 130, 0.02, 6, "blue", 1],
+    ["Marte", 170, 0.015, 5, "red", 2],
+    ["Júpiter", 240, 0.008, 12, "orange", 8],
+    ["Saturno", 300, 0.006, 10, "tan", 6],
+    ["Urano", 360, 0.004, 8, "cyan", 4],
+    ["Netuno", 420, 0.003, 8, "blue", 3]
+]
+
+# Função para desenhar as órbitas fixas
+def desenhar_orbitas():
+    drawer = turtle.Turtle()
+    drawer.hideturtle()
+    drawer.pencolor("#333333")
+    drawer.speed(0)
+    for p in planetas_info:
+        drawer.penup()
+        drawer.goto(0, -p[1])
+        drawer.pendown()
+        drawer.circle(p[1])
+
+desenhar_orbitas()
+
+def criar_turtles(t_shape="circle", t_color="white", t_size=1):
+    t = turtle.Turtle(shape=t_shape)
+    t.color(t_color)
+    t.shapesize(t_size)
+    t.penup()
+    return t
+
+# Criar objetos
+objetos = []
+for p in planetas_info:
+    t = criar_turtles(t_color=p[4], t_size=p[3]/10)
+    label = criar_turtles(t_shape="classic", t_size=0.1)
+    label.hideturtle()
+    
+    # Criar múltiplas luas
+    luas = [criar_turtles(t_size=0.2, t_color="white") for _ in range(p[5])]
+    
+    # Anéis de Saturno
+    anel = None
+    if p[0] == "Saturno":
+        anel = criar_turtles(t_shape="circle", t_color="gray", t_size=0.8)
+        anel.shapesize(stretch_wid=0.1, stretch_len=2.5)
+        anel.fillcolor("")
+    
+    objetos.append({"t": t, "l": label, "luas": luas, "data": p, "ang": 0, 
+                    "lua_ang": [random.random() for _ in range(p[5])], "anel": anel})
+
+# Sol e Cinturão
+sol = criar_turtles(t_color="yellow", t_size=3)
+asteroides = [[criar_turtles(t_size=0.1, t_color="gray"), random.uniform(200, 220), random.uniform(0, 2*math.pi)] for _ in range(250)]
+
+# Loop de Animação
+while True:
+    for obj in objetos:
+        data = obj["data"]
+        obj["ang"] += data[2]
+        x = data[1] * math.cos(obj["ang"])
+        y = data[1] * math.sin(obj["ang"])
+        obj["t"].goto(x, y)
+        
+        # Nome
+        obj["l"].goto(x, y + 15)
+        obj["l"].clear()
+        obj["l"].write(data[0], align="center", font=("Arial", 8, "bold"))
+        
+        # Anéis
+        if obj["anel"]:
+            obj["anel"].goto(x, y)
+        
+        # Luas orbitando o planeta
+        for i, lua in enumerate(obj["luas"]):
+            obj["lua_ang"][i] += (0.1 + i*0.02)
+            lx = x + 15 * math.cos(obj["lua_ang"][i])
+            ly = y + 15 * math.sin(obj["lua_ang"][i])
+            lua.goto(lx, ly)
+
+    # Asteroides
+    for a in asteroides:
+        a[2] += 0.003
+        a[0].goto(a[1] * math.cos(a[2]), a[1] * math.sin(a[2]))
+        
+    screen.update()
