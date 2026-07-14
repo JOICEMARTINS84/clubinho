@@ -1,0 +1,64 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+from matplotlib.patches import Polygon
+
+# --- Configurações da Órbita ---
+a = 3.5      
+e = 0.6      
+b = a * np.sqrt(1 - e**2)
+foco = a * e 
+
+# --- AVALIAÇÃO DOS LIMITES ---
+# A elipse está centrada em (-foco, 0)
+# O ponto mais à esquerda é (-a - foco) e o mais à direita é (a - foco)
+# O ponto mais alto é b, o mais baixo é -b
+x_min, x_max = -a - foco - 0.5, a - foco + 0.5
+y_min, y_max = -b - 0.5, b + 0.5
+
+fig, ax = plt.subplots(figsize=(8, 8))
+
+
+ax.set_xlim(x_min, x_max)
+ax.set_ylim(y_min, y_max)
+
+ax.set_aspect('equal')
+ax.set_title("Segunda Lei de Kepler: Áreas Iguais")
+
+# Trajetória e Sol
+t_orbita = np.linspace(0, 2 * np.pi, 500)
+ax.plot(a * np.cos(t_orbita) - foco, b * np.sin(t_orbita), 'k--', alpha=0.3)
+ax.plot(0, 0, 'yo', markersize=15, label="Sol (Foco)")
+
+# Planeta
+planeta, = ax.plot([], [], 'bo', markersize=8)
+
+areas = []
+num_frames = 100
+
+def get_pos(M):
+    E = M
+    for _ in range(10):
+        E = M + e * np.sin(E)
+    x = a * np.cos(E) - foco
+    y = b * np.sin(E)
+    return x, y
+
+def animate(i):
+    m_atual = 2 * np.pi * (i / num_frames)
+    m_prev = 2 * np.pi * ((i - 1) / num_frames)
+    x, y = get_pos(m_atual)
+    x_prev, y_prev = get_pos(m_prev)
+    
+    poly = Polygon([[0, 0], [x_prev, y_prev], [x, y]], closed=True, color='blue', alpha=0.3)
+    ax.add_patch(poly)
+    areas.append(poly)
+    planeta.set_data([x], [y])
+    
+    if len(areas) > 15:
+        areas[0].remove()
+        areas.pop(0)
+    return [planeta] + areas
+
+ani = FuncAnimation(fig, animate, frames=num_frames, interval=50, blit=False)
+plt.show()
