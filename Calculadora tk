@@ -1,0 +1,51 @@
+import customtkinter as ctk
+
+# Configurações de tema
+ctk.set_appearance_mode("dark")
+ctk.set_default_color_theme("blue")
+
+class Calculadora(ctk.CTk):
+    def __init__(self):
+        super().__init__()
+
+        self.title("Calculadora")
+        self.geometry("300x420")
+
+        # Tela
+        self.tela = ctk.CTkEntry(self, font=("Arial", 28), justify='right', height=50)
+        self.tela.pack(fill='x', padx=20, pady=20)
+
+        # Botões
+        botoes = [
+            ['7', '8', '9', '/'],
+            ['4', '5', '6', '*'],
+            ['1', '2', '3', '-'],
+            ['C', '0', '=', '+']
+        ]
+
+        grid_frame = ctk.CTkFrame(self)
+        grid_frame.pack(padx=20, pady=10)
+
+        for i, linha in enumerate(botoes):
+            for j, valor in enumerate(linha):
+                btn = ctk.CTkButton(grid_frame, text=valor, width=60, height=50,
+                                   command=lambda v=valor: self.on_click(v))
+                btn.grid(row=i, column=j, padx=5, pady=5)
+
+    def on_click(self, valor):
+        if valor == 'C':
+            self.tela.delete(0, 'end')
+        elif valor == '=':
+            try:
+                res = eval(self.tela.get())
+                self.tela.delete(0, 'end')
+                self.tela.insert(0, str(res))
+            except:
+                self.tela.delete(0, 'end')
+                self.tela.insert(0, "Erro")
+        else:
+            self.tela.insert('end', valor)
+
+if __name__ == "__main__":
+    app = Calculadora()
+    app.mainloop()
