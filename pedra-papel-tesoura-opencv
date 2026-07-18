@@ -1,0 +1,141 @@
+import cv2
+import numpy as np
+import random
+import time
+
+
+# Configuração da câmera
+
+cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 320)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
+cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+cap.set(cv2.CAP_PROP_FPS, 30)
+
+
+# Funções
+
+
+def jogada_ia():
+    return random.choice(["PEDRA", "PAPEL", "TESOURA"])
+
+def vencedor(jogador, ia):
+    if jogador == ia:
+        return "EMPATE!"
+
+    if (
+        (jogador == "PEDRA" and ia == "TESOURA") or
+        (jogador == "PAPEL" and ia == "PEDRA") or
+        (jogador == "TESOURA" and ia == "PAPEL")
+    ):
+        return "VOCE VENCEU!"
+
+    return "IA VENCEU!"
+
+estado = "ESPERANDO"
+inicio = 0
+resultado = ""
+ia = ""
+usuario = ""
+gesto = "SEM OBJETO"
+
+while True:
+
+    ok, frame = cap.read()
+    if not ok:
+        break
+
+    frame = cv2.flip(frame, 1)
+    frame = cv2.GaussianBlur(frame, (5,5), 0)
+
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+
+    # Azul
+    lower = np.array([100,100,50])
+    upper = np.array([130,255,255])
+
+    mask = cv2.inRange(hsv, lower, upper)
+
+    kernel = np.ones((5,5), np.uint8)
+    mask = cv2.erode(mask, kernel, 1)
+    mask = cv2.dilate(mask, kernel, 2)
+
+    contornos, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    gesto = "SEM OBJETO"
+
+    if contornos:
+        c = max(contornos, key=cv2.contourArea)
+
+        if cv2.contourArea(c) > 300:
+
+            x,y,w,h = cv2.boundingRect(c)
+
+            cx = x + w//2
+            cy = y + h//2
+
+            cv2.rectangle(frame,(x,y),(x+w,y+h),(255,0,0),2)
+            cv2.circle(frame,(cx,cy),4,(0,255,255),-1)
+
+            if cy < 80:
+                gesto = "PAPEL"
+            elif cy < 160:
+                gesto = "TESOURA"
+            else:
+                gesto = "PEDRA"
+
+    cv2.line(frame,(0,80),(320,80),(255,255,255),1)
+    cv2.line(frame,(0,160),(320,160),(255,255,255),1)
+
+    cv2.putText(frame,"PAPEL",(245,40),cv2.FONT_HERSHEY_SIMPLEX,0.45,(255,255,255),1)
+    cv2.putText(frame,"TESOURA",(220,120),cv2.FONT_HERSHEY_SIMPLEX,0.45,(255,255,255),1)
+    cv2.putText(frame,"PEDRA",(240,210),cv2.FONT_HERSHEY_SIMPLEX,0.45,(255,255,255),1)
+
+    if estado == "ESPERANDO":
+        cv2.putText(frame,"ESPACO = JOGAR",(55,20),cv2.FONT_HERSHEY_SIMPLEX,0.6,(0,255,255),2)
+
+    elif estado == "CONTAGEM":
+
+        restante = 3 - int(time.time() - inicio)
+
+        if restante > 0:
+            cv2.putText(frame,str(restante),(135,140),
+                        cv2.FONT_HERSHEY_SIMPLEX,3,(0,255,255),5)
+        else:
+            usuario = gesto
+            ia = jogada_ia()
+            resultado = vencedor(usuario, ia)
+            inicio = time.time()
+            estado = "RESULTADO"
+
+    elif estado == "RESULTADO":
+
+        cv2.putText(frame,f"VOCE: {usuario}",(10,25),
+                    cv2.FONT_HERSHEY_SIMPLEX,0.55,(0,255,0),2)
+
+        cv2.putText(frame,f"IA: {ia}",(10,55),
+                    cv2.FONT_HERSHEY_SIMPLEX,0.55,(0,255,255),2)
+
+        cv2.putText(frame,resultado,(25,120),
+                    cv2.FONT_HERSHEY_SIMPLEX,0.9,(255,255,255),2)
+
+        if time.time() - inicio > 3:
+            estado = "ESPERANDO"
+
+    cv2.putText(frame,f"Detectado: {gesto}",(10,235),
+                cv2.FONT_HERSHEY_SIMPLEX,0.5,(255,255,0),2)
+
+    cv2.imshow("Pedra Papel Tesoura", frame)
+    cv2.imshow("Mascara Azul", mask)
+
+    tecla = cv2.waitKey(1) & 0xFF
+
+    if tecla == ord(" "):
+        estado = "CONTAGEM"
+        inicio = time.time()
+
+    elif tecla == ord("q"):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
