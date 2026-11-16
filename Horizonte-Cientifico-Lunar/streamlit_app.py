@@ -12,33 +12,46 @@ from physics import IRRADIANCIA_REFERENCIA_W_M2, add_solar_power
 
 st.set_page_config(page_title="Horizonte Científico | Lua", page_icon="🌘", layout="wide")
 
-BG, PANEL, BORDER = "#101014", "#1b1b20", "#3a3936"
-SOL, TERRA, TEXTO = "#e7bb75", "#d6d5d1", "#f5f2eb"
+BG, PANEL, BORDER = "#0b1015", "#14212a", "#324653"
+SOL, TERRA, TEXTO = "#e3bd82", "#83c4c4", "#e8eff1"
 
 st.markdown("""
 <style>
-:root {color-scheme: dark;}
-.stApp {background: #101014; color: #f5f2eb;}
-[data-testid="stSidebar"] {background: #19191d; border-right: 1px solid #39393d;}
-[data-testid="stMetric"] {background: #1d1d21; border: 1px solid #38383b; padding: 16px; border-radius: 12px;}
-[data-testid="stMetricLabel"] {color: #c8c2b8;}
-h1,h2,h3 {color: #f6f1e7 !important;}
-.hero {padding: 28px 30px; border: 1px solid #4c4235; border-radius: 16px;
-       background: linear-gradient(110deg, #27231e 0%, #17171a 65%, #101014 100%);
-       margin: 6px 0 24px 0;}
-.hero h1 {font-size: clamp(1.7rem, 3.3vw, 3rem); margin: 0 0 6px 0 !important;}
-.hero p {color: #d0c6b7; margin: 0; font-size: 1.05rem;}
-.eyebrow {font-size: .73rem; font-weight: 700; letter-spacing: .2em; color: #e8bd80; margin-bottom: 8px;}
-.method-note {padding: 12px 16px; background: #1e1d1c; border-left: 3px solid #c99d67;
-              color: #dcd7ce; border-radius: 4px; font-size: .92rem;}
+:root{color-scheme:dark;}
+.stApp{background:#0b1015;color:#ecf1f0;}
+[data-testid="stSidebar"]{background:#101820;border-right:1px solid #273744;}
+[data-testid="stMetric"]{background:linear-gradient(155deg,#16222b,#111920);
+ border:1px solid #30414d;padding:19px 18px;border-radius:13px;
+ box-shadow:0 8px 26px rgba(0,0,0,.12);}
+[data-testid="stMetricLabel"]{color:#a4b8c0;font-size:.87rem;}
+[data-testid="stMetricValue"]{color:#f2f5f3;font-variant-numeric:tabular-nums;}
+[data-testid="stVerticalBlock"]{gap:.72rem;}
+h1,h2,h3{font-family:'Segoe UI',Arial,sans-serif!important;letter-spacing:-.02em;color:#eaf2f2!important;}
+hr{border-color:#293946!important;}
+a{color:#9dcfc6!important;}
+.hero{padding:30px 32px;border:1px solid #44535c;border-left:4px solid #d7b883;border-radius:14px;
+ background:radial-gradient(circle at 88% 30%,rgba(153,192,190,.13),transparent 38%),
+ linear-gradient(117deg,#1c2830 4%,#101a23 70%,#0b1117);margin:2px 0 19px;}
+.hero h1{font-size:clamp(1.8rem,3.5vw,3rem);margin:7px 0 10px!important;line-height:1.17;}
+.hero p{color:#b1c4ca;margin:0;font-size:1rem;max-width:700px;}
+.eyebrow{font:700 .72rem/1.4 'Segoe UI',sans-serif;letter-spacing:.17em;color:#dfc18f;}
+.statusline{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 0;font-size:.76rem;color:#b4c6c8;}
+.statusline span{border:1px solid #45606c;border-radius:4px;padding:5px 10px;background:#14222a;}
+.method-note{padding:14px 17px;background:#19232a;border-left:3px solid #d7b883;color:#cbd6d7;border-radius:5px;font-size:.91rem;}
+.kicker{color:#d8b781;font-size:.72rem;font-weight:700;letter-spacing:.17em;}
+div[data-baseweb="tab-list"]{gap:8px;}
+button[data-baseweb="tab"]{background:#14212a;border:1px solid #2d4653;border-radius:8px;padding:9px 15px;color:#d2e1e3;}
+button[data-baseweb="tab"][aria-selected="true"]{border-color:#d7b883;color:#f6dfb4;}
+@media(max-width:700px){.hero{padding:20px 18px}.hero h1{font-size:1.7rem}}
 </style>
 """, unsafe_allow_html=True)
 
 st.markdown("""
 <div class="hero">
-  <div class="eyebrow">MATEMÁTICA &amp; CONTEXTO · LABORATÓRIO CIENTÍFICO</div>
-  <h1>Horizonte Científico <span style="color:#d3aa74">/ Lua</span></h1>
-  <p>Explore a geometria do Sol e da Terra no céu lunar e investigue a geração de energia.</p>
+  <div class="eyebrow">OBSERVATÓRIO LUNAR // MATEMÁTICA &amp; CONTEXTO</div>
+  <h1>Horizonte Científico <span style="color:#dec39a">/ Lua</span></h1>
+  <p>Efemérides topocêntricas, distâncias astronômicas, visibilidade geométrica e geração fotovoltaica estimada.</p>
+  <div class="statusline"><span>FONTE: NASA / JPL HORIZONS</span><span>REFERENCIAL: SUPERFÍCIE LUNAR</span><span>ESCALA TEMPORAL: UTC</span></div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -63,7 +76,8 @@ with st.sidebar:
     day = st.date_input("Data inicial (UTC)", value=datetime.now(timezone.utc).date(),
                         min_value=datetime(1900, 1, 1).date(), max_value=datetime(2099, 12, 31).date())
     days = st.slider("Duração (dias)", 1, 14, 7)
-    step = st.select_slider("Amostragem", options=[3, 6, 12], value=6, format_func=lambda v: f"{v} horas")
+    step = st.select_slider("Amostragem", options=[1, 3, 6, 12], value=3,
+                            format_func=lambda v: f"{v} hora" if v == 1 else f"{v} horas")
     st.divider()
     st.subheader("Painel fotovoltaico · hipótese")
     area = st.slider("Área (m²)", 0.5, 30.0, 4.0, 0.5)
@@ -74,7 +88,8 @@ with st.sidebar:
         tilt = st.slider("Inclinação desde a horizontal (°)", 0, 90, 75)
         az_panel = st.slider("Direção da face do painel (°)", 0, 359, 180)
     load = st.button("Consultar NASA / JPL", type="primary", use_container_width=True)
-    st.caption("Requer internet. Nenhum dado observacional é inventado em caso de falha da API.")
+    st.caption("As efemérides vêm do JPL. Resultados calculados pelo modelo são identificados.")
+    st.markdown("[Cartografia lunar real · NASA Moon Trek](https://trek.nasa.gov/moon/)")
 
 start = datetime.combine(day, datetime.min.time()).replace(tzinfo=timezone.utc)
 stop = start + timedelta(days=days)
@@ -120,12 +135,20 @@ earth_fraction = 100 * (df["earth_elev"] > 0).mean()
 energy = df["energia_acumulada_kwh"].iloc[-1]
 max_power = df["potencia_w"].max()
 
-st.caption(f"DADOS CONSULTADOS · NASA/JPL HORIZONS · {n} instantes UTC · horizonte geométrico de altitude 0°")
+st.markdown('<div class="kicker">TELEMETRIA // EFEMÉRIDES CONSULTADAS</div>', unsafe_allow_html=True)
+st.caption(f"NASA/JPL HORIZONS · {n} amostras UTC · horizonte geométrico a 0° · latitude {lat:.2f}°, longitude {lon:.2f}°")
 c1, c2, c3, c4 = st.columns(4)
-c1.metric("Sol acima do horizonte", f"{sun_fraction:.0f}%", help="Percentual das amostras com elevação solar positiva")
-c2.metric("Terra acima do horizonte", f"{earth_fraction:.0f}%", help="Percentual das amostras com elevação terrestre positiva")
-c3.metric("Energia teórica", f"{energy:.2f} kWh", help="Integração trapezoidal da potência simulada")
-c4.metric("Pico de potência", f"{max_power:.0f} W", help="Máxima potência calculada no intervalo amostrado")
+c1.metric("Sol visível · amostras", f"{sun_fraction:.0f}%", help="Fração das amostras com elevação solar > 0°. Não é porcentagem temporal contínua.")
+c2.metric("Terra visível · amostras", f"{earth_fraction:.0f}%", help="Fração das amostras com elevação terrestre > 0°. Não modela montanhas nem comunicação por rádio.")
+c3.metric("Energia · modelo", f"{energy:.2f} kWh", help="Energia fotovoltaica hipotética integrada a partir de irradiância por distância.")
+c4.metric("Potência máxima · modelo", f"{max_power:.0f} W", help="Máxima potência calculada no intervalo amostrado.")
+first = df.iloc[0]
+st.caption("DISTÂNCIAS JPL // GEOMETRIA · PRIMEIRA AMOSTRA DO INTERVALO SELECIONADO")
+d1, d2, d3, d4 = st.columns(4)
+d1.metric("Distância à Terra", f"{first['earth_dist_km']:,.0f} km", help="Distância do observador lunar ao centro da Terra · JPL Horizons.")
+d2.metric("Distância ao Sol", f"{first['sun_dist_km']/1e6:,.3f} milhões km", help="Distância do observador lunar ao Sol · JPL Horizons.")
+d3.metric("Luz até a Terra", f"{first['retardo_terra_s']:.2f} s", help="Estimativa da distância ao centro da Terra dividida pela velocidade da luz.")
+d4.metric("Separação Sol–Terra", f"{first['separacao_sol_terra_deg']:.1f}°", help="Separação angular calculada a partir de azimutes e elevações topocêntricos.")
 
 
 def style_chart(fig, height=415):
