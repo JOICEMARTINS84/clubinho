@@ -20,36 +20,143 @@ h1{font-size:clamp(2rem,5vw,3.8rem);letter-spacing:-.045em;line-height:1.08;marg
 button.secondary{background:#163447;color:#e9ffff;border:1px solid #3b6c79;border-radius:8px;padding:10px 14px;cursor:pointer}button.secondary:hover{background:#245064}
 a{color:#7ae8d5}footer{margin-top:30px;color:#8fa9b5;font-size:.85rem}ul{color:#b5cad2;padding-left:20px}
 @media(max-width:860px){.layout,.bottom{grid-template-columns:1fr}.panel{padding:15px}.star{height:22px;width:22px}.star span{font-size:15px}.detail{min-height:0}}
+</style><style>
+/* Interação por SVG sobre desenho geométrico de 20×14 módulos */
+.flag-wrap{border:0;background:#009b3a;border-radius:8px;box-shadow:0 1px 0 #335c61,0 20px 52px #0004;transition:aspect-ratio .2s}
+.flag-wrap.zoomed{aspect-ratio:1/1;max-width:640px;margin-inline:auto;background:#002776}
+svg.flag{width:100%;height:100%;display:block}
+svg.star-layer{inset:0;width:100%;height:100%;position:absolute;display:block;overflow:visible}
+svg.star-layer .star-group{cursor:pointer;outline:none}
+svg.star-layer .star-shape{fill:#fff;stroke:#fff;stroke-width:.65;pointer-events:none;filter:drop-shadow(0 0 2px #ffffff38)}
+svg.star-layer .star-ring{fill:none;stroke:#ffe68a;stroke-width:4;pointer-events:none;opacity:0}
+svg.star-layer .star-group.is-selected .star-ring,svg.star-layer .star-group:focus-visible .star-ring{opacity:1}
+svg.star-layer .star-group.is-selected .star-shape{fill:#fff6cf;stroke:#fff6cf}
+svg.star-layer .star-group.is-dim{opacity:.25}
+svg.star-layer .star-hit{fill:transparent;stroke:transparent;stroke-width:0;pointer-events:all}
+.results{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px}
+.results[hidden]{display:none}
+.results button{background:#17394a;color:#edfaff;border:1px solid #396275;border-radius:7px;padding:7px 10px;cursor:pointer;font-size:.78rem}
+.results button:hover{background:#27556a}
+.toolbar{align-items:center}
+.toolbar h2{margin-right:auto}
+#zoom{white-space:nowrap}
+@media(max-width:860px){.flag-wrap.zoomed{max-width:100%}.toolbar{gap:9px}.toolbar select{width:100%;flex:1;min-width:170px}}
 </style></head>
 <body><header><div class="brand">MATEMÁTICA & CONTEXTO <span style="color:#6e8b9e">/ LABORATÓRIO</span></div><div class="tag">Astronomia · História · Educação</div></header>
 <main><div class="eyebrow">Atlas astronômico interativo · edição educativa</div><h1>O céu na<br>Bandeira do Brasil</h1>
 <p class="intro">Cada estrela da bandeira representa uma unidade da Federação e pertence a uma constelação real. Explore a relação entre o símbolo nacional, o céu e a história da República.</p>
 <div class="stats"><span><strong>27</strong> estrelas</span><span><strong>9</strong> constelações</span><span><strong>1889</strong> céu de referência</span></div>
-<section class="layout"><div class="panel"><div class="toolbar"><h2>Mapa estelar da bandeira</h2><select id="filter" aria-label="Filtrar por constelação"><option value="">Todas as constelações</option></select></div>
+<section class="layout"><div class="panel"><div class="toolbar"><h2>Mapa estelar da bandeira</h2><button class="secondary" id="zoom" type="button" aria-pressed="false">Ampliar céu</button><select id="filter" aria-label="Filtrar por constelação"><option value="">Todas as constelações</option></select></div>
 <div class="flag-wrap">
-<svg class="flag" viewBox="0 0 1000 700" xmlns="http://www.w3.org/2000/svg" aria-label="Representação ilustrativa da bandeira brasileira">
-<rect width="1000" height="700" fill="#168b4e"/><polygon points="500,80 920,350 500,620 80,350" fill="#f6ce38"/><circle cx="500" cy="350" r="242" fill="#153f88"/>
-<defs><clipPath id="orb"><circle cx="500" cy="350" r="242"/></clipPath><path id="bandpath" d="M 225 322 Q 500 240 780 405"/></defs>
-<g clip-path="url(#orb)"><path d="M 222 314 Q 500 233 780 397" stroke="#fff" stroke-width="82" fill="none"/><text font-size="29" fill="#167a47" font-weight="700" letter-spacing="3"><textPath href="#bandpath" startOffset="15%">ORDEM E PROGRESSO</textPath></text></g></svg>
-<div id="stars" class="star-layer" role="group" aria-label="Selecione as estrelas da bandeira"></div></div>
-<p class="legend">Visualização didática esquemática: as posições e proporções não constituem reprodução geométrica oficial da bandeira. Selecione uma estrela ou use a busca abaixo.</p>
-<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:15px"><input id="search" placeholder="Buscar estrela ou estado..." aria-label="Buscar estrela ou estado" style="flex:1"><button class="secondary" id="random">Escolher uma estrela</button></div>
+<svg class="flag" id="flag-svg" viewBox="0 0 2000 1400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Bandeira do Brasil: composição geométrica baseada nas proporções da legislação">
+<rect width="2000" height="1400" fill="#009b3a"/>
+<polygon points="170,700 1000,170 1830,700 1000,1230" fill="#ffdf00"/>
+<circle cx="1000" cy="700" r="350" fill="#002776"/>
+<defs><path id="motto-line" d="M 659.73473 603.76015 A 808.5 808.5 0 0 1 1339.74817 798.04970"/></defs>
+<path d="M 661.20938 612.13125 A 350 350 0 0 1 679.86412 558.53261 A 850 850 0 0 1 1346.55097 749.01457 A 350 350 0 0 1 1334.07364 804.37818 A 800 800 0 0 0 661.20938 612.13125 Z" fill="#fff"/>
+<text font-family="Verdana,Arial,sans-serif" font-size="45" font-weight="600" letter-spacing="5" word-spacing="10" fill="#007024" text-anchor="middle"><textPath href="#motto-line" startOffset="50%">ORDEM <tspan font-size="41">E</tspan> PROGRESSO</textPath></text>
+</svg>
+<svg id="stars" class="star-layer" viewBox="0 0 2000 1400" role="group" aria-label="27 estrelas interativas da bandeira"></svg></div>
+<p class="legend">Reconstituição vetorial baseada nas proporções legais e nas posições do desenho modular. As áreas clicáveis são ampliadas para facilitar a seleção. Use a lupa para explorar as estrelas.</p>
+<div id="results" class="results" aria-live="polite" hidden></div><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:15px"><input id="search" placeholder="Buscar estrela ou estado..." aria-label="Buscar estrela ou estado" style="flex:1"><button class="secondary" id="random">Escolher uma estrela</button></div>
 </div>
 <aside class="panel detail" aria-live="polite"><div class="subtitle">Observatório · ficha da estrela</div><h3 id="name">Selecione uma estrela</h3><div id="state"></div><p id="desc">Clique em uma das estrelas ou busque pelo nome de um estado.</p>
-<div class="fact"><b>Constelação</b><span id="con">—</span></div><div class="fact"><b>Designação astronômica</b><span id="des">—</span></div><div class="fact"><b>Unidade da Federação</b><span id="uf">—</span></div>
-<p class="small">As designações são astronômicas reais. O tamanho gráfico das estrelas aqui não representa seu brilho aparente nem sua distância.</p></aside></section>
-<section class="bottom"><div class="panel"><h2>O que exatamente está representado?</h2><p>A lei brasileira estabelece como referência o aspecto do céu do Rio de Janeiro em <strong>15 de novembro de 1889, às 8h30</strong> (12 horas siderais). O desenho é concebido como visto de fora da esfera celeste, e não como uma fotografia do céu obtida do solo.</p><p>A bandeira foi adotada em 19 de novembro de 1889 e posteriormente atualizada para representar as 27 unidades da Federação.</p></div>
-<div class="panel"><h2>Fontes e metodologia</h2><ul><li><a href="https://www2.camara.leg.br/legin/fed/lei/1970-1979/lei-5700-1-setembro-1971-357915-normaatualizada-pl.html" target="_blank" rel="noopener">Lei nº 5.700/1971 (texto atualizado)</a></li><li><a href="https://www.inpe.br/ciaa2018/arquivos/aulas_pdfs/astronomia_no_dia_adia/AulaCIAA_2b_Astronomianodiadia_DiasNoitesEstacoes_Topocentrismo_SemAnimacoes2015.pdf" target="_blank" rel="noopener">INPE: estados e estrelas</a></li><li><a href="https://www.gov.br/aeb/pt-br/centrais-de-conteudo/publicacoes/instagram-do-periodo-de-defeso-eleitoral-2022/curiosidades-do-espaco-bandeira-nacional-e-constelacoes" target="_blank" rel="noopener">AEB: constelações</a></li></ul><p class="small">Os dados históricos e a identidade das estrelas foram revisados com fontes institucionais. As coordenadas do mapa são apenas ilustrativas; não foram derivadas de efemérides ou API astronômica.</p></div></section>
+<div class="fact"><b>Constelação</b><span id="con">—</span></div><div class="fact"><b>Designação astronômica</b><span id="des">—</span></div><div class="fact"><b>Grandeza na bandeira</b><span id="grade">—</span></div><div class="fact"><b>Unidade da Federação</b><span id="uf">—</span></div>
+<p class="small">As designações são astronômicas reais. As cinco grandezas gráficas seguem a convenção da bandeira e não representam distâncias. Seu tamanho está relacionado, de forma aproximada, ao brilho aparente.</p></aside></section>
+<section class="bottom"><div class="panel"><h2>O que exatamente está representado?</h2><p>A lei brasileira estabelece como referência o aspecto do céu do Rio de Janeiro em <strong>15 de novembro de 1889, às 8h30</strong> (12 horas siderais). O desenho é concebido como visto de fora da esfera celeste, e não como uma fotografia do céu obtida do solo.</p><p>A bandeira foi adotada em 19 de novembro de 1889 e posteriormente atualizada para representar as 27 unidades da Federação. Como prevê a lei, as constelações são consideradas do ponto de vista de quem observa de fora da esfera celeste.</p></div>
+<div class="panel"><h2>Fontes e metodologia</h2><ul><li><a href="https://www2.camara.leg.br/legin/fed/lei/1970-1979/lei-5700-1-setembro-1971-357915-normaatualizada-pl.html" target="_blank" rel="noopener">Lei nº 5.700/1971 (texto atualizado)</a></li><li><a href="https://www.inpe.br/ciaa2018/arquivos/aulas_pdfs/astronomia_no_dia_adia/AulaCIAA_2b_Astronomianodiadia_DiasNoitesEstacoes_Topocentrismo_SemAnimacoes2015.pdf" target="_blank" rel="noopener">INPE: estados e estrelas</a></li><li><a href="https://www.gov.br/aeb/pt-br/centrais-de-conteudo/publicacoes/instagram-do-periodo-de-defeso-eleitoral-2022/curiosidades-do-espaco-bandeira-nacional-e-constelacoes" target="_blank" rel="noopener">AEB: constelações</a></li><li><a href="https://www.gov.br/observatorio/pt-br/assuntos/areas-de-atuacao/divulgacao-e-popularizacao-da-ciencia/revistas/pdf/bandeiras.pdf" target="_blank" rel="noopener">Observatório Nacional: A Nossa Bandeira</a></li><li><a href="https://github.com/danmadeira/bandeira-nacional" target="_blank" rel="noopener">Estudo de geometria do desenho modular (referência)</a></li></ul><p class="small">Os dados históricos e a identidade das estrelas foram revisados com fontes institucionais. O mapa respeita as proporções geométricas legais e utiliza centros de estrelas reconstruídos a partir do desenho modular. Não são coordenadas celestes ou efemérides de uma API.</p></div></section>
 <footer>Projeto educativo e autoria: Joice Souza Martins Santos · Matemática & Contexto</footer></main>
 <script>
-const starsData=[{"uf":"PA","estado":"Pará","nome":"Spica","designacao":"α Virginis","constelacao":"Virgem","x":43.8,"y":34.8,"curiosidade":"Estrela azul-branca, uma das mais brilhantes do céu noturno."},{"uf":"AM","estado":"Amazonas","nome":"Procyon","designacao":"α Canis Minoris","constelacao":"Cão Menor","x":38.8,"y":46,"curiosidade":"Uma das estrelas próximas do Sol na vizinhança estelar."},{"uf":"MS","estado":"Mato Grosso do Sul","nome":"Alphard","designacao":"α Hydrae","constelacao":"Hidra Fêmea","x":44.4,"y":50,"curiosidade":"Uma gigante alaranjada, destaque da constelação de Hidra."},{"uf":"AC","estado":"Acre","nome":"Gamma Hydrae","designacao":"γ Hydrae","constelacao":"Hidra Fêmea","x":47.2,"y":53.3,"curiosidade":"Estrela da longa constelação Hidra Fêmea."},{"uf":"MT","estado":"Mato Grosso","nome":"Sirius","designacao":"α Canis Majoris","constelacao":"Cão Maior","x":52.8,"y":43.4,"curiosidade":"É a estrela mais brilhante do céu noturno, vista da Terra."},{"uf":"AP","estado":"Amapá","nome":"Mirzam","designacao":"β Canis Majoris","constelacao":"Cão Maior","x":50.6,"y":40.1,"curiosidade":"Estrela associada ao Cão Maior, próxima de Sirius no céu."},{"uf":"RO","estado":"Rondônia","nome":"Muliphein","designacao":"γ Canis Majoris","constelacao":"Cão Maior","x":55,"y":47.4,"curiosidade":"Também identificada pela designação Gamma Canis Majoris."},{"uf":"RR","estado":"Roraima","nome":"Wezen","designacao":"δ Canis Majoris","constelacao":"Cão Maior","x":57.8,"y":45.4,"curiosidade":"Supergigante amarela na constelação do Cão Maior."},{"uf":"TO","estado":"Tocantins","nome":"Adhara","designacao":"ε Canis Majoris","constelacao":"Cão Maior","x":55.6,"y":40.8,"curiosidade":"Uma estrela azul muito luminosa do Cão Maior."},{"uf":"GO","estado":"Goiás","nome":"Canopus","designacao":"α Carinae","constelacao":"Carina (Quilha)","x":51.1,"y":52.6,"curiosidade":"A segunda estrela mais brilhante do céu noturno."},{"uf":"BA","estado":"Bahia","nome":"Gacrux","designacao":"γ Crucis","constelacao":"Cruzeiro do Sul","x":55,"y":55.3,"curiosidade":"Gigante avermelhada que marca uma ponta do Cruzeiro do Sul."},{"uf":"MG","estado":"Minas Gerais","nome":"Delta Crucis","designacao":"δ Crucis","constelacao":"Cruzeiro do Sul","x":57.8,"y":57.9,"curiosidade":"Uma das cinco estrelas representadas no Cruzeiro do Sul da bandeira."},{"uf":"ES","estado":"Espírito Santo","nome":"Epsilon Crucis","designacao":"ε Crucis","constelacao":"Cruzeiro do Sul","x":56.2,"y":59.9,"curiosidade":"Conhecida popularmente como a Intrometida."},{"uf":"SP","estado":"São Paulo","nome":"Acrux","designacao":"α Crucis","constelacao":"Cruzeiro do Sul","x":55,"y":64.5,"curiosidade":"Sistema estelar que marca a extremidade inferior do Cruzeiro do Sul."},{"uf":"RJ","estado":"Rio de Janeiro","nome":"Mimosa","designacao":"β Crucis","constelacao":"Cruzeiro do Sul","x":52.2,"y":59.9,"curiosidade":"Estrela azul brilhante do Cruzeiro do Sul."},{"uf":"PI","estado":"Piauí","nome":"Antares","designacao":"α Scorpii","constelacao":"Escorpião","x":64,"y":51.3,"curiosidade":"Supergigante vermelha que marca o coração do Escorpião."},{"uf":"MA","estado":"Maranhão","nome":"Acrab (Graffias)","designacao":"β Scorpii","constelacao":"Escorpião","x":61.2,"y":48,"curiosidade":"Sistema estelar conhecido também por Graffias."},{"uf":"CE","estado":"Ceará","nome":"Wei","designacao":"ε Scorpii","constelacao":"Escorpião","x":66.8,"y":54.6,"curiosidade":"Estrela identificada por Epsilon Scorpii."},{"uf":"RN","estado":"Rio Grande do Norte","nome":"Shaula","designacao":"λ Scorpii","constelacao":"Escorpião","x":70.7,"y":64.5,"curiosidade":"Estrela muito luminosa na região do ferrão do Escorpião."},{"uf":"PB","estado":"Paraíba","nome":"Girtab","designacao":"κ Scorpii","constelacao":"Escorpião","x":69,"y":61.9,"curiosidade":"Estrela associada à cauda do Escorpião."},{"uf":"PE","estado":"Pernambuco","nome":"Mu Scorpii","designacao":"μ Scorpii","constelacao":"Escorpião","x":67.9,"y":57.9,"curiosidade":"Designação de um sistema estelar do Escorpião."},{"uf":"AL","estado":"Alagoas","nome":"Sargas","designacao":"θ Scorpii","constelacao":"Escorpião","x":66.2,"y":60.6,"curiosidade":"Estrela brilhante próxima à cauda do Escorpião."},{"uf":"SE","estado":"Sergipe","nome":"Iota Scorpii","designacao":"ι Scorpii","constelacao":"Escorpião","x":64.6,"y":57.9,"curiosidade":"Identificada pela letra grega iota na constelação do Escorpião."},{"uf":"RS","estado":"Rio Grande do Sul","nome":"Atria","designacao":"α Trianguli Australis","constelacao":"Triângulo Austral","x":51.1,"y":67.2,"curiosidade":"Uma gigante alaranjada do Triângulo Austral."},{"uf":"SC","estado":"Santa Catarina","nome":"Beta Trianguli Australis","designacao":"β Trianguli Australis","constelacao":"Triângulo Austral","x":49.4,"y":64.5,"curiosidade":"Uma das três estrelas principais do Triângulo Austral."},{"uf":"PR","estado":"Paraná","nome":"Gamma Trianguli Australis","designacao":"γ Trianguli Australis","constelacao":"Triângulo Austral","x":48.3,"y":68.5,"curiosidade":"Completa o trio principal do Triângulo Austral."},{"uf":"DF","estado":"Distrito Federal","nome":"Polaris Australis","designacao":"σ Octantis","constelacao":"Oitante","x":56.7,"y":71.8,"curiosidade":"Estrela próxima ao polo sul celeste, menos brilhante que muitas outras na bandeira."}];
-const layer=document.querySelector('#stars'),filter=document.querySelector('#filter'),search=document.querySelector('#search');
-let selected=null;
-for(const constellation of [...new Set(starsData.map(s=>s.constelacao))].sort((a,b)=>a.localeCompare(b,'pt-BR'))){const option=document.createElement('option');option.value=constellation;option.textContent=constellation;filter.append(option)}
-function selectStar(s){selected=s.uf;document.querySelector('#name').textContent=s.nome;document.querySelector('#state').innerHTML='<span class="state"></span>';document.querySelector('#state .state').textContent=s.estado+' · '+s.uf;document.querySelector('#desc').textContent=s.curiosidade;document.querySelector('#con').textContent=s.constelacao;document.querySelector('#des').textContent=s.designacao;document.querySelector('#uf').textContent=s.estado+' ('+s.uf+')';render()}
-function render(){layer.replaceChildren();const query=search.value.toLocaleLowerCase('pt-BR').trim();for(const s of starsData){if(filter.value&&s.constelacao!==filter.value)continue;if(query&&!([s.nome,s.estado,s.uf,s.constelacao,s.designacao].join(' ').toLocaleLowerCase('pt-BR').includes(query)))continue;
-const btn=document.createElement('button');btn.className='star'+(selected===s.uf?' active':'');btn.style.left=s.x+'%';btn.style.top=s.y+'%';btn.title=s.nome+' — '+s.estado;btn.setAttribute('aria-label',s.nome+', '+s.estado+', '+s.constelacao);const glyph=document.createElement('span');glyph.textContent='★';btn.append(glyph);btn.addEventListener('click',()=>selectStar(s));layer.append(btn)}}
-filter.addEventListener('change',render);search.addEventListener('input',render);
-document.querySelector('#random').addEventListener('click',()=>{const visible=starsData.filter(s=>(!filter.value||s.constelacao===filter.value)&&(!search.value||[s.nome,s.estado,s.uf,s.constelacao,s.designacao].join(' ').toLocaleLowerCase('pt-BR').includes(search.value.toLocaleLowerCase('pt-BR'))));if(visible.length)selectStar(visible[Math.floor(Math.random()*visible.length)])});
-selectStar(starsData[10]);
+const starsData=[{"uf":"PA","estado":"Pará","nome":"Spica","designacao":"α Virginis","constelacao":"Virgem","x":55.2,"y":42.43,"curiosidade":"Estrela azul-branca, uma das mais brilhantes do céu noturno.","cx":1103.95,"cy":593.95,"grandeza":1},{"uf":"AM","estado":"Amazonas","nome":"Procyon","designacao":"α Canis Minoris","constelacao":"Cão Menor","x":35.74,"y":45.5,"curiosidade":"Uma das estrelas próximas do Sol na vizinhança estelar.","cx":714.75,"cy":637,"grandeza":1},{"uf":"MS","estado":"Mato Grosso do Sul","nome":"Alphard","designacao":"α Hydrae","constelacao":"Hidra Fêmea","x":43.53,"y":50.75,"curiosidade":"Uma gigante alaranjada, destaque da constelação de Hidra.","cx":870.5,"cy":710.5,"grandeza":2},{"uf":"AC","estado":"Acre","nome":"Gamma Hydrae","designacao":"γ Hydrae","constelacao":"Hidra Fêmea","x":54.59,"y":48.6,"curiosidade":"Estrela da longa constelação Hidra Fêmea.","cx":1091.7,"cy":680.4,"grandeza":3},{"uf":"MT","estado":"Mato Grosso","nome":"Sirius","designacao":"α Canis Majoris","constelacao":"Cão Maior","x":37.16,"y":56,"curiosidade":"É a estrela mais brilhante do céu noturno, vista da Terra.","cx":743.1,"cy":784,"grandeza":1},{"uf":"AP","estado":"Amapá","nome":"Mirzam","designacao":"β Canis Majoris","constelacao":"Cão Maior","x":35.2,"y":58.18,"curiosidade":"Estrela associada ao Cão Maior, próxima de Sirius no céu.","cx":703.9,"cy":814.45,"grandeza":2},{"uf":"RO","estado":"Rondônia","nome":"Muliphein","designacao":"γ Canis Majoris","constelacao":"Cão Maior","x":38.85,"y":54.38,"curiosidade":"Também identificada pela designação Gamma Canis Majoris.","cx":777.05,"cy":761.25,"grandeza":4},{"uf":"RR","estado":"Roraima","nome":"Wezen","designacao":"δ Canis Majoris","constelacao":"Cão Maior","x":40.88,"y":58.35,"curiosidade":"Supergigante amarela na constelação do Cão Maior.","cx":817.65,"cy":816.9,"grandeza":2},{"uf":"TO","estado":"Tocantins","nome":"Adhara","designacao":"ε Canis Majoris","constelacao":"Cão Maior","x":40.41,"y":60.95,"curiosidade":"Uma estrela azul muito luminosa do Cão Maior.","cx":808.2,"cy":853.3,"grandeza":3},{"uf":"GO","estado":"Goiás","nome":"Canopus","designacao":"α Carinae","constelacao":"Carina (Quilha)","x":43,"y":63.5,"curiosidade":"A segunda estrela mais brilhante do céu noturno.","cx":860,"cy":889,"grandeza":1},{"uf":"BA","estado":"Bahia","nome":"Gacrux","designacao":"γ Crucis","constelacao":"Cruzeiro do Sul","x":49.97,"y":53.88,"curiosidade":"Gigante avermelhada que marca uma ponta do Cruzeiro do Sul.","cx":999.3,"cy":754.25,"grandeza":2},{"uf":"MG","estado":"Minas Gerais","nome":"Delta Crucis","designacao":"δ Crucis","constelacao":"Cruzeiro do Sul","x":48.29,"y":56.48,"curiosidade":"Uma das cinco estrelas representadas no Cruzeiro do Sul da bandeira.","cx":965.7,"cy":790.65,"grandeza":3},{"uf":"ES","estado":"Espírito Santo","nome":"Epsilon Crucis","designacao":"ε Crucis","constelacao":"Cruzeiro do Sul","x":49.25,"y":57.9,"curiosidade":"Conhecida popularmente como a Intrometida.","cx":984.95,"cy":810.6,"grandeza":4},{"uf":"SP","estado":"São Paulo","nome":"Acrux","designacao":"α Crucis","constelacao":"Cruzeiro do Sul","x":50,"y":61.33,"curiosidade":"Sistema estelar que marca a extremidade inferior do Cruzeiro do Sul.","cx":1000,"cy":858.55,"grandeza":1},{"uf":"RJ","estado":"Rio de Janeiro","nome":"Mimosa","designacao":"β Crucis","constelacao":"Cruzeiro do Sul","x":51.94,"y":56.18,"curiosidade":"Estrela azul brilhante do Cruzeiro do Sul.","cx":1038.85,"cy":786.45,"grandeza":2},{"uf":"PI","estado":"Piauí","nome":"Antares","designacao":"α Scorpii","constelacao":"Escorpião","x":62.25,"y":58.58,"curiosidade":"Supergigante vermelha que marca o coração do Escorpião.","cx":1245,"cy":820.05,"grandeza":1},{"uf":"MA","estado":"Maranhão","nome":"Acrab (Graffias)","designacao":"β Scorpii","constelacao":"Escorpião","x":64.72,"y":58.78,"curiosidade":"Sistema estelar conhecido também por Graffias.","cx":1294.35,"cy":822.85,"grandeza":3},{"uf":"CE","estado":"Ceará","nome":"Wei","designacao":"ε Scorpii","constelacao":"Escorpião","x":62.92,"y":61.08,"curiosidade":"Estrela identificada por Epsilon Scorpii.","cx":1258.3,"cy":855.05,"grandeza":2},{"uf":"RN","estado":"Rio Grande do Norte","nome":"Shaula","designacao":"λ Scorpii","constelacao":"Escorpião","x":61.88,"y":62.95,"curiosidade":"Estrela muito luminosa na região do ferrão do Escorpião.","cx":1237.65,"cy":881.3,"grandeza":2},{"uf":"PB","estado":"Paraíba","nome":"Girtab","designacao":"κ Scorpii","constelacao":"Escorpião","x":60.45,"y":64.18,"curiosidade":"Estrela associada à cauda do Escorpião.","cx":1208.95,"cy":898.45,"grandeza":3},{"uf":"PE","estado":"Pernambuco","nome":"Mu Scorpii","designacao":"μ Scorpii","constelacao":"Escorpião","x":58.75,"y":64.03,"curiosidade":"Designação de um sistema estelar do Escorpião.","cx":1175,"cy":896.35,"grandeza":3},{"uf":"AL","estado":"Alagoas","nome":"Sargas","designacao":"θ Scorpii","constelacao":"Escorpião","x":58.75,"y":66.43,"curiosidade":"Estrela brilhante próxima à cauda do Escorpião.","cx":1175,"cy":929.95,"grandeza":2},{"uf":"SE","estado":"Sergipe","nome":"Iota Scorpii","designacao":"ι Scorpii","constelacao":"Escorpião","x":58.77,"y":68.72,"curiosidade":"Identificada pela letra grega iota na constelação do Escorpião.","cx":1175.35,"cy":962.15,"grandeza":3},{"uf":"RS","estado":"Rio Grande do Sul","nome":"Atria","designacao":"α Trianguli Australis","constelacao":"Triângulo Austral","x":55.2,"y":66.93,"curiosidade":"Uma gigante alaranjada do Triângulo Austral.","cx":1103.95,"cy":936.95,"grandeza":2},{"uf":"SC","estado":"Santa Catarina","nome":"Beta Trianguli Australis","designacao":"β Trianguli Australis","constelacao":"Triângulo Austral","x":56.72,"y":64.47,"curiosidade":"Uma das três estrelas principais do Triângulo Austral.","cx":1134.4,"cy":902.65,"grandeza":3},{"uf":"PR","estado":"Paraná","nome":"Gamma Trianguli Australis","designacao":"γ Trianguli Australis","constelacao":"Triângulo Austral","x":53.8,"y":63.88,"curiosidade":"Completa o trio principal do Triângulo Austral.","cx":1075.95,"cy":894.25,"grandeza":3},{"uf":"DF","estado":"Distrito Federal","nome":"Polaris Australis","designacao":"σ Octantis","constelacao":"Oitante","x":50.04,"y":69.38,"curiosidade":"Estrela próxima ao polo sul celeste, menos brilhante que muitas outras na bandeira.","cx":1000.7,"cy":971.25,"grandeza":5}];
+const NS='http://www.w3.org/2000/svg';
+const layer=document.querySelector('#stars');
+const flag=document.querySelector('#flag-svg');
+const wrap=document.querySelector('.flag-wrap');
+const filter=document.querySelector('#filter');
+const search=document.querySelector('#search');
+const zoomButton=document.querySelector('#zoom');
+const results=document.querySelector('#results');
+let selected='PA';
+let zoomed=window.matchMedia('(max-width:650px)').matches;
+const constellations=[...new Set(starsData.map(s=>s.constelacao))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+for(const name of constellations){
+ const opt=document.createElement('option');opt.value=name;opt.textContent=name;filter.append(opt);
+}
+function svgEl(tag,attributes){
+ const el=document.createElementNS(NS,tag);
+ for(const [key,value] of Object.entries(attributes||{}))el.setAttribute(key,String(value));
+ return el;
+}
+function starPoints(s){
+ const radius=[15,12.5,10,7,5][s.grandeza-1],inner=radius*0.381966;
+ const pts=[];
+ for(let i=0;i<10;i++){
+  const angle=-Math.PI/2+i*Math.PI/5,r=i%2?inner:radius;
+  pts.push((s.cx+Math.cos(angle)*r).toFixed(3)+','+(s.cy+Math.sin(angle)*r).toFixed(3));
+ }
+ return pts.join(' ');
+}
+function showStar(s){
+ selected=s.uf;
+ document.querySelector('#name').textContent=s.nome;
+ document.querySelector('#state').replaceChildren();
+ const pill=document.createElement('span');pill.className='state';pill.textContent=s.estado+' · '+s.uf;
+ document.querySelector('#state').append(pill);
+ document.querySelector('#desc').textContent=s.curiosidade;
+ document.querySelector('#con').textContent=s.constelacao;
+ document.querySelector('#des').textContent=s.designacao;
+ document.querySelector('#grade').textContent=s.grandeza+'ª de 5';
+ document.querySelector('#uf').textContent=s.estado+' ('+s.uf+')';
+ render();
+}
+function matches(s){
+ const text=[s.nome,s.estado,s.uf,s.constelacao,s.designacao].join(' ').toLocaleLowerCase('pt-BR');
+ const q=search.value.trim().toLocaleLowerCase('pt-BR');
+ return (!filter.value||filter.value===s.constelacao)&&(!q||text.includes(q));
+}
+function renderResults(){
+ const active=Boolean(search.value.trim()||filter.value);
+ results.hidden=!active;results.replaceChildren();
+ if(!active)return;
+ const list=starsData.filter(matches);
+ if(!list.length){const span=document.createElement('span');span.textContent='Nenhuma estrela encontrada';results.append(span);return;}
+ for(const s of list){
+  const b=document.createElement('button');b.type='button';b.textContent=s.uf+' · '+s.nome;
+  b.addEventListener('click',()=>showStar(s));
+  results.append(b);
+ }
+}
+function render(){
+ layer.replaceChildren();
+ for(const s of starsData){
+  const group=svgEl('g',{'class':'star-group'+(selected===s.uf?' is-selected':'')+(!matches(s)?' is-dim':''),
+    'role':'button','tabindex':'0','aria-label':s.nome+' — '+s.estado+', '+s.constelacao});
+  const title=svgEl('title');title.textContent=s.nome+' — '+s.estado;group.append(title);
+  const ring=svgEl('circle',{cx:s.cx,cy:s.cy,r:[15,12.5,10,7,5][s.grandeza-1]+8,'class':'star-ring'});
+  const shape=svgEl('polygon',{points:starPoints(s),'class':'star-shape'});
+  const hit=svgEl('circle',{cx:s.cx,cy:s.cy,r:22,'class':'star-hit'});
+  group.append(ring,shape,hit);
+  group.addEventListener('click',()=>showStar(s));
+  group.addEventListener('keydown',event=>{
+   if(event.key==='Enter'||event.key===' '){event.preventDefault();showStar(s);}
+  });
+  layer.append(group);
+ }
+ renderResults();
+}
+function setZoom(next){
+ zoomed=next;wrap.classList.toggle('zoomed',zoomed);
+ const viewBox=zoomed?'650 350 700 700':'0 0 2000 1400';
+ flag.setAttribute('viewBox',viewBox);layer.setAttribute('viewBox',viewBox);
+ zoomButton.textContent=zoomed?'Ver bandeira inteira':'Ampliar céu';
+ zoomButton.setAttribute('aria-pressed',String(zoomed));
+}
+filter.addEventListener('change',render);
+search.addEventListener('input',render);
+zoomButton.addEventListener('click',()=>setZoom(!zoomed));
+document.querySelector('#random').addEventListener('click',()=>{
+ const choices=starsData.filter(matches);
+ if(choices.length)showStar(choices[Math.floor(Math.random()*choices.length)]);
+});
+setZoom(zoomed);showStar(starsData[0]);
 </script></body></html>
