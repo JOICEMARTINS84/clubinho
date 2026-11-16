@@ -1,6 +1,7 @@
 """Horizonte Científico — laboratório lunar de efemérides e energia solar."""
 from __future__ import annotations
 
+import json
 from datetime import datetime, timedelta, timezone
 
 import pandas as pd
@@ -112,6 +113,7 @@ if load:
             data = fetch_cached(float(lat), float(lon), start, stop, step)
         st.session_state["horizons_data"] = data
         st.session_state["horizons_key"] = query_key
+        st.session_state["horizons_retrieved"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
         st.session_state.pop("horizons_error", None)
     except (HorizonsError, ValueError) as exc:
         st.session_state["horizons_error"] = str(exc)
@@ -144,6 +146,8 @@ max_power = df["potencia_w"].max()
 
 st.markdown('<div class="kicker">TELEMETRIA // EFEMÉRIDES CONSULTADAS</div>', unsafe_allow_html=True)
 st.caption(f"NASA/JPL HORIZONS · {n} amostras UTC · horizonte geométrico a 0° · latitude {lat:.2f}°, longitude {lon:.2f}°")
+st.caption(f"Consulta executada em UTC: {st.session_state.get('horizons_retrieved', 'não registrado')} · "
+           f"período modelado: {start:%d/%m/%Y} a {stop:%d/%m/%Y}")
 c1, c2, c3, c4 = st.columns(4)
 c1.metric("Sol visível · amostras", f"{sun_fraction:.0f}%", help="Fração das amostras com elevação solar > 0°. Não é porcentagem temporal contínua.")
 c2.metric("Terra visível · amostras", f"{earth_fraction:.0f}%", help="Fração das amostras com elevação terrestre > 0°. Não modela montanhas nem comunicação por rádio.")
@@ -320,6 +324,33 @@ with method:
     st.dataframe(display, use_container_width=True, hide_index=True)
     st.download_button("Baixar resultados (CSV)", data=display.to_csv(index=False).encode("utf-8-sig"),
                        file_name="horizonte_cientifico_lunar.csv", mime="text/csv")
+    protocolo = {
+        "projeto": "Horizonte Científico / Lua",
+        "autora": "Joice Souza Martins Santos",
+        "consulta_utc": st.session_state.get("horizons_retrieved"),
+        "fonte": "NASA/JPL Horizons",
+        "api": "https://ssd.jpl.nasa.gov/api/horizons.api",
+        "observador": "coord@301; GEODETIC; altitude=0 km",
+        "alvos": {"sun": "10", "earth": "399"},
+        "quantidades": "4,20",
+        "unidades_range": "km",
+        "latitude": float(lat), "longitude_leste": float(lon),
+        "data_inicio_utc": start.isoformat(),
+        "data_fim_utc": stop.isoformat(),
+        "amostragem_horas": int(step),
+        "amostras": int(n),
+        "modelo": {
+            "irradiancia_referencia_w_m2": IRRADIANCIA_REFERENCIA_W_M2,
+            "potencia": "lei inversa do quadrado + area + eficiencia + incidencia",
+            "area_m2": float(area), "eficiencia_pct": int(efficiency),
+            "orientacao": mode, "inclinacao_graus": float(tilt),
+            "azimute_painel_graus": float(az_panel),
+            "horizonte": "geometrico, sem obstrucao por relevo",
+        },
+    }
+    st.download_button("Baixar protocolo da consulta (JSON)",
+                       data=json.dumps(protocolo, ensure_ascii=False, indent=2).encode("utf-8"),
+                       file_name="horizonte_lunar_protocolo.json", mime="application/json")
 
 st.divider()
 st.caption("Matemática & Contexto · Joice Souza Martins Santos · versão 2.0 · Efemérides JPL e modelos físicos identificados")
