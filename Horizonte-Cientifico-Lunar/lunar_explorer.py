@@ -16,6 +16,7 @@ from streamlit_folium import st_folium
 
 from horizons import HorizonsError, get_ephemerides
 from physics import add_solar_power
+from crater_measure import MOON_RADIUS_KM, estimate_crater, spherical_midpoint
 
 NASA_WAC_TILES = (
     "https://trek.nasa.gov/tiles/Moon/EQ/"
@@ -36,6 +37,8 @@ def _init_state() -> None:
         # Ponto de estudo neutro: não atribuímos nome a nenhuma formação.
         st.session_state.lunar_site_lat = 0.0
         st.session_state.lunar_site_lon = 0.0
+    if "lunar_rim_points" not in st.session_state:
+        st.session_state.lunar_rim_points = []
     # Limpa estados de versões antigas que faziam identificação automática.
     for key in (
         "lunar_identify_active", "lunar_site_name", "lunar_site_previous_name",
@@ -44,7 +47,12 @@ def _init_state() -> None:
         st.session_state.pop(key, None)
 
 
-def _map(current_lat: float, current_lon: float) -> folium.Map:
+def _map(
+    current_lat: float, current_lon: float,
+    mode: str = "Selecionar ponto",
+    rim_points: list[tuple[float, float]] | None = None,
+) -> folium.Map:
+    """Renderiza foto LRO, marcador de posição OU duas bordas escolhidas."""
     m = folium.Map(
         location=[current_lat, current_lon], zoom_start=4,
         min_zoom=1, max_zoom=8, tiles=None, crs="EPSG4326",
@@ -57,12 +65,37 @@ def _map(current_lat: float, current_lon: float) -> folium.Map:
         min_zoom=0, max_zoom=8, overlay=False, control=False,
         tms=False, no_wrap=True,
     ).add_to(m)
-    folium.CircleMarker(
-        location=[current_lat, current_lon], radius=6,
-        color="#f13b2d", fill=True, fill_color="#f13b2d",
-        fill_opacity=0.85, weight=2,
-        tooltip="Coordenadas selecionadas — sem identificação de nome",
-    ).add_to(m)
+
+    points = rim_points or []
+    if mode == "Medir cratera":
+        for index, (latitude, longitude) in enumerate(points[:2]):
+            label = "A" if index == 0 else "B"
+            color = "#f7d08c" if index == 0 else "#65bcf5"
+            folium.CircleMarker(
+                location=[latitude, longitude], radius=8,
+                color=color, fill=True, fill_color=color,
+                fill_opacity=0.95, weight=3,
+                tooltip=f"Borda {label} • {latitude:+.5f}°, {longitude:+.5f}°",
+            ).add_to(m)
+        if len(points) == 2:
+            if abs(points[0][1] - points[1][1]) <= 180:
+                folium.PolyLine(
+                    locations=points, color="#f13b2d", weight=3,
+                    opacity=0.9, tooltip="Diâmetro aproximado entre as bordas A e B",
+                ).add_to(m)
+            folium.CircleMarker(
+                location=[current_lat, current_lon], radius=4,
+                color="white", fill=True, fill_color="#f13b2d",
+                fill_opacity=1.0, weight=2,
+                tooltip="Centro geométrico estimado (não centro real medido)",
+            ).add_to(m)
+    else:
+        folium.CircleMarker(
+            location=[current_lat, current_lon], radius=6,
+            color="#f13b2d", fill=True, fill_color="#f13b2d",
+            fill_opacity=0.85, weight=2,
+            tooltip="Coordenadas selecionadas — sem identificação de nome",
+        ).add_to(m)
     return m
 
 
@@ -87,15 +120,48 @@ def _set_location(lat: float, lon: float) -> None:
 
 
 def _selection_callback() -> None:
-    """Captura lat/lon do clique e nunca busca nomes, crateras ou locais."""
+    """Converte um clique em ponto de pesquisa ou em borda A/B, conforme o modo."""
     result = st.session_state.get("moon_wac_map") or {}
     click = result.get("last_clicked") if isinstance(result, dict) else None
     if not isinstance(click, dict):
         return
     try:
-        _set_location(click["lat"], click["lng"])
+        la, lo = valid_coords(click["lat"], click["lng"])
+        position = (round(la, 6), round(lo, 6))
     except (KeyError, ValueError, TypeError):
-        pass
+        return
+
+    # Evita contabilizar novamente o mesmo evento caso o mapa seja redesenhado.
+    if st.session_state.get("lunar_last_click") == position:
+        return
+    st.session_state.lunar_last_click = position
+
+    if st.session_state.get("lunar_action_mode", "Selecionar ponto") != "Medir cratera":
+        _set_location(*position)
+        return
+
+    points = list(st.session_state.get("lunar_rim_points", []))
+    if len(points) >= 2:
+        return  # só reiniciar para efetuar nova medida
+    if points and points[-1] == position:
+        return
+    points.append(position)
+    st.session_state.lunar_rim_points = points
+    if len(points) == 1:
+        _set_location(*position)
+    else:
+        try:
+            midpoint = spherical_midpoint(points[0], points[1])
+            _set_location(*midpoint)
+        except ValueError:
+            # Pontos antipodais: geometria sem centro único; explicar na UI.
+            pass
+
+
+def _clear_crater_measurement() -> None:
+    """Inicia uma nova medida sem alterar as coordenadas de consulta já escolhidas."""
+    st.session_state.lunar_rim_points = []
+
 
 
 def _apply_manual_coordinates() -> None:
