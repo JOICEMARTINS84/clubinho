@@ -217,15 +217,24 @@ with power:
     fig.update_yaxes(title="Potência elétrica (W)", gridcolor="#303036")
     fig.update_xaxes(title="Data e hora (UTC)", gridcolor="#29292e")
     st.plotly_chart(style_chart(fig), use_container_width=True)
-    st.latex(r"P(t) = S_0 \, A \, \eta \, \max(0,\cos\theta(t))")
-    st.caption(f"S₀ = {IRRADIANCIA_REFERENCIA_W_M2:,.0f} W/m² (referência adotada); A = {area:.1f} m²; "
-               f"η = {efficiency}%; orientação: {mode}. O resultado é uma estimativa, não geração medida.")
+    st.latex(r"S(r)=1361\left(\frac{1\,\mathrm{UA}}{r}\right)^2\qquad P(t)=S(r)\,A\,\eta\,\max(0,\cos\theta(t))")
+    st.caption(f"1361 W/m² a 1 UA (referência); distância solar conforme o JPL; área = {area:.1f} m²; "
+               f"eficiência = {efficiency}%; orientação: {mode}. Não é geração de energia medida.")
+    st.markdown("**Irradiância solar no ponto lunar · modelo físico**")
+    flux = go.Figure()
+    flux.add_trace(go.Scatter(x=df["instante_utc"], y=df["irradiancia_estim_w_m2"],
+                              name="Irradiância por distância", line=dict(color="#deb980", width=2.7)))
+    flux.update_yaxes(title="Irradiância calculada (W/m²)")
+    flux.update_xaxes(title="Data e hora (UTC)")
+    st.plotly_chart(style_chart(flux, 315), use_container_width=True)
+    st.caption("A irradiância varia pela distância Sol–Lua fornecida pelo JPL e pela lei do inverso do quadrado. "
+               "É uma estimativa de fluxo no vácuo, não uma medição de sensor.")
     st.info("O modelo ignora sombras do terreno, poeira, perdas térmicas, envelhecimento, bateria, "
             "eletrônica e indisponibilidade por manutenção. Rastreamento ideal supõe o painel sempre perpendicular "
             "aos raios solares quando o Sol está acima de 0°.")
 
 with sky:
-    st.subheader("Direções no céu em um instante selecionado")
+    st.subheader("Projeção polar · céu local da Lua")
     position = st.slider("Selecione uma amostra", 0, n - 1, 0, format="%d") if n > 1 else 0
     selected = df.iloc[position]
     st.caption(f"Instante UTC: {selected['instante_utc']:%d/%m/%Y %H:%M} · Centro = zênite · Círculo externo = horizonte (0°)")
@@ -251,14 +260,18 @@ with sky:
                                    gridcolor="#55504a", color="#d3ccc0", angle=45)),
     )
     st.plotly_chart(polar, use_container_width=True)
-    st.caption("Azimute medido do norte para leste. A elevação é topocêntrica, referente a uma superfície idealizada.")
+    az1, az2 = st.columns(2)
+    az1.metric("Sol · azimute / elevação", f"{selected['sun_az']:.1f}° / {selected['sun_elev']:.1f}°")
+    az2.metric("Terra · azimute / elevação", f"{selected['earth_az']:.1f}° / {selected['earth_elev']:.1f}°")
+    st.caption("Azimute: norte 0°, leste 90°, sul 180°, oeste 270°. "
+               "A projeção mostra apenas direções; não é um mapa de terreno.")
 
 with method:
     st.subheader("Procedência e limites científicos")
     st.markdown("""
     **Fonte das posições astronômicas:** NASA/JPL Horizons, API pública, efemérides
     do tipo `OBSERVER`, origem `coord@301` (Lua), alvos `10` (Sol) e `399` (Terra),
-    quantidade `4` (azimute/elevação) e instantes UTC.
+    quantidades `4,20` (azimute/elevação e distância), `RANGE_UNITS=KM`, UTC.
 
     **Coordenadas:** planetodéticas, longitude positiva para leste e altitude adotada de
     0 km relativa ao elipsoide de referência da Lua.
@@ -266,25 +279,38 @@ with method:
     **Critério visual:** elevação do centro do astro superior a 0°. Não considera o
     tamanho angular do disco, sombras produzidas pelo relevo ou obstáculos artificiais.
 
-    **Modelo fotovoltaico:** irradiância de referência constante de 1361 W/m²,
-    área e eficiência escolhidas, geometria de incidência conforme a orientação
-    do painel e integração trapezoidal do sinal amostrado. A energia não é prevista
-    com precisão de engenharia, tampouco medida pela NASA.
+    **Modelo fotovoltaico:** irradiância de referência de 1361 W/m² a uma unidade astronômica.
+    Irradiância local calculada pela lei inversa do quadrado da distância solar obtida do JPL.
+    Potência calculada com a geometria do painel, área e eficiência hipotética.
+    Energia estimada por integração trapezoidal das amostras. Esses resultados não são
+    medições de um painel solar nem previsões de engenharia.
+
+    **Comunicação:** tempo de propagação aproximado = distância aparente à Terra dividida
+    pela velocidade da luz no vácuo. Não calcula perdas, alinhamento nem disponibilidade do rádio.
+
+    **Visibilidade:** percentuais mostram a proporção das amostras com elevação positiva,
+    e não a fração exata de tempo. As mudanças de visibilidade entre amostras não são resolvidas.
 
     **Próxima etapa:** incorporar mapa de elevação LOLA/LRO para calcular
     a linha real do horizonte em cada azimute.
     """)
     st.markdown("[Documentação do JPL Horizons](https://ssd-api.jpl.nasa.gov/doc/horizons.html) · "
-                "[Dados lunares LRO/LOLA](https://pds-geosciences.wustl.edu/missions/lro/lola.htm)")
+                "[NASA Moon Trek · mapas reais](https://trek.nasa.gov/moon/) · "
+                "[LRO/LOLA · altimetria](https://pds-geosciences.wustl.edu/missions/lro/lola.htm)")
+    st.info("Moon Trek oferece mapas lunares reais, mas ainda não importamos seus dados de "
+            "elevação para calcular a linha local do horizonte. Nenhuma sombra de crateras é simulada.")
     display = df.rename(columns={
         "instante_utc": "Data/hora UTC", "sun_az": "Azimute Sol (°)", "sun_elev": "Elevação Sol (°)",
         "earth_az": "Azimute Terra (°)", "earth_elev": "Elevação Terra (°)",
-        "incidencia": "Fator de incidência", "potencia_w": "Potência (W)",
-        "energia_acumulada_kwh": "Energia acumulada (kWh)",
+        "sun_dist_km": "Distância Sol (km)", "earth_dist_km": "Distância Terra (km)",
+        "retardo_terra_s": "Luz à Terra (s)", "separacao_sol_terra_deg": "Separação Sol–Terra (°)",
+        "irradiancia_estim_w_m2": "Irradiância calculada (W/m²)",
+        "incidencia": "Fator de incidência", "potencia_w": "Potência estimada (W)",
+        "energia_acumulada_kwh": "Energia estimada (kWh)",
     })
     st.dataframe(display, use_container_width=True, hide_index=True)
     st.download_button("Baixar resultados (CSV)", data=display.to_csv(index=False).encode("utf-8-sig"),
                        file_name="horizonte_cientifico_lunar.csv", mime="text/csv")
 
 st.divider()
-st.caption("Matemática & Contexto · Joice Souza Martins Santos · versão 1.0 · Pesquisa e educação científica")
+st.caption("Matemática & Contexto · Joice Souza Martins Santos · versão 2.0 · Efemérides JPL e modelos físicos identificados")
