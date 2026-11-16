@@ -147,13 +147,10 @@ st.markdown("""
 st.markdown('<p class="photo-credit">Imagem: mosaico do polo sul lunar · NASA/GSFC/Arizona State University, LRO · PIA13523. Projeto independente, não afiliado à NASA.</p>', unsafe_allow_html=True)
 
 PRESETS = {
-    "Polo Sul · ponto de estudo (89,5°S)": (-89.5, 0.0),
-    "Sul lunar · ponto de estudo (85°S)": (-85.0, 45.0),
-    "Apollo 11 · Mare Tranquillitatis (NASA)": (0.67416, 23.47314),
-    "Apollo 15 · Hadley Rille (NASA)": (26.13239, 3.63330),
-    "Apollo 17 · Taurus–Littrow (NASA)": (20.19110, 30.77230),
-    "Equador lunar · ponto de estudo": (0.0, 0.0),
-    "Personalizar coordenadas": None,
+    "Definir coordenadas": None,
+    "Exemplo A · latitude −89,5°, longitude 0°": (-89.5, 0.0),
+    "Exemplo B · latitude −85°, longitude 45°": (-85.0, 45.0),
+    "Exemplo C · latitude 0°, longitude 0°": (0.0, 0.0),
 }
 
 with st.sidebar:
@@ -198,12 +195,7 @@ with st.sidebar:
         f'<span>LONGITUDE <b>{lon:+.4f}°</b></span></div>',
         unsafe_allow_html=True,
     )
-    if "Apollo" in place:
-        st.caption("Local histórico NASA/NSSDC; latitude planetocêntrica aproximada como geodética.")
-        if experience == "Técnico":
-            st.markdown("[Ver coordenadas originais NASA](https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html)")
-    else:
-        st.caption("Este é o ponto a partir do qual o JPL calculará onde o Sol e a Terra aparecem.")
+    st.caption("Este é o ponto a partir do qual o JPL calculará onde o Sol e a Terra aparecem. Nenhuma formação geológica é identificada.")
 
     st.markdown('<div class="side-step"><b>02</b><span>PERÍODO E RESOLUÇÃO</span></div>',
                 unsafe_allow_html=True)
@@ -502,10 +494,9 @@ with method:
     do tipo `OBSERVER`, origem `coord@301` (Lua), alvos `10` (Sol) e `399` (Terra),
     quantidades `4,20` (azimute/elevação e distância), `RANGE_UNITS=KM`, UTC.
 
-    **Coordenadas:** locais personalizados com latitude geodética, longitude positiva a leste,
-    altitude adotada de 0 km no elipsoide lunar. Coordenadas dos locais Apollo vêm da
-    base planetocêntrica NASA/NSSDC e foram usadas como aproximação geodética;
-    nenhuma correção cartográfica detalhada foi aplicada.
+    **Coordenadas:** latitude geodética informada pelo usuário, longitude positiva a leste
+    e altitude adotada de 0 km no elipsoide lunar. Os exemplos numéricos são pontos
+    de estudo sem identificação de crateras ou outros nomes geográficos.
 
     **Critério visual:** elevação do centro do astro superior a 0°. Não considera o
     tamanho angular do disco, sombras produzidas pelo relevo ou obstáculos artificiais.
