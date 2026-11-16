@@ -1,23 +1,55 @@
-# O céu na Bandeira do Brasil
+# O Céu na Bandeira do Brasil
 
-Projeto educativo de **Joice Souza Martins Santos** — Matemática & Contexto.
+**Aplicativo independente** de astronomia educativa para o Streamlit Community Cloud.
+Autoria: **Joice Souza Martins Santos**, projeto Matemática & Contexto.
 
-Explore 27 estrelas, 26 estados e o Distrito Federal e suas 9 constelações. Interface com HTML, CSS e JavaScript; Python para validar o dataset.
+## O que contém
+- Atlas interativo da bandeira do Brasil com 27 estrelas, 26 estados e o Distrito Federal;
+- Nove constelações, nomes e designações astronômicas;
+- Busca por estado/estrela, filtro por constelação e seleção por clique;
+- Texto histórico e referências institucionais;
+- Interface responsiva em HTML, CSS e JavaScript incorporada a uma aplicação Python + Streamlit.
 
-## Abrir
-Abra `index.html` no navegador. Não requer instalação nem chave de API.
+**Nota científica:** a posição dos ícones é didática e esquemática, não uma reprodução geométrica oficial nem efemérides. A estrela selecionada é identificada por seu nome e sua designação; os ícones não indicam brilho, distância ou coordenadas reais. Não há API astronômica ativa nesta versão.
 
-## Publicação no Streamlit
-O atlas também está integrado como segunda página do projeto **Horizonte Científico Lunar**, hospedado em https://horizonte-cientifico-lunar.streamlit.app/.
-O arquivo de página está em `../Horizonte-Cientifico-Lunar/pages/02_Ceu_na_Bandeira.py`. O Streamlit detecta a página automaticamente na navegação lateral e incorpora este `index.html` com `streamlit.components.v1.html`.
+## Publicar como aplicativo SEPARADO do Horizonte Lunar
 
-## Hospedagem HTML alternativa
-O mesmo HTML pode ser publicado via GitHub Pages, se o Pages estiver ativado. A publicação atual não depende de ativar GitHub Pages.
+1. Entre em **https://share.streamlit.io** com seu GitHub.
+2. Clique em **Create app** → **Yup, I have an app**.
+3. Use estes três campos:
+   - Repository: `JOICEMARTINS84/clubinho`
+   - Branch: `main`
+   - Main file path: `bandeira-astronomica/streamlit_app.py`
+4. Escolha um subdomínio como `ceu-na-bandeira-brasil` **se estiver disponível**.
+5. Clique em **Deploy**. O Streamlit criará um endereço próprio para este app. Este procedimento não modifica nem substitui o Horizonte Lunar.
 
-## Importante
-A composição visual é **esquemática**, não é desenho oficial nem projeção astronômica; não use a posição dos ícones para inferir coordenadas, brilho ou distâncias.
+## Rodar no seu computador
 
-Referências: Lei 5.700/1971; material didático INPE; Agência Espacial Brasileira.
+No terminal, na raiz do repositório:
 
-## API futura
-Uma futura versão poderá consumir catálogos astronômicos como SIMBAD/VizieR para dados físicos atualizados, após revisão dos identificadores. Esta versão não faz chamadas de API.
+```bash
+pip install -r bandeira-astronomica/requirements.txt
+streamlit run bandeira-astronomica/streamlit_app.py
+```
+
+Também é possível abrir `bandeira-astronomica/index.html` diretamente no navegador, sem Python.
+
+## Estrutura
+
+- `streamlit_app.py` — arquivo de entrada de **seu próprio aplicativo Streamlit**
+- `requirements.txt` — dependências deste app
+- `.streamlit/config.toml` — tema deste app
+- `index.html` — interface HTML/CSS/JS
+- `estrelas.json` — catálogo auditável das 27 estrelas
+- `validar_estrelas.py` — conferência do catálogo
+
+## Fontes
+
+- Lei nº 5.700/1971 — https://www2.camara.leg.br/legin/fed/lei/1970-1979/lei-5700-1-setembro-1971-357915-normaatualizada-pl.html
+- INPE — material didático sobre bandeira e astronomia
+- Agência Espacial Brasileira — constelações e bandeira brasileira
+
+## Etapas futuras
+
+- Refinar o desenho para concordar com a geometria oficial (posição e tamanhos).
+- Acrescentar dados físicos astronômicos e referências por estrela com curadoria, e eventualmente uma API/catalogador como SIMBAD/VizieR.
