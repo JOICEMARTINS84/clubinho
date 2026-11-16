@@ -11,6 +11,7 @@ import streamlit as st
 from horizons import HorizonsError, get_ephemerides
 from physics import IRRADIANCIA_REFERENCIA_W_M2, add_solar_power
 from craters import render_crater_lab
+from lunar_explorer import render_lunar_explorer
 
 st.set_page_config(page_title="Horizonte Científico | Lua", page_icon="🌘", layout="wide")
 
@@ -309,7 +310,9 @@ if "horizons_data" not in st.session_state or st.session_state.get("horizons_key
     <div class="method-note">Módulo astronômico: dados NASA/JPL Horizons. Módulo energético: modelo matemático.
     O relevo observado pelo LRO/LOLA é referência visual, ainda sem correção local de sombras.</div>
     """, unsafe_allow_html=True)
-    atlas_tab, crater_tab = st.tabs(["Atlas NASA/LRO", "Laboratório de crateras"])
+    explorer_tab, atlas_tab, crater_tab = st.tabs(["Explorar um local", "Atlas NASA/LRO", "Laboratório de crateras"])
+    with explorer_tab:
+        render_lunar_explorer(start, stop, step, area, efficiency, mode, tilt, az_panel)
     with atlas_tab:
         st.markdown('<div class="mission-header"><b>Cartografia lunar</b><span>LRO / LOLA · REGIÃO POLAR</span></div>', unsafe_allow_html=True)
         st.subheader("Polo sul · dados observacionais NASA/LRO")
@@ -368,7 +371,9 @@ def style_chart(fig, height=415):
     return fig
 
 
-v, distances, power, sky, topo, craters_tab, method = st.tabs(["Visão orbital", "Distâncias", "Energia", "Céu lunar", "Topografia", "Analisar crateras", "Método científico"])
+explorer_tab, v, distances, power, sky, topo, craters_tab, method = st.tabs(["Explorar locais", "Visão orbital", "Distâncias", "Energia", "Céu lunar", "Topografia", "Analisar crateras", "Método científico"])
+with explorer_tab:
+    render_lunar_explorer(start, stop, step, area, efficiency, mode, tilt, az_panel)
 with v:
     st.subheader("Elevação dos astros · JPL Horizons")
     fig = go.Figure()
