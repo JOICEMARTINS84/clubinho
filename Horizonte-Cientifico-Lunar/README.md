@@ -10,7 +10,7 @@ Autora: **Joice Souza Martins Santos**.
 - Calcula tempo de propagação aproximado Terra–observador lunar (distância / velocidade da luz).
 - Apresenta um diagrama polar das direções do céu local.
 - Calcula **irradiância e energia solar teóricas** com fluxo solar variável pela lei do inverso do quadrado da distância. Simula painéis horizontais, inclinados ou com rastreamento ideal.
-- Permite escolher sítios Apollo 11, 15 e 17 com coordenadas publicadas pela NASA.
+- Permite explorar pontos lunares por coordenadas e **medir crateras pelo mapa**, sem atribuir nomes automaticamente.
 - Indica o acesso externo ao mapa real **NASA Moon Trek** e exporta os dados do JPL junto às colunas calculadas em CSV.
 - Exibe uma **imagem científica real NASA/LRO/LOLA** de topografia regional do polo sul e regiões permanentemente sombreadas, com link para a fonte. A imagem é referência visual e **não é** incorporada à modelagem de sombras local.
 
@@ -21,26 +21,50 @@ local lunar, data e resolução, modelo de energia e execução da consulta JPL.
 O modo **Guiado** apresenta parâmetros essenciais com explicações para estudantes;
 o modo **Técnico** libera ajuste detalhado de coordenadas e parâmetros do painel.
 
-## Explorar qualquer ponto na Lua — sem identificar nomes
+## Explorar qualquer ponto e medir crateras no mapa
 
-A aba **Explorar um local** usa o mosaico fotográfico **LRO/WAC** da NASA
-(servido pelo NASA Moon Trek) para seleção de coordenadas.
+A aba **Explorar e medir** utiliza o mosaico fotográfico LRO/WAC
+da NASA, servido pelo NASA Moon Trek. Não identifica nomes de
+crateras ou locais automaticamente.
 
-1. Navegue pelo mapa e clique em qualquer região lunar ou digite latitude/longitude.
-2. Observe **apenas as coordenadas selecionadas**; o aplicativo não inventa
-   nem atribui nomes de crateras ou locais a partir de um clique.
-3. Clique em **Coletar dados NASA/JPL do ponto** para consultar as posições
-   e distâncias do Sol e da Terra calculadas para aquelas coordenadas.
-4. Exporte CSV com efemérides e cálculos ou JSON com coordenadas, período e
-   fontes utilizadas.
+### Selecionar ponto
 
-**Limitações:** a fotografia não é um modelo de altitude. Este módulo não
-identifica crateras, diâmetros, alturas ou profundidades automaticamente.
-O catálogo de nomes oficial não é consultado nem aplicado ao mapa.
-O mapa lunar oficial NASA Moon Trek oferece instrumentos adicionais de
-topografia e pesquisa sem induzir associações automáticas incorretas.
+1. Escolha **Selecionar ponto** e clique na superfície ou digite coordenadas.
+2. Consulte efemérides do Sol e da Terra pelo NASA/JPL Horizons.
+3. Exporte as séries e a ficha da consulta quando disponíveis.
 
-Fontes:
+### Medir cratera por duas bordas
+
+1. Escolha **Medir cratera** na parte superior do explorador.
+2. Aproxime o mapa e clique uma vez na borda A de uma cratera visível.
+3. Clique na borda oposta B. O aplicativo mostra marcadores A e B,
+   o diâmetro estimado em quilômetros, o raio e a área de círculo ideal.
+4. Use **Recomeçar medição** para apagar A/B e estudar outra cratera.
+5. Exporte CSV da medição ou JSON com coordenadas, fórmula e hipóteses.
+
+**Método:** distância entre coordenadas por haversine no modelo esférico
+da Lua, com raio de referência de 1.737,4 km (NASA). O arco entre A e B
+é interpretado como diâmetro SOMENTE SE o usuário marcou bordas opostas.
+
+**Área aproximada:** π × (diâmetro/2)²; a hipótese é uma formação circular
+plana, sem contorno real obtido por processamento de imagem. O centro
+exibido é o ponto médio geométrico aproximado dos marcadores; não é
+o centro geológico medido.
+
+**Precisão e limites:** a imagem WAC possui resolução variável conforme o
+zoom; bordas irregulares e subjetividade no clique geram erro. O modelo
+usa superfície esférica, não distâncias 3D sobre relevo. Não determina
+profundidade, volume, tipo de terreno ou nome. Para relevo real,
+é necessário incorporar um DEM LRO/LOLA e medir as bordas adequadamente.
+Pontos próximos à longitude ±180° são calculados pelo arco menor; a
+linha visual do mapa pode não ser desenhada nesse caso.
+
+Os dados astronômicos continuam independentes da medição geométrica:
+a consulta JPL pode usar o centro aproximado entre A e B, mas NÃO
+participa do cálculo do diâmetro.
+
+**Fontes:**
+- NASA Moon Fact Sheet (raio lunar): https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html
 - NASA Moon Trek: https://trek.nasa.gov/moon/
 - NASA Moon Trek WMTS: https://trek.nasa.gov/tiles/apidoc/trekAPI.html?body=moon
 - NASA/JPL Horizons: https://ssd-api.jpl.nasa.gov/doc/horizons.html
