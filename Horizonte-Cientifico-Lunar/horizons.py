@@ -92,11 +92,22 @@ def request_body(
         "ANG_FORMAT": "'DEG'",
         "TIME_TYPE": "'UT'",
         "TIME_DIGITS": "'MINUTES'",
-        "REFRACT": "'NO'",  # Lua: refração desprezada
+        "APPARENT": "'AIRLESS'",  # geometria sem correção atmosférica
     }
     client = session if session is not None else requests
     try:
         response = client.get(API_URL, params=params, timeout=55)
+        if response.status_code >= 400:
+            try:
+                response_error = response.json()
+                details = response_error.get("message") or response_error.get("error") or response.text
+            except ValueError:
+                details = response.text
+            details = " ".join(str(details).split())[:600]
+            raise HorizonsError(
+                f"JPL Horizons rejeitou a consulta (HTTP {response.status_code}). "
+                f"Detalhe da NASA: {details or 'sem detalhes adicionais'}"
+            )
         response.raise_for_status()
         payload = response.json()
     except (requests.RequestException, ValueError) as exc:
