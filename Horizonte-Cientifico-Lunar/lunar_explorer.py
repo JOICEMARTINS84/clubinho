@@ -197,21 +197,16 @@ def render_lunar_explorer(start: datetime, stop: datetime, step: int,
             matched_names = find_named_features(lat, lon, official_names)
         except GazetteerUnavailable as exc:
             gazetteer_error = str(exc)
-        # Os pontos catalogados antes da nova integração ainda servem como
-        # fallback de identificação PARCIAL se o Gazetteer remoto falhar.
+        # Falha de fonte oficial = nenhuma identificação automática.
+        # Não transformar uma lista didática limitada em verificação cartográfica.
         if not gazetteer_online:
-            curated = [
-                {"name": name, "lat": feat["lat"], "lon": feat["lon"],
-                 "diameter_km": feat["diameter_km"],
-                 "source": feat["source"], "catalogue": feat["ref"]}
-                for name, feat in CRATERS.items()
-            ]
-            matched_names = find_named_features(lat, lon, curated)
+            matched_names = []
 
     top_match = matched_names[0] if matched_names else None
     display_label = (
-        top_match["name"] if top_match and top_match["relation"] == "na área nominal"
-        else "Próximo a " + top_match["name"] if top_match
+        "Região aproximada: " + top_match["name"]
+        if top_match and top_match["relation"] == "na área nominal"
+        else "Próximo a: " + top_match["name"] if top_match
         else st.session_state.lunar_site_name if current
         else None
     )
@@ -244,16 +239,18 @@ def render_lunar_explorer(start: datetime, stop: datetime, step: int,
             if top_match:
                 st.markdown("**Identificação do ponto selecionado**")
                 if top_match["relation"] == "na área nominal":
-                    st.success(f"Área nominal de: **{top_match['name']}**")
+                    st.info(f"Região aproximada de **{top_match['name']}** (nome do catálogo)")
                     st.caption("O ponto está dentro do raio aproximado calculado a partir do "
                                "diâmetro catalogado. Não é um contorno geológico confirmado.")
                 else:
-                    st.info(f"Nome oficial próximo: **{top_match['name']}**")
+                    st.info(f"Formação catalogada próxima: **{top_match['name']}**")
                     st.caption("Perto do centro catalogado. Não é possível afirmar "
                                "que este ponto esteja dentro dessa feição.")
                 st.caption(f"Centro a {top_match['distance_km']:.2f} km do ponto escolhido · "
                            f"Fonte: {top_match['catalogue']}")
-                st.markdown(f"[Conferir registro da fonte]({top_match['source']})")
+                st.markdown(f"[Verificar nome e coordenadas no catálogo]({top_match['source']})")
+                st.caption("Identificação baseada em proximidade ao centro e, quando disponível, "
+                           "diâmetro nominal. Não é classificação automática do relevo.")
                 if len(matched_names) > 1:
                     with st.expander("Outros nomes na mesma região"):
                         for feature in matched_names[1:]:
@@ -267,8 +264,9 @@ def render_lunar_explorer(start: datetime, stop: datetime, step: int,
                            "que o lugar não tenha nome: a identificação é aproximada.")
             elif gazetteer_error:
                 st.warning("Não foi possível consultar o catálogo oficial completo neste momento.")
-                st.caption(gazetteer_error + " A identificação parcial cobre apenas "
-                           "as crateras previamente cadastradas.")
+                st.caption(gazetteer_error + " Por segurança, a identificação automática "
+                           "fica desativada até o catálogo voltar. A lista de locais "
+                           "predefinidos continua disponível, mas não é usada como confirmação do clique.")
             else:
                 st.caption("Clique no mapa ou digite coordenadas para identificar "
                            "nomes registrados no catálogo USGS/IAU.")
