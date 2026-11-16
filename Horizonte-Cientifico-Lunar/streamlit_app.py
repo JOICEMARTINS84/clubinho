@@ -177,6 +177,8 @@ with st.sidebar:
         else "Modo técnico: parâmetros de observação e modelo fotovoltaico disponíveis."
     )
 
+    st.caption("Na aba **Explorar e medir**, marque dois pontos na borda de uma cratera para estimar seu diâmetro e sua área.")
+
     st.markdown('<div class="side-step"><b>01</b><span>LOCAL DE OBSERVAÇÃO</span></div>',
                 unsafe_allow_html=True)
     place = st.selectbox(
@@ -302,7 +304,7 @@ if "horizons_data" not in st.session_state or st.session_state.get("horizons_key
     <div class="method-note">Módulo astronômico: dados NASA/JPL Horizons. Módulo energético: modelo matemático.
     O relevo observado pelo LRO/LOLA é referência visual, ainda sem correção local de sombras.</div>
     """, unsafe_allow_html=True)
-    explorer_tab, atlas_tab, crater_tab = st.tabs(["Explorar um local", "Atlas NASA/LRO", "Laboratório de crateras"])
+    explorer_tab, atlas_tab, crater_tab = st.tabs(["Explorar e medir", "Atlas NASA/LRO", "Laboratório de crateras"])
     with explorer_tab:
         render_lunar_explorer(start, stop, step, area, efficiency, mode, tilt, az_panel)
     with atlas_tab:
@@ -363,7 +365,7 @@ def style_chart(fig, height=415):
     return fig
 
 
-explorer_tab, v, distances, power, sky, topo, craters_tab, method = st.tabs(["Explorar locais", "Visão orbital", "Distâncias", "Energia", "Céu lunar", "Topografia", "Analisar crateras", "Método científico"])
+explorer_tab, v, distances, power, sky, topo, craters_tab, method = st.tabs(["Explorar e medir", "Visão orbital", "Distâncias", "Energia", "Céu lunar", "Topografia", "Analisar crateras", "Método científico"])
 with explorer_tab:
     render_lunar_explorer(start, stop, step, area, efficiency, mode, tilt, az_panel)
 with v:
@@ -512,6 +514,12 @@ with method:
 
     **Visibilidade:** percentuais mostram a proporção das amostras com elevação positiva,
     e não a fração exata de tempo. As mudanças de visibilidade entre amostras não são resolvidas.
+
+    **Medição geométrica de crateras:** na aba Explorar e medir, a distância
+    superficial entre duas bordas escolhidas usa haversine e raio lunar médio
+    de 1737,4 km (NASA). A área estimada é a de um círculo ideal de diâmetro
+    igual à distância. Não identifica bordas automaticamente, não mede altitude
+    nem calcula profundidade.
 
     **Próxima etapa:** incorporar mapa de elevação LOLA/LRO para calcular
     a linha real do horizonte em cada azimute.
