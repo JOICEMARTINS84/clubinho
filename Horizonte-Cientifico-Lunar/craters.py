@@ -13,17 +13,17 @@ import streamlit as st
 from PIL import Image, ImageOps, UnidentifiedImageError
 
 PHOTO_SOURCES = {
-    "Tycho · mosaico LROC/WAC (visão da cratera)": {
+    "Fotografia 01 · mosaico de cratera (LRO/WAC)": {
         "url": "https://lroc.im-ldi.com/news/uploads/LROCiotw/4588WAC-annon.png",
         "page": "https://lroc.im-ldi.com/images/559",
         "credit": "NASA/GSFC/ASU · Lunar Reconnaissance Orbiter Camera · mosaico WAC",
         "note": "A imagem possui uma barra gráfica de 25 km. A calibração precisa ser indicada manualmente.",
     },
-    "Tycho · terreno interno LRO/NAC (detalhe)": {
+    "Fotografia 02 · detalhe do terreno (LRO/NAC)": {
         "url": "https://assets.science.nasa.gov/dynamicimage/assets/science/psd/photojournal/pia/pia12/pia12941/PIA12941.jpg?crop=faces%2Cfocalpoint&fit=clip&h=1000&w=1000",
         "page": "https://science.nasa.gov/photojournal/the-floor-of-tycho/",
         "credit": "NASA/GSFC/ASU · Lunar Reconnaissance Orbiter · PIA12941",
-        "note": "É um detalhe do solo de Tycho, NÃO uma imagem da cratera inteira. Não use o diâmetro de Tycho como escala da fotografia.",
+        "note": "A imagem mostra apenas um detalhe do terreno, não o contorno completo de uma cratera. Não use dimensões de outra imagem como escala desta.",
     },
 }
 
