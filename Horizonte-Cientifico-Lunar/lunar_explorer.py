@@ -131,7 +131,6 @@ def _selection_callback() -> None:
     st.session_state.pop("lunar_site_results", None)
     st.session_state.pop("lunar_site_query_key", None)
     st.session_state.pop("lunar_site_error", None)
-    st.session_state.pop("lunar_site_error", None)
 
 
 def _apply_manual_coordinates() -> None:
@@ -147,6 +146,7 @@ def _apply_manual_coordinates() -> None:
     st.session_state["lunar_place_choice"] = NOMINATED[0]
     st.session_state.pop("lunar_site_results", None)
     st.session_state.pop("lunar_site_query_key", None)
+    st.session_state.pop("lunar_site_error", None)
 
 
 def render_lunar_explorer(start: datetime, stop: datetime, step: int,
@@ -174,6 +174,7 @@ def render_lunar_explorer(start: datetime, stop: datetime, step: int,
         st.session_state.lunar_site_previous_name = choice
         st.session_state.pop("lunar_site_results", None)
         st.session_state.pop("lunar_site_query_key", None)
+        st.session_state.pop("lunar_site_error", None)
 
     lat = float(st.session_state.lunar_site_lat)
     lon = float(st.session_state.lunar_site_lon)
@@ -241,6 +242,7 @@ def render_lunar_explorer(start: datetime, stop: datetime, step: int,
             st.session_state.lunar_site_error = str(exc)
             st.session_state.pop("lunar_site_results", None)
             st.session_state.pop("lunar_site_query_key", None)
+            st.session_state.pop("lunar_site_error", None)
     if st.session_state.get("lunar_site_error"):
         st.error("A consulta ao JPL não foi concluída: " + st.session_state.lunar_site_error)
         st.caption("O mapa e o catálogo continuam disponíveis, mas nenhuma efeméride fictícia foi gerada.")
