@@ -9,6 +9,7 @@ Proveniência:
 from __future__ import annotations
 
 import json
+from html import escape
 from datetime import datetime, timezone
 
 import folium
@@ -19,6 +20,7 @@ from streamlit_folium import st_folium
 
 from horizons import HorizonsError, get_ephemerides
 from physics import add_solar_power
+from lunar_names import GazetteerUnavailable, fetch_usgs_names, find_named_features, GAZETTEER_URL
 
 NASA_WAC_TILES = (
     "https://trek.nasa.gov/tiles/Moon/EQ/"
@@ -77,7 +79,7 @@ def _init_state() -> None:
         st.session_state.lunar_site_previous_name = "Cratera · Tycho"
 
 
-def _map(current_lat: float, current_lon: float):
+def _map(current_lat: float, current_lon: float, label: str | None = None):
     m = folium.Map(
         location=[current_lat, current_lon],
         zoom_start=4,
@@ -103,7 +105,7 @@ def _map(current_lat: float, current_lon: float):
         location=[current_lat, current_lon], radius=6,
         color="#f13b2d", fill=True, fill_color="#f13b2d",
         fill_opacity=0.85, weight=2,
-        tooltip="Ponto selecionado",
+        tooltip=escape(label) if label else "Ponto selecionado",
     ).add_to(m)
     return m
 
@@ -128,6 +130,7 @@ def _selection_callback() -> None:
     st.session_state.lunar_site_name = NOMINATED[0]
     st.session_state.lunar_site_previous_name = NOMINATED[0]
     st.session_state["lunar_place_choice"] = NOMINATED[0]
+    st.session_state["lunar_identify_active"] = True
     st.session_state.pop("lunar_site_results", None)
     st.session_state.pop("lunar_site_query_key", None)
     st.session_state.pop("lunar_site_error", None)
@@ -144,6 +147,7 @@ def _apply_manual_coordinates() -> None:
     st.session_state.lunar_site_name = NOMINATED[0]
     st.session_state.lunar_site_previous_name = NOMINATED[0]
     st.session_state["lunar_place_choice"] = NOMINATED[0]
+    st.session_state["lunar_identify_active"] = True
     st.session_state.pop("lunar_site_results", None)
     st.session_state.pop("lunar_site_query_key", None)
     st.session_state.pop("lunar_site_error", None)
@@ -172,6 +176,7 @@ def render_lunar_explorer(start: datetime, stop: datetime, step: int,
             st.session_state.lunar_site_lon = record["lon"]
         st.session_state.lunar_site_name = choice
         st.session_state.lunar_site_previous_name = choice
+        st.session_state["lunar_identify_active"] = False
         st.session_state.pop("lunar_site_results", None)
         st.session_state.pop("lunar_site_query_key", None)
         st.session_state.pop("lunar_site_error", None)
@@ -179,13 +184,42 @@ def render_lunar_explorer(start: datetime, stop: datetime, step: int,
     lat = float(st.session_state.lunar_site_lat)
     lon = float(st.session_state.lunar_site_lon)
     current = site_record(st.session_state.lunar_site_name)
+    matched_names = []
+    gazetteer_error = None
+    gazetteer_online = False
+    if current is None and st.session_state.get("lunar_identify_active", False):
+        try:
+            with st.spinner("Identificando local pelo Gazetteer oficial da USGS/IAU..."):
+                official_names = fetch_usgs_names()
+            gazetteer_online = True
+            matched_names = find_named_features(lat, lon, official_names)
+        except GazetteerUnavailable as exc:
+            gazetteer_error = str(exc)
+        # Os pontos catalogados antes da nova integração ainda servem como
+        # fallback de identificação PARCIAL se o Gazetteer remoto falhar.
+        if not gazetteer_online:
+            curated = [
+                {"name": name, "lat": feat["lat"], "lon": feat["lon"],
+                 "diameter_km": feat["diameter_km"],
+                 "source": feat["source"], "catalogue": feat["ref"]}
+                for name, feat in CRATERS.items()
+            ]
+            matched_names = find_named_features(lat, lon, curated)
+
+    top_match = matched_names[0] if matched_names else None
+    display_label = (
+        top_match["name"] if top_match and top_match["relation"] == "na área nominal"
+        else "Próximo a " + top_match["name"] if top_match
+        else st.session_state.lunar_site_name if current
+        else None
+    )
 
     left, right = st.columns([1.7, 1.0], gap="large")
     with left:
         st.markdown("**01 — Selecione no mapa lunar**")
         st.caption("Roda do mouse aproxima. Clique em qualquer ponto da superfície para marcar as coordenadas.")
         st_folium(
-            _map(lat, lon),
+            _map(lat, lon, display_label),
             key="moon_wac_map",
             use_container_width=True,
             height=455,
@@ -205,8 +239,37 @@ def render_lunar_explorer(start: datetime, stop: datetime, step: int,
         elif current:
             st.caption("Local histórico aproximado. Não é cratera; sem diâmetro catalogado.")
         else:
-            st.caption("Ponto livre: sem cratera identificada automaticamente. "
-                       "As coordenadas serão usadas para a consulta astronômica.")
+            if top_match:
+                st.markdown("**Identificação do ponto selecionado**")
+                if top_match["relation"] == "na área nominal":
+                    st.success(f"Área nominal de: **{top_match['name']}**")
+                    st.caption("O ponto está dentro do raio aproximado calculado a partir do "
+                               "diâmetro catalogado. Não é um contorno geológico confirmado.")
+                else:
+                    st.info(f"Nome oficial próximo: **{top_match['name']}**")
+                    st.caption("Perto do centro catalogado. Não é possível afirmar "
+                               "que este ponto esteja dentro dessa feição.")
+                st.caption(f"Centro a {top_match['distance_km']:.2f} km do ponto escolhido · "
+                           f"Fonte: {top_match['catalogue']}")
+                st.markdown(f"[Conferir registro da fonte]({top_match['source']})")
+                if len(matched_names) > 1:
+                    with st.expander("Outros nomes na mesma região"):
+                        for feature in matched_names[1:]:
+                            st.markdown(
+                                f"**{feature['name']}** — {feature['relation']}, "
+                                f"centro a {feature['distance_km']:.2f} km"
+                            )
+            elif gazetteer_online:
+                st.info("Não foi localizado um nome oficial nas proximidades deste ponto.")
+                st.caption("A ausência de correspondência pelo centro e diâmetro não prova "
+                           "que o lugar não tenha nome: a identificação é aproximada.")
+            elif gazetteer_error:
+                st.warning("Não foi possível consultar o catálogo oficial completo neste momento.")
+                st.caption(gazetteer_error + " A identificação parcial cobre apenas "
+                           "as crateras previamente cadastradas.")
+            else:
+                st.caption("Clique no mapa ou digite coordenadas para identificar "
+                           "nomes registrados no catálogo USGS/IAU.")
         with st.expander("Digitar coordenadas exatas"):
             origin = (round(lat, 5), round(lon, 5))
             if st.session_state.get("lunar_manual_origin") != origin:
@@ -252,6 +315,13 @@ def render_lunar_explorer(start: datetime, stop: datetime, step: int,
         "mapa_wmts": NASA_WAC_TILES,
         "fonte_nomenclatura": (current or {}).get("source"),
         "local": st.session_state.lunar_site_name,
+        "identificacao_nome": top_match["name"] if top_match else (
+            st.session_state.lunar_site_name if current else None),
+        "identificacao_relacao": top_match["relation"] if top_match else None,
+        "identificacao_distancia_centro_km": top_match["distance_km"] if top_match else None,
+        "identificacao_fonte": top_match["source"] if top_match else None,
+        "identificacao_catalogo_completo": gazetteer_online,
+        "identificacao_metodo": "centro de feição e diâmetro nominal; não usa contorno geológico",
         "lat_graus": lat,
         "lon_leste_graus": lon,
         "diametro_catalogo_km": (current or {}).get("diameter_km"),
