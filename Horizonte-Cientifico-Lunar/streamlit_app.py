@@ -10,6 +10,7 @@ import streamlit as st
 
 from horizons import HorizonsError, get_ephemerides
 from physics import IRRADIANCIA_REFERENCIA_W_M2, add_solar_power
+from craters import render_crater_lab
 
 st.set_page_config(page_title="Horizonte Científico | Lua", page_icon="🌘", layout="wide")
 
@@ -308,22 +309,26 @@ if "horizons_data" not in st.session_state or st.session_state.get("horizons_key
     <div class="method-note">Módulo astronômico: dados NASA/JPL Horizons. Módulo energético: modelo matemático.
     O relevo observado pelo LRO/LOLA é referência visual, ainda sem correção local de sombras.</div>
     """, unsafe_allow_html=True)
-    st.markdown('<div class="mission-header"><b>Cartografia lunar</b><span>LRO / LOLA · REGIÃO POLAR</span></div>', unsafe_allow_html=True)
-    st.subheader("Polo sul · dados observacionais NASA/LRO")
-    col_img, col_note = st.columns([1, 1], gap="large")
-    with col_img:
-        try:
-            st.image("https://science.nasa.gov/wp-content/uploads/2024/06/psrs-n-topo3.png",
-                     caption="NASA/LRO/LOLA — topografia e regiões permanentemente sombreadas.",
-                     use_container_width=True)
-        except Exception:
-            st.caption("A imagem remota da NASA está indisponível.")
-    with col_note:
-        st.markdown("**Observe dados reais do relevo lunar.** A carta do polo sul mostra "
-                    "regiões permanentemente sombreadas sobre uma base topográfica derivada do LRO/LOLA.")
-        st.markdown("[Consultar a imagem e os resultados científicos na NASA](https://science.nasa.gov/solar-system/moon/nasas-lro-lunar-ice-deposits-are-widespread/)")
-        st.markdown("[Abrir o mapa interativo NASA Moon Trek](https://trek.nasa.gov/moon/)")
-        st.caption("Esta cartografia não substitui a consulta ao JPL e não alimenta o cálculo fotovoltaico.")
+    atlas_tab, crater_tab = st.tabs(["Atlas NASA/LRO", "Laboratório de crateras"])
+    with atlas_tab:
+        st.markdown('<div class="mission-header"><b>Cartografia lunar</b><span>LRO / LOLA · REGIÃO POLAR</span></div>', unsafe_allow_html=True)
+        st.subheader("Polo sul · dados observacionais NASA/LRO")
+        col_img, col_note = st.columns([1, 1], gap="large")
+        with col_img:
+            try:
+                st.image("https://science.nasa.gov/wp-content/uploads/2024/06/psrs-n-topo3.png",
+                         caption="NASA/LRO/LOLA — topografia e regiões permanentemente sombreadas.",
+                         use_container_width=True)
+            except Exception:
+                st.caption("A imagem remota da NASA está indisponível.")
+        with col_note:
+            st.markdown("**Observe dados reais do relevo lunar.** A carta do polo sul mostra "
+                        "regiões permanentemente sombreadas sobre uma base topográfica derivada do LRO/LOLA.")
+            st.markdown("[Consultar a imagem e os resultados científicos na NASA](https://science.nasa.gov/solar-system/moon/nasas-lro-lunar-ice-deposits-are-widespread/)")
+            st.markdown("[Abrir o mapa interativo NASA Moon Trek](https://trek.nasa.gov/moon/)")
+            st.caption("Esta cartografia não substitui a consulta ao JPL e não alimenta o cálculo fotovoltaico.")
+    with crater_tab:
+        render_crater_lab()
     st.stop()
 
 raw = st.session_state["horizons_data"]
@@ -363,7 +368,7 @@ def style_chart(fig, height=415):
     return fig
 
 
-v, distances, power, sky, topo, method = st.tabs(["Visão orbital", "Distâncias", "Energia", "Céu lunar", "Topografia", "Método científico"])
+v, distances, power, sky, topo, craters_tab, method = st.tabs(["Visão orbital", "Distâncias", "Energia", "Céu lunar", "Topografia", "Analisar crateras", "Método científico"])
 with v:
     st.subheader("Elevação dos astros · JPL Horizons")
     fig = go.Figure()
@@ -481,6 +486,9 @@ with topo:
     st.markdown("[Explorar relevo, imagens e camadas no NASA Moon Trek](https://trek.nasa.gov/moon/)")
     st.info("O mapa é um dado cartográfico real da região polar. Nesta versão, o modelo de energia "
             "não utiliza a altitude de cada pixel nem as sombras para corrigir os cálculos do ponto selecionado.")
+
+with craters_tab:
+    render_crater_lab()
 
 with method:
     st.subheader("Procedência e limites científicos")
