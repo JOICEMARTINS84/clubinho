@@ -161,9 +161,9 @@ def style_chart(fig, height=415):
     return fig
 
 
-v, power, sky, method = st.tabs(["Sol e Terra", "Energia", "Céu local", "Dados e método"])
+v, distances, power, sky, method = st.tabs(["01 · Geometria", "02 · Distâncias JPL", "03 · Energia", "04 · Céu lunar", "05 · Métodos"])
 with v:
-    st.subheader("Elevação sobre o horizonte lunar")
+    st.subheader("Elevação dos astros · JPL Horizons")
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=df["instante_utc"], y=df["sun_elev"], name="Sol", mode="lines+markers",
                              line=dict(color=SOL, width=2.8), marker=dict(size=4)))
@@ -173,8 +173,40 @@ with v:
     fig.update_yaxes(title="Elevação aparente (graus)", zeroline=False, gridcolor="#303036")
     fig.update_xaxes(title="Data e hora (UTC)", gridcolor="#29292e")
     st.plotly_chart(style_chart(fig), use_container_width=True)
-    st.caption("Acima de 0°: astro acima do horizonte geométrico, desconsiderando crateras e montanhas. "
-               "Isso não garante iluminação efetiva nem comunicação desobstruída.")
+    st.caption("Elevações topocêntricas em graus. Não considera crateras, montanhas ou obstáculos artificiais.")
+    st.markdown("**Separação angular Sol–Terra** · calculada das duas direções observadas")
+    sep_plot = go.Figure()
+    sep_plot.add_trace(go.Scatter(x=df["instante_utc"], y=df["separacao_sol_terra_deg"],
+                                  name="Separação angular", mode="lines",
+                                  line=dict(color="#d4a27f", width=2.6)))
+    sep_plot.update_yaxes(title="Ângulo (°)", range=[0,180])
+    sep_plot.update_xaxes(title="Data e hora (UTC)")
+    st.plotly_chart(style_chart(sep_plot, 275), use_container_width=True)
+
+with distances:
+    st.subheader("Distâncias aparentes · JPL Horizons")
+    st.caption("Valores da NASA/JPL ao centro da Terra e ao centro do Sol, vistos do observador lunar.")
+    fig_earth = go.Figure()
+    fig_earth.add_trace(go.Scatter(x=df["instante_utc"], y=df["earth_dist_km"],
+                                   name="Distância à Terra", line=dict(color=TERRA, width=2.8)))
+    fig_earth.update_yaxes(title="Distância à Terra (km)")
+    fig_earth.update_xaxes(title="Data e hora (UTC)")
+    st.plotly_chart(style_chart(fig_earth, 340), use_container_width=True)
+    fig_sun = go.Figure()
+    fig_sun.add_trace(go.Scatter(x=df["instante_utc"], y=df["sun_dist_km"]/1e6,
+                                 name="Distância ao Sol", line=dict(color=SOL, width=2.8)))
+    fig_sun.update_yaxes(title="Distância ao Sol (milhões de km)")
+    fig_sun.update_xaxes(title="Data e hora (UTC)")
+    st.plotly_chart(style_chart(fig_sun, 310), use_container_width=True)
+    fig_delay = go.Figure()
+    fig_delay.add_trace(go.Scatter(x=df["instante_utc"], y=df["retardo_terra_s"],
+                                   name="Tempo estimado de propagação",
+                                   line=dict(color="#a8cbbf", width=2.8)))
+    fig_delay.update_yaxes(title="Tempo estimado (segundos)")
+    fig_delay.update_xaxes(title="Data e hora (UTC)")
+    st.plotly_chart(style_chart(fig_delay, 290), use_container_width=True)
+    st.caption("Distância à Terra dividida pela velocidade da luz. "
+               "Não inclui equipamentos, enlaces intermediários nem sombras de montanhas.")
 
 with power:
     st.subheader("Energia solar calculada")
