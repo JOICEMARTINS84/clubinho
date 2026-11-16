@@ -13,48 +13,100 @@ from physics import IRRADIANCIA_REFERENCIA_W_M2, add_solar_power
 
 st.set_page_config(page_title="Horizonte Científico | Lua", page_icon="🌘", layout="wide")
 
-BG, PANEL, BORDER = "#0b1015", "#14212a", "#324653"
-SOL, TERRA, TEXTO = "#e3bd82", "#83c4c4", "#e8eff1"
+BG, PANEL, BORDER = "#05080e", "#0c1420", "#263248"
+SOL, TERRA, TEXTO = "#f5d8a4", "#74b8f6", "#f2f5fb"
 
 st.markdown("""
 <style>
-:root{color-scheme:dark;}
-.stApp{background:#0b1015;color:#ecf1f0;}
-[data-testid="stSidebar"]{background:#101820;border-right:1px solid #273744;}
-[data-testid="stMetric"]{background:linear-gradient(155deg,#16222b,#111920);
- border:1px solid #30414d;padding:19px 18px;border-radius:13px;
- box-shadow:0 8px 26px rgba(0,0,0,.12);}
-[data-testid="stMetricLabel"]{color:#a4b8c0;font-size:.87rem;}
-[data-testid="stMetricValue"]{color:#f2f5f3;font-variant-numeric:tabular-nums;}
-[data-testid="stVerticalBlock"]{gap:.72rem;}
-h1,h2,h3{font-family:'Segoe UI',Arial,sans-serif!important;letter-spacing:-.02em;color:#eaf2f2!important;}
-hr{border-color:#293946!important;}
-a{color:#9dcfc6!important;}
-.hero{padding:30px 32px;border:1px solid #44535c;border-left:4px solid #d7b883;border-radius:14px;
- background:radial-gradient(circle at 88% 30%,rgba(153,192,190,.13),transparent 38%),
- linear-gradient(117deg,#1c2830 4%,#101a23 70%,#0b1117);margin:2px 0 19px;}
-.hero h1{font-size:clamp(1.8rem,3.5vw,3rem);margin:7px 0 10px!important;line-height:1.17;}
-.hero p{color:#b1c4ca;margin:0;font-size:1rem;max-width:700px;}
-.eyebrow{font:700 .72rem/1.4 'Segoe UI',sans-serif;letter-spacing:.17em;color:#dfc18f;}
-.statusline{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 0;font-size:.76rem;color:#b4c6c8;}
-.statusline span{border:1px solid #45606c;border-radius:4px;padding:5px 10px;background:#14222a;}
-.method-note{padding:14px 17px;background:#19232a;border-left:3px solid #d7b883;color:#cbd6d7;border-radius:5px;font-size:.91rem;}
-.kicker{color:#d8b781;font-size:.72rem;font-weight:700;letter-spacing:.17em;}
-div[data-baseweb="tab-list"]{gap:8px;}
-button[data-baseweb="tab"]{background:#14212a;border:1px solid #2d4653;border-radius:8px;padding:9px 15px;color:#d2e1e3;}
-button[data-baseweb="tab"][aria-selected="true"]{border-color:#d7b883;color:#f6dfb4;}
-@media(max-width:700px){.hero{padding:20px 18px}.hero h1{font-size:1.7rem}}
+:root { color-scheme: dark; }
+html, body, .stApp { background:#05080e !important; color:#f4f6fa; }
+[data-testid="stAppViewContainer"] { background:#05080e; }
+[data-testid="stMainBlockContainer"] {padding-top:1.25rem;max-width:1500px;}
+[data-testid="stSidebar"]{background:#0b1019;border-right:1px solid #252e3c;}
+[data-testid="stSidebar"] h3 {font-size:1rem!important;letter-spacing:.015em;}
+[data-testid="stSidebar"] label {color:#aeb9c8;}
+[data-testid="stSidebar"] [data-testid="stButton"] button {
+ background:#f13b2d!important;color:white!important;
+ border:0!important;border-radius:3px!important;
+ font-size:.9rem!important;font-weight:750!important;
+ text-transform:uppercase;letter-spacing:.07em;
+ min-height:2.9rem;
+}
+[data-testid="stSidebar"] [data-testid="stButton"] button:hover{background:#d92c1f!important;}
+[data-testid="stMetric"]{
+ background:transparent !important; padding:14px 13px 10px;
+ border:0!important;border-top:2px solid #263248!important;
+ border-radius:0!important;box-shadow:none!important;
+}
+[data-testid="stMetricLabel"]{color:#9da9b8!important;font-size:.77rem!important;letter-spacing:.015em;}
+[data-testid="stMetricValue"]{color:#fcfcff!important;font-variant-numeric:tabular-nums;font-weight:650!important;}
+[data-testid="stMetricDelta"]{color:#c1cedc!important;}
+h1,h2,h3{font-family:Arial,"Helvetica Neue",sans-serif!important;color:#f9f9fc!important;letter-spacing:-.025em;}
+h2{font-size:1.45rem!important;}
+h3{font-size:1.12rem!important;}
+a{color:#93b9ef!important;text-decoration:none!important;}
+a:hover{text-decoration:underline!important;}
+hr{border-color:#263044!important;}
+[data-testid="stAlert"]{border-radius:4px!important;}
+.hero{
+ position:relative;overflow:hidden;display:flex;align-items:center;
+ min-height:405px;padding:54px clamp(28px,5vw,72px);
+ background-color:#05070b;
+ background-image:linear-gradient(90deg,#05070c 2%,rgba(5,7,12,.98) 29%,rgba(5,7,12,.74) 54%,rgba(5,7,12,.06) 100%),
+ url("https://assets.science.nasa.gov/dynamicimage/assets/science/psd/photojournal/pia/pia13/pia13523/PIA13523.jpg?fit=cover&w=1100&h=1100");
+ background-repeat:no-repeat;background-position:center,right 24% center;
+ background-size:cover, auto 135%;
+ border:1px solid #202b3e;border-radius:2px;
+ margin:0 0 7px;
+}
+.hero-content {position:relative;z-index:1;max-width:680px;}
+.mission-name{font-size:.79rem;font-weight:800;letter-spacing:.20em;text-transform:uppercase;color:#f1f4f9;}
+.mission-name:before{content:"";display:inline-block;width:27px;height:3px;background:#f13b2d;margin-right:12px;vertical-align:middle;}
+.hero h1{font-size:clamp(2.55rem,5.9vw,5.5rem)!important;line-height:.98!important;
+ letter-spacing:-.055em!important;font-weight:850!important;margin:28px 0 19px!important;}
+.hero h1 span{color:#f13b2d!important;}
+.hero p{font-size:1.075rem;line-height:1.55;color:#d4dce8;max-width:540px;}
+.hero-meta{display:flex;gap:22px;margin-top:29px;flex-wrap:wrap;
+ font-size:.75rem;letter-spacing:.045em;color:#b8c5d8;font-weight:700;}
+.hero-meta b{color:#f13b2d;}
+.photo-credit{color:#778599!important;font-size:.71rem;margin:0 0 24px;}
+.mission-header{border-bottom:1px solid #263246;display:flex;
+ justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:baseline;
+ padding:0 0 12px;margin:24px 0 9px;}
+.mission-header b{font-size:.81rem;letter-spacing:.15em;text-transform:uppercase;color:#edf2fb;}
+.mission-header span{font-size:.78rem;color:#8e9caf;letter-spacing:.04em;}
+.kicker{font-size:.73rem;letter-spacing:.16em;font-weight:800;text-transform:uppercase;color:#d0d8e6;}
+.method-note{border-left:3px solid #f13b2d;padding:13px 18px;
+ background:#0d1521;font-size:.9rem;color:#c5d0df;line-height:1.6;border-radius:0;}
+div[data-baseweb="tab-list"]{gap:0;border-bottom:1px solid #2a3445;overflow-x:auto;}
+button[data-baseweb="tab"]{border-radius:0!important;border:0!important;
+ border-bottom:2px solid transparent!important;background:transparent!important;
+ color:#a7b5c7!important;font-size:.86rem!important;padding:12px 14px!important;}
+button[data-baseweb="tab"][aria-selected="true"]{
+ border-bottom-color:#f13b2d!important;color:#fff!important;background:#0c1420!important;}
+[data-testid="stDataFrame"]{border:1px solid #28364a;}
+@media(max-width:800px){
+ .hero{min-height:350px;padding:30px 21px;background-image:
+ linear-gradient(90deg,#05070c 0%,rgba(5,7,12,.9) 64%,rgba(5,7,12,.58) 100%),
+ url("https://assets.science.nasa.gov/dynamicimage/assets/science/psd/photojournal/pia/pia13/pia13523/PIA13523.jpg?fit=cover&w=760&h=760");
+ background-size:cover,auto 100%;background-position:center,right center;}
+ .hero h1{font-size:clamp(2.35rem,9vw,3.4rem)!important;}
+ .hero-meta{gap:10px;}
+}
 </style>
 """, unsafe_allow_html=True)
 
 st.markdown("""
 <div class="hero">
-  <div class="eyebrow">OBSERVATÓRIO LUNAR // MATEMÁTICA &amp; CONTEXTO</div>
-  <h1>Horizonte Científico <span style="color:#dec39a">/ Lua</span></h1>
-  <p>Efemérides topocêntricas, distâncias astronômicas, visibilidade geométrica e geração fotovoltaica estimada.</p>
-  <div class="statusline"><span>FONTE: NASA / JPL HORIZONS</span><span>REFERENCIAL: SUPERFÍCIE LUNAR</span><span>ESCALA TEMPORAL: UTC</span></div>
+ <div class="hero-content">
+  <div class="mission-name">Matemática &amp; Contexto · Exploração científica</div>
+  <h1>HORIZONTE<br><span>LUNAR</span></h1>
+  <p>Explore o céu da Lua com efemérides astronômicas do JPL e investigue as condições de iluminação, energia e comunicação.</p>
+  <div class="hero-meta"><span><b>01</b> NASA/JPL HORIZONS</span><span><b>02</b> DADOS ASTRONÔMICOS</span><span><b>03</b> ANÁLISE LUNAR</span></div>
+ </div>
 </div>
 """, unsafe_allow_html=True)
+st.markdown('<p class="photo-credit">Imagem: mosaico do polo sul lunar · NASA/GSFC/Arizona State University, LRO · PIA13523. Projeto independente, não afiliado à NASA.</p>', unsafe_allow_html=True)
 
 PRESETS = {
     "Polo Sul · ponto de estudo (89,5°S)": (-89.5, 0.0),
@@ -67,7 +119,8 @@ PRESETS = {
 }
 
 with st.sidebar:
-    st.subheader("Local de observação")
+    st.markdown("**CONFIGURAÇÃO DE OBSERVAÇÃO**")
+    st.subheader("Local lunar")
     place = st.selectbox("Ponto lunar", list(PRESETS))
     if PRESETS[place] is None:
         lat = st.number_input("Latitude (°)", min_value=-90.0, max_value=90.0, value=-89.5, step=0.1)
@@ -80,14 +133,14 @@ with st.sidebar:
                    "usadas aqui como aproximação para a entrada geodética do JPL.")
         st.markdown("[Fonte dos locais Apollo · NASA](https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html)")
     st.divider()
-    st.subheader("Período de análise")
+    st.subheader("Janela temporal")
     day = st.date_input("Data inicial (UTC)", value=datetime.now(timezone.utc).date(),
                         min_value=datetime(1900, 1, 1).date(), max_value=datetime(2099, 12, 31).date())
     days = st.slider("Duração (dias)", 1, 14, 7)
     step = st.select_slider("Amostragem", options=[1, 3, 6, 12], value=3,
                             format_func=lambda v: f"{v} hora" if v == 1 else f"{v} horas")
     st.divider()
-    st.subheader("Painel fotovoltaico · hipótese")
+    st.subheader("Modelo fotovoltaico")
     area = st.slider("Área (m²)", 0.5, 30.0, 4.0, 0.5)
     efficiency = st.slider("Eficiência (%)", 5, 35, 22)
     mode = st.selectbox("Orientação", ["Horizontal", "Inclinado fixo", "Rastreamento ideal"])
@@ -95,7 +148,7 @@ with st.sidebar:
     if mode == "Inclinado fixo":
         tilt = st.slider("Inclinação desde a horizontal (°)", 0, 90, 75)
         az_panel = st.slider("Direção da face do painel (°)", 0, 359, 180)
-    load = st.button("Consultar NASA / JPL", type="primary", use_container_width=True)
+    load = st.button("Executar análise", type="primary", use_container_width=True)
     st.caption("As efemérides vêm do JPL. Resultados calculados pelo modelo são identificados.")
     st.markdown("[Cartografia lunar real · NASA Moon Trek](https://trek.nasa.gov/moon/)")
 
@@ -128,12 +181,13 @@ if "horizons_data" not in st.session_state or st.session_state.get("horizons_key
     if "horizons_data" in st.session_state and st.session_state.get("horizons_key") != query_key:
         st.warning("As coordenadas ou datas foram alteradas. Consulte a NASA novamente para atualizar os resultados.")
     else:
-        st.info("Escolha as coordenadas e o período na barra lateral. Depois clique em **Consultar NASA / JPL**.")
+        st.info("Defina o local e o período na barra lateral e clique em **Executar análise** para consultar as efemérides reais do JPL.")
     st.markdown("""
     <div class="method-note">Módulo astronômico: dados NASA/JPL Horizons. Módulo energético: modelo matemático.
     O relevo observado pelo LRO/LOLA é referência visual, ainda sem correção local de sombras.</div>
     """, unsafe_allow_html=True)
-    st.subheader("Atlas do polo sul · observação NASA/LRO")
+    st.markdown('<div class="mission-header"><b>Cartografia lunar</b><span>LRO / LOLA · REGIÃO POLAR</span></div>', unsafe_allow_html=True)
+    st.subheader("Polo sul · dados observacionais NASA/LRO")
     col_img, col_note = st.columns([1, 1], gap="large")
     with col_img:
         try:
@@ -159,8 +213,8 @@ earth_fraction = 100 * (df["earth_elev"] > 0).mean()
 energy = df["energia_acumulada_kwh"].iloc[-1]
 max_power = df["potencia_w"].max()
 
-st.markdown('<div class="kicker">TELEMETRIA // EFEMÉRIDES CONSULTADAS</div>', unsafe_allow_html=True)
-st.caption(f"NASA/JPL HORIZONS · {n} amostras UTC · horizonte geométrico a 0° · latitude {lat:.2f}°, longitude {lon:.2f}°")
+st.markdown('<div class="mission-header"><b>Resultados da investigação</b><span>EFEMÉRIDES / VISIBILIDADE / ENERGIA</span></div>', unsafe_allow_html=True)
+st.caption(f"JPL Horizons · {n} amostras UTC · horizonte geométrico 0° · {lat:.2f}° lat., {lon:.2f}° long.")
 st.caption(f"Consulta executada em UTC: {st.session_state.get('horizons_retrieved', 'não registrado')} · "
            f"período modelado: {start:%d/%m/%Y} a {stop:%d/%m/%Y}")
 c1, c2, c3, c4 = st.columns(4)
@@ -169,7 +223,7 @@ c2.metric("Terra visível · amostras", f"{earth_fraction:.0f}%", help="Fração
 c3.metric("Energia · modelo", f"{energy:.2f} kWh", help="Energia fotovoltaica hipotética integrada a partir de irradiância por distância.")
 c4.metric("Potência máxima · modelo", f"{max_power:.0f} W", help="Máxima potência calculada no intervalo amostrado.")
 first = df.iloc[0]
-st.caption("DISTÂNCIAS JPL // GEOMETRIA · PRIMEIRA AMOSTRA DO INTERVALO SELECIONADO")
+st.markdown('<div class="mission-header"><b>Dados de referência</b><span>PRIMEIRA AMOSTRA DO INTERVALO · JPL</span></div>', unsafe_allow_html=True)
 d1, d2, d3, d4 = st.columns(4)
 d1.metric("Distância à Terra", f"{first['earth_dist_km']:,.0f} km", help="Distância do observador lunar ao centro da Terra · JPL Horizons.")
 d2.metric("Distância ao Sol", f"{first['sun_dist_km']/1e6:,.3f} milhões km", help="Distância do observador lunar ao Sol · JPL Horizons.")
@@ -187,7 +241,7 @@ def style_chart(fig, height=415):
     return fig
 
 
-v, distances, power, sky, topo, method = st.tabs(["01 · Geometria", "02 · Distâncias JPL", "03 · Energia", "04 · Céu lunar", "05 · Topografia NASA", "06 · Métodos"])
+v, distances, power, sky, topo, method = st.tabs(["Visão orbital", "Distâncias", "Energia", "Céu lunar", "Topografia", "Método científico"])
 with v:
     st.subheader("Elevação dos astros · JPL Horizons")
     fig = go.Figure()
@@ -195,7 +249,7 @@ with v:
                              line=dict(color=SOL, width=2.8), marker=dict(size=4)))
     fig.add_trace(go.Scatter(x=df["instante_utc"], y=df["earth_elev"], name="Terra", mode="lines+markers",
                              line=dict(color=TERRA, width=2.4), marker=dict(size=4)))
-    fig.add_hline(y=0, line_width=1.2, line_dash="dash", line_color="#9c988f")
+    fig.add_hline(y=0, line_width=1.2, line_dash="dash", line_color="#8793a7")
     fig.update_yaxes(title="Elevação aparente (graus)", zeroline=False, gridcolor="#303036")
     fig.update_xaxes(title="Data e hora (UTC)", gridcolor="#29292e")
     st.plotly_chart(style_chart(fig), use_container_width=True)
