@@ -130,9 +130,24 @@ if "horizons_data" not in st.session_state or st.session_state.get("horizons_key
     else:
         st.info("Escolha as coordenadas e o período na barra lateral. Depois clique em **Consultar NASA / JPL**.")
     st.markdown("""
-    <div class="method-note">Primeira versão: posição astronômica do Sol e da Terra calculada pelo JPL Horizons.
-    A energia é uma estimativa matemática. Ainda não incorporamos dados de altitude nem sombras de crateras.</div>
+    <div class="method-note">Módulo astronômico: dados NASA/JPL Horizons. Módulo energético: modelo matemático.
+    O relevo observado pelo LRO/LOLA é referência visual, ainda sem correção local de sombras.</div>
     """, unsafe_allow_html=True)
+    st.subheader("Atlas do polo sul · observação NASA/LRO")
+    col_img, col_note = st.columns([1, 1], gap="large")
+    with col_img:
+        try:
+            st.image("https://science.nasa.gov/wp-content/uploads/2024/06/psrs-n-topo3.png",
+                     caption="NASA/LRO/LOLA — topografia e regiões permanentemente sombreadas.",
+                     use_container_width=True)
+        except Exception:
+            st.caption("A imagem remota da NASA está indisponível.")
+    with col_note:
+        st.markdown("**Observe dados reais do relevo lunar.** A carta do polo sul mostra "
+                    "regiões permanentemente sombreadas sobre uma base topográfica derivada do LRO/LOLA.")
+        st.markdown("[Consultar a imagem e os resultados científicos na NASA](https://science.nasa.gov/solar-system/moon/nasas-lro-lunar-ice-deposits-are-widespread/)")
+        st.markdown("[Abrir o mapa interativo NASA Moon Trek](https://trek.nasa.gov/moon/)")
+        st.caption("Esta cartografia não substitui a consulta ao JPL e não alimenta o cálculo fotovoltaico.")
     st.stop()
 
 raw = st.session_state["horizons_data"]
