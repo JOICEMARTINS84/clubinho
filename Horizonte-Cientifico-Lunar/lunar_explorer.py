@@ -127,6 +127,22 @@ def _selection_callback() -> None:
     st.session_state.lunar_site_lon = round(lo, 5)
     st.session_state.lunar_site_name = NOMINATED[0]
     st.session_state.lunar_site_previous_name = NOMINATED[0]
+    st.session_state["lunar_place_choice"] = NOMINATED[0]
+    st.session_state.pop("lunar_site_results", None)
+    st.session_state.pop("lunar_site_query_key", None)
+
+
+def _apply_manual_coordinates() -> None:
+    try:
+        la, lo = valid_coords(st.session_state["lunar_manual_lat"],
+                              st.session_state["lunar_manual_lon"])
+    except (ValueError, KeyError, TypeError):
+        return
+    st.session_state.lunar_site_lat = round(la, 5)
+    st.session_state.lunar_site_lon = round(lo, 5)
+    st.session_state.lunar_site_name = NOMINATED[0]
+    st.session_state.lunar_site_previous_name = NOMINATED[0]
+    st.session_state["lunar_place_choice"] = NOMINATED[0]
     st.session_state.pop("lunar_site_results", None)
     st.session_state.pop("lunar_site_query_key", None)
 
@@ -190,20 +206,12 @@ def render_lunar_explorer(start: datetime, stop: datetime, step: int,
                        "As coordenadas serão usadas para a consulta astronômica.")
         with st.expander("Digitar coordenadas exatas"):
             with st.form("manual_lunar_coords"):
-                input_lat = st.number_input("Latitude norte (+) / sul (−)", -90.0, 90.0, lat,
-                                            step=0.01, format="%.5f")
-                input_lon = st.number_input("Longitude leste (+) / oeste (−)", -180.0, 180.0, lon,
-                                            step=0.01, format="%.5f")
-                apply_manual = st.form_submit_button("Aplicar coordenadas", use_container_width=True)
-            if apply_manual:
-                st.session_state.lunar_site_lat, st.session_state.lunar_site_lon = valid_coords(
-                    input_lat, input_lon
-                )
-                st.session_state.lunar_site_name = NOMINATED[0]
-                st.session_state.lunar_site_previous_name = NOMINATED[0]
-                st.session_state.pop("lunar_site_results", None)
-                st.session_state.pop("lunar_site_query_key", None)
-                st.rerun()
+                st.number_input("Latitude norte (+) / sul (−)", -90.0, 90.0, lat,
+                                step=0.01, format="%.5f", key="lunar_manual_lat")
+                st.number_input("Longitude leste (+) / oeste (−)", -180.0, 180.0, lon,
+                                step=0.01, format="%.5f", key="lunar_manual_lon")
+                st.form_submit_button("Aplicar coordenadas", use_container_width=True,
+                                      on_click=_apply_manual_coordinates)
         st.markdown("[Abrir mapas de altitude e buscar imagens NAC na NASA Moon Trek]"
                     f"({MOON_TREK})")
 
