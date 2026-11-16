@@ -10,6 +10,7 @@ import json
 from datetime import datetime, timezone
 
 import folium
+import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 from streamlit_folium import st_folium
@@ -180,22 +181,61 @@ def render_lunar_explorer(
     tilt: float = 0.0, az_panel: float = 0.0,
 ) -> None:
     _init_state()
-    st.subheader("Selecione um ponto na superfície lunar")
+    st.subheader("Explorador lunar · selecionar e medir")
     st.caption(
-        "Mosaico fotográfico NASA/LRO. Clique no mapa ou informe latitude e longitude. "
-        "Para preservar o rigor, o aplicativo não atribui nomes a pontos selecionados."
+        "Mapa fotográfico da NASA/LRO. Os cliques retornam apenas coordenadas, "
+        "sem identificação automática de crateras ou outros nomes."
     )
+    action = st.radio(
+        "O que você deseja fazer?",
+        ["Selecionar ponto", "Medir cratera"],
+        horizontal=True,
+        key="lunar_action_mode",
+        help="Selecionar ponto: pesquisar efemérides. Medir cratera: marque duas bordas opostas para calcular um diâmetro aproximado.",
+    )
+    rim_points = list(st.session_state.get("lunar_rim_points", []))
+    if action == "Medir cratera":
+        st.info(
+            "**Como medir:** aproxime o mapa e clique na borda A da cratera. "
+            "Depois clique na borda B, no lado oposto. O programa calcula "
+            "a distância entre os pontos usando o raio médio da Lua."
+        )
+        if rim_points:
+            st.button(
+                "Recomeçar medição · apagar A e B",
+                on_click=_clear_crater_measurement,
+                key="crater_clear_points",
+            )
+            rim_points = list(st.session_state.get("lunar_rim_points", []))
+
     lat, lon = valid_coords(
         st.session_state.lunar_site_lat,
         st.session_state.lunar_site_lon,
     )
 
+    crater_estimate = None
+    if action == "Medir cratera" and len(rim_points) == 2:
+        try:
+            crater_estimate = estimate_crater(rim_points[0], rim_points[1])
+        except ValueError as exc:
+            st.warning(f"Não foi possível calcular a medida: {exc}")
+
     col_map, col_details = st.columns([1.7, 1.0], gap="large")
     with col_map:
-        st.markdown("**01 — Selecione um ponto no mapa**")
-        st.caption("Use a roda do mouse para aproximar e clique na região que deseja investigar.")
+        st.markdown("**01 — Marque as bordas no mapa**" if action == "Medir cratera"
+                    else "**01 — Selecione um ponto no mapa**")
+        if action == "Medir cratera":
+            st.caption(
+                f"{len(rim_points)}/2 bordas selecionadas · "
+                + ("Clique na borda A." if not rim_points
+                   else "Clique na borda B (oposta)." if len(rim_points) == 1
+                   else "Medição concluída. Reinicie para medir outra região.")
+            )
+        else:
+            st.caption("Use a roda do mouse para aproximar e clique na região que deseja investigar.")
+
         st_folium(
-            _map(lat, lon),
+            _map(lat, lon, mode=action, rim_points=rim_points),
             key="moon_wac_map",
             use_container_width=True,
             height=455,
@@ -203,38 +243,104 @@ def render_lunar_explorer(
             on_change=_selection_callback,
         )
         st.caption(
-            "A imagem de fundo é um mosaico LRO/WAC. Um ponto marcado não implica "
-            "identificação automática da cratera ou de sua estrutura geológica."
+            "Base cartográfica: mosaico NASA Moon Trek / LRO-WAC. A distância entre "
+            "pontos é estimada sobre uma esfera lunar, sem corrigir o relevo."
         )
 
     with col_details:
-        st.markdown("**02 — Localização do ponto**")
-        st.metric("Latitude", f"{lat:+.5f}°")
-        st.metric("Longitude leste", f"{lon:+.5f}°")
-        st.info(
-            "Identificação geográfica: **somente coordenadas**. "
-            "Nenhum nome de formação lunar é atribuído automaticamente."
-        )
+        if action == "Medir cratera":
+            st.markdown("**02 — Medidas do relevo aparente**")
+            if not rim_points:
+                st.caption("Nenhuma borda marcada. O primeiro clique definirá a borda A.")
+            for index, point in enumerate(rim_points[:2]):
+                label = "A" if index == 0 else "B"
+                st.caption(
+                    f"**Borda {label}:** latitude {point[0]:+.5f}°, "
+                    f"longitude {point[1]:+.5f}°"
+                )
+            if crater_estimate is not None:
+                st.metric(
+                    "Diâmetro aproximado", f"{crater_estimate.diameter_km:.2f} km",
+                    help="Distância superficial pelo arco menor entre os dois pontos clicados.",
+                )
+                st.metric("Raio estimado", f"{crater_estimate.radius_km:.2f} km")
+                st.metric(
+                    "Área circular estimada", f"{crater_estimate.area_km2:.2f} km²",
+                    help="Área de um círculo plano ideal: π × (diâmetro/2)².",
+                )
+                st.caption(
+                    f"Centro geométrico aproximado: {crater_estimate.midpoint[0]:+.5f}°, "
+                    f"{crater_estimate.midpoint[1]:+.5f}°"
+                )
+                st.success("Distância calculada. Você pode exportar a medição abaixo.")
+            elif len(rim_points) == 1:
+                st.info("Primeira borda registrada. Selecione a borda oposta no mapa.")
+            elif len(rim_points) == 2:
+                st.warning("Pontos incompatíveis. Reinicie e escolha duas bordas próximas.")
 
-        with st.expander("Informar coordenadas manualmente"):
-            origin = (round(lat, 5), round(lon, 5))
-            if st.session_state.get("lunar_manual_origin") != origin:
-                st.session_state["lunar_manual_lat"] = lat
-                st.session_state["lunar_manual_lon"] = lon
-                st.session_state["lunar_manual_origin"] = origin
-            with st.form("manual_lunar_coords"):
-                st.number_input(
-                    "Latitude norte (+) / sul (-)", -90.0, 90.0, lat,
-                    step=0.01, format="%.5f", key="lunar_manual_lat",
+            with st.expander("Como o diâmetro é calculado?"):
+                st.markdown(
+                    "A distância entre as coordenadas A e B é calculada pela "
+                    "**fórmula de haversine**, com o raio médio lunar de 1.737,4 km."
                 )
-                st.number_input(
-                    "Longitude leste (+) / oeste (-)", -180.0, 180.0, lon,
-                    step=0.01, format="%.5f", key="lunar_manual_lon",
+                st.latex(r"d=2R\arcsin\left(\sqrt{\sin^2\frac{\Delta\varphi}{2}+\cos\varphi_1\cos\varphi_2\sin^2\frac{\Delta\lambda}{2}}\right)")
+                st.latex(r"A_{\mathrm{circular}}\approx\pi\left(\frac{d}{2}\right)^2")
+                st.caption(
+                    "É uma estimativa geométrica. A borda foi escolhida visualmente, "
+                    "o diâmetro supõe duas extremidades opostas e a área supõe "
+                    "uma formação circular. Não calcula a profundidade."
                 )
-                st.form_submit_button(
-                    "Aplicar coordenadas", use_container_width=True,
-                    on_click=_apply_manual_coordinates,
+                st.markdown(
+                    "[Raio lunar de referência · NASA](https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html)"
                 )
+            if crater_estimate is not None:
+                measurement = {
+                    "borda_a_lat": rim_points[0][0],
+                    "borda_a_lon_leste": rim_points[0][1],
+                    "borda_b_lat": rim_points[1][0],
+                    "borda_b_lon_leste": rim_points[1][1],
+                    "diametro_aproximado_km": crater_estimate.diameter_km,
+                    "raio_aproximado_km": crater_estimate.radius_km,
+                    "area_circular_estimada_km2": crater_estimate.area_km2,
+                    "centro_estimado_lat": crater_estimate.midpoint[0],
+                    "centro_estimado_lon_leste": crater_estimate.midpoint[1],
+                    "raio_lua_adotado_km": MOON_RADIUS_KM,
+                    "modelo": "haversine e disco circular ideal; bordas selecionadas manualmente",
+                }
+                st.download_button(
+                    "Baixar esta medição (CSV)",
+                    data=pd.DataFrame([measurement]).to_csv(index=False).encode("utf-8-sig"),
+                    file_name="medicao_cratera_lunar.csv", mime="text/csv",
+                    key="crater_measure_csv",
+                    use_container_width=True,
+                )
+        else:
+            st.markdown("**02 — Localização do ponto**")
+            st.metric("Latitude", f"{lat:+.5f}°")
+            st.metric("Longitude leste", f"{lon:+.5f}°")
+            st.info(
+                "Identificação geográfica: **somente coordenadas**. "
+                "Nenhum nome de formação lunar é atribuído automaticamente."
+            )
+            with st.expander("Informar coordenadas manualmente"):
+                origin = (round(lat, 5), round(lon, 5))
+                if st.session_state.get("lunar_manual_origin") != origin:
+                    st.session_state["lunar_manual_lat"] = lat
+                    st.session_state["lunar_manual_lon"] = lon
+                    st.session_state["lunar_manual_origin"] = origin
+                with st.form("manual_lunar_coords"):
+                    st.number_input(
+                        "Latitude norte (+) / sul (-)", -90.0, 90.0, lat,
+                        step=0.01, format="%.5f", key="lunar_manual_lat",
+                    )
+                    st.number_input(
+                        "Longitude leste (+) / oeste (-)", -180.0, 180.0, lon,
+                        step=0.01, format="%.5f", key="lunar_manual_lon",
+                    )
+                    st.form_submit_button(
+                        "Aplicar coordenadas", use_container_width=True,
+                        on_click=_apply_manual_coordinates,
+                    )
         st.markdown(
             f"[Verificar a região no mapa original NASA Moon Trek]({MOON_TREK})"
         )
