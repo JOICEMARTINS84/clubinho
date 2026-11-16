@@ -7,8 +7,12 @@ Explore 27 estrelas, 26 estados e o Distrito Federal e suas 9 constelações. In
 ## Abrir
 Abra `index.html` no navegador. Não requer instalação nem chave de API.
 
-## Hospedar
-No GitHub Pages, escolha a publicação a partir da branch `main` e a pasta raiz `/ (root)` do repositório. Como este projeto fica em uma subpasta, a URL é `/clubinho/bandeira-astronomica/` **somente se o Pages estiver ativado**.
+## Publicação no Streamlit
+O atlas também está integrado como segunda página do projeto **Horizonte Científico Lunar**, hospedado em https://horizonte-cientifico-lunar.streamlit.app/.
+O arquivo de página está em `../Horizonte-Cientifico-Lunar/pages/02_Ceu_na_Bandeira.py`. O Streamlit detecta a página automaticamente na navegação lateral e incorpora este `index.html` com `streamlit.components.v1.html`.
+
+## Hospedagem HTML alternativa
+O mesmo HTML pode ser publicado via GitHub Pages, se o Pages estiver ativado. A publicação atual não depende de ativar GitHub Pages.
 
 ## Importante
 A composição visual é **esquemática**, não é desenho oficial nem projeção astronômica; não use a posição dos ícones para inferir coordenadas, brilho ou distâncias.
