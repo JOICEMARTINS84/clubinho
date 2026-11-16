@@ -1,0 +1,272 @@
+[
+  {
+    "uf": "PA",
+    "estado": "Pará",
+    "nome": "Spica",
+    "designacao": "α Virginis",
+    "constelacao": "Virgem",
+    "x": 39,
+    "y": 27,
+    "curiosidade": "Estrela azul-branca, uma das mais brilhantes do céu noturno."
+  },
+  {
+    "uf": "AM",
+    "estado": "Amazonas",
+    "nome": "Procyon",
+    "designacao": "α Canis Minoris",
+    "constelacao": "Cão Menor",
+    "x": 30,
+    "y": 44,
+    "curiosidade": "Uma das estrelas próximas do Sol na vizinhança estelar."
+  },
+  {
+    "uf": "MS",
+    "estado": "Mato Grosso do Sul",
+    "nome": "Alphard",
+    "designacao": "α Hydrae",
+    "constelacao": "Hidra Fêmea",
+    "x": 40,
+    "y": 50,
+    "curiosidade": "Uma gigante alaranjada, destaque da constelação de Hidra."
+  },
+  {
+    "uf": "AC",
+    "estado": "Acre",
+    "nome": "Gamma Hydrae",
+    "designacao": "γ Hydrae",
+    "constelacao": "Hidra Fêmea",
+    "x": 45,
+    "y": 55,
+    "curiosidade": "Estrela da longa constelação Hidra Fêmea."
+  },
+  {
+    "uf": "MT",
+    "estado": "Mato Grosso",
+    "nome": "Sirius",
+    "designacao": "α Canis Majoris",
+    "constelacao": "Cão Maior",
+    "x": 55,
+    "y": 40,
+    "curiosidade": "É a estrela mais brilhante do céu noturno, vista da Terra."
+  },
+  {
+    "uf": "AP",
+    "estado": "Amapá",
+    "nome": "Mirzam",
+    "designacao": "β Canis Majoris",
+    "constelacao": "Cão Maior",
+    "x": 51,
+    "y": 35,
+    "curiosidade": "Estrela associada ao Cão Maior, próxima de Sirius no céu."
+  },
+  {
+    "uf": "RO",
+    "estado": "Rondônia",
+    "nome": "Muliphein",
+    "designacao": "γ Canis Majoris",
+    "constelacao": "Cão Maior",
+    "x": 59,
+    "y": 46,
+    "curiosidade": "Também identificada pela designação Gamma Canis Majoris."
+  },
+  {
+    "uf": "RR",
+    "estado": "Roraima",
+    "nome": "Wezen",
+    "designacao": "δ Canis Majoris",
+    "constelacao": "Cão Maior",
+    "x": 64,
+    "y": 43,
+    "curiosidade": "Supergigante amarela na constelação do Cão Maior."
+  },
+  {
+    "uf": "TO",
+    "estado": "Tocantins",
+    "nome": "Adhara",
+    "designacao": "ε Canis Majoris",
+    "constelacao": "Cão Maior",
+    "x": 60,
+    "y": 36,
+    "curiosidade": "Uma estrela azul muito luminosa do Cão Maior."
+  },
+  {
+    "uf": "GO",
+    "estado": "Goiás",
+    "nome": "Canopus",
+    "designacao": "α Carinae",
+    "constelacao": "Carina (Quilha)",
+    "x": 52,
+    "y": 54,
+    "curiosidade": "A segunda estrela mais brilhante do céu noturno."
+  },
+  {
+    "uf": "BA",
+    "estado": "Bahia",
+    "nome": "Gacrux",
+    "designacao": "γ Crucis",
+    "constelacao": "Cruzeiro do Sul",
+    "x": 59,
+    "y": 58,
+    "curiosidade": "Gigante avermelhada que marca uma ponta do Cruzeiro do Sul."
+  },
+  {
+    "uf": "MG",
+    "estado": "Minas Gerais",
+    "nome": "Delta Crucis",
+    "designacao": "δ Crucis",
+    "constelacao": "Cruzeiro do Sul",
+    "x": 64,
+    "y": 62,
+    "curiosidade": "Uma das cinco estrelas representadas no Cruzeiro do Sul da bandeira."
+  },
+  {
+    "uf": "ES",
+    "estado": "Espírito Santo",
+    "nome": "Epsilon Crucis",
+    "designacao": "ε Crucis",
+    "constelacao": "Cruzeiro do Sul",
+    "x": 61,
+    "y": 65,
+    "curiosidade": "Conhecida popularmente como a Intrometida."
+  },
+  {
+    "uf": "SP",
+    "estado": "São Paulo",
+    "nome": "Acrux",
+    "designacao": "α Crucis",
+    "constelacao": "Cruzeiro do Sul",
+    "x": 59,
+    "y": 72,
+    "curiosidade": "Sistema estelar que marca a extremidade inferior do Cruzeiro do Sul."
+  },
+  {
+    "uf": "RJ",
+    "estado": "Rio de Janeiro",
+    "nome": "Mimosa",
+    "designacao": "β Crucis",
+    "constelacao": "Cruzeiro do Sul",
+    "x": 54,
+    "y": 65,
+    "curiosidade": "Estrela azul brilhante do Cruzeiro do Sul."
+  },
+  {
+    "uf": "PI",
+    "estado": "Piauí",
+    "nome": "Antares",
+    "designacao": "α Scorpii",
+    "constelacao": "Escorpião",
+    "x": 75,
+    "y": 52,
+    "curiosidade": "Supergigante vermelha que marca o coração do Escorpião."
+  },
+  {
+    "uf": "MA",
+    "estado": "Maranhão",
+    "nome": "Acrab (Graffias)",
+    "designacao": "β Scorpii",
+    "constelacao": "Escorpião",
+    "x": 70,
+    "y": 47,
+    "curiosidade": "Sistema estelar conhecido também por Graffias."
+  },
+  {
+    "uf": "CE",
+    "estado": "Ceará",
+    "nome": "Wei",
+    "designacao": "ε Scorpii",
+    "constelacao": "Escorpião",
+    "x": 80,
+    "y": 57,
+    "curiosidade": "Estrela identificada por Epsilon Scorpii."
+  },
+  {
+    "uf": "RN",
+    "estado": "Rio Grande do Norte",
+    "nome": "Shaula",
+    "designacao": "λ Scorpii",
+    "constelacao": "Escorpião",
+    "x": 87,
+    "y": 72,
+    "curiosidade": "Estrela muito luminosa na região do ferrão do Escorpião."
+  },
+  {
+    "uf": "PB",
+    "estado": "Paraíba",
+    "nome": "Girtab",
+    "designacao": "κ Scorpii",
+    "constelacao": "Escorpião",
+    "x": 84,
+    "y": 68,
+    "curiosidade": "Estrela associada à cauda do Escorpião."
+  },
+  {
+    "uf": "PE",
+    "estado": "Pernambuco",
+    "nome": "Mu Scorpii",
+    "designacao": "μ Scorpii",
+    "constelacao": "Escorpião",
+    "x": 82,
+    "y": 62,
+    "curiosidade": "Designação de um sistema estelar do Escorpião."
+  },
+  {
+    "uf": "AL",
+    "estado": "Alagoas",
+    "nome": "Sargas",
+    "designacao": "θ Scorpii",
+    "constelacao": "Escorpião",
+    "x": 79,
+    "y": 66,
+    "curiosidade": "Estrela brilhante próxima à cauda do Escorpião."
+  },
+  {
+    "uf": "SE",
+    "estado": "Sergipe",
+    "nome": "Iota Scorpii",
+    "designacao": "ι Scorpii",
+    "constelacao": "Escorpião",
+    "x": 76,
+    "y": 62,
+    "curiosidade": "Identificada pela letra grega iota na constelação do Escorpião."
+  },
+  {
+    "uf": "RS",
+    "estado": "Rio Grande do Sul",
+    "nome": "Atria",
+    "designacao": "α Trianguli Australis",
+    "constelacao": "Triângulo Austral",
+    "x": 52,
+    "y": 76,
+    "curiosidade": "Uma gigante alaranjada do Triângulo Austral."
+  },
+  {
+    "uf": "SC",
+    "estado": "Santa Catarina",
+    "nome": "Beta Trianguli Australis",
+    "designacao": "β Trianguli Australis",
+    "constelacao": "Triângulo Austral",
+    "x": 49,
+    "y": 72,
+    "curiosidade": "Uma das três estrelas principais do Triângulo Austral."
+  },
+  {
+    "uf": "PR",
+    "estado": "Paraná",
+    "nome": "Gamma Trianguli Australis",
+    "designacao": "γ Trianguli Australis",
+    "constelacao": "Triângulo Austral",
+    "x": 47,
+    "y": 78,
+    "curiosidade": "Completa o trio principal do Triângulo Austral."
+  },
+  {
+    "uf": "DF",
+    "estado": "Distrito Federal",
+    "nome": "Polaris Australis",
+    "designacao": "σ Octantis",
+    "constelacao": "Oitante",
+    "x": 62,
+    "y": 83,
+    "curiosidade": "Estrela próxima ao polo sul celeste, menos brilhante que muitas outras na bandeira."
+  }
+]
