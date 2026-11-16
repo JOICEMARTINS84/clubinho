@@ -24,6 +24,26 @@ o modo **Técnico** libera ajuste detalhado de coordenadas e parâmetros do pain
 ## Explorar qualquer local lunar — mapa geográfico NASA
 
 A aba **Explorar um local** funciona mesmo sem executar primeiro a análise de efemérides.
+
+**Novidade — identificação de nomes ao selecionar um ponto:**
+- Após clicar ou digitar coordenadas, o sistema consulta o KML de centros de feições
+  do **Gazetteer oficial USGS/IAU**, atualizado diariamente pelo fornecedor.
+- O programa tenta identificar um nome registrado **próximo ao ponto**. Quando há
+  diâmetro nominal, pode mostrar "área nominal de" a feição (aproximação circular);
+  caso contrário mostra somente "nome próximo".
+- Informa distância em quilômetros até o centro catalogado, eventuais outros nomes
+  próximos e o endereço da fonte para verificação.
+- Se a conexão com o catálogo falhar, identifica apenas um pequeno conjunto de
+  crateras de referência previamente cadastradas e avisa que o resultado é parcial.
+- Se não houver correspondência dentro da regra conservadora, informa que não
+  encontrou nome. Isso **não significa que o local não tenha nome**, pois a base
+  registra centros e não necessariamente limites cartográficos precisos.
+- Inclui nome, tipo de associação e fonte no JSON exportado. Não usa geocodificação
+  terrestre, nem atribui nomes criados pelo aplicativo.
+
+Fonte original: https://planetarynames.wr.usgs.gov/GIS_Downloads
+Download KML para a Lua: https://asc-planetarynames-data.s3.us-west-2.amazonaws.com/MOON_nomenclature_center_pts.kmz
+
 É um mapa de mosaicos **LRO WAC** fornecidos pelo WMTS oficial NASA Moon Trek
 (projeção lunar equiretangular, Folium/Leaflet EPSG:4326, com tiles 2×1 no zoom 0).
 
