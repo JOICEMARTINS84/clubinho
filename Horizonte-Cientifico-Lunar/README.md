@@ -21,6 +21,38 @@ local lunar, data e resolução, modelo de energia e execução da consulta JPL.
 O modo **Guiado** apresenta parâmetros essenciais com explicações para estudantes;
 o modo **Técnico** libera ajuste detalhado de coordenadas e parâmetros do painel.
 
+## Explorar qualquer local lunar — mapa geográfico NASA
+
+A aba **Explorar um local** funciona mesmo sem executar primeiro a análise de efemérides.
+É um mapa de mosaicos **LRO WAC** fornecidos pelo WMTS oficial NASA Moon Trek
+(projeção lunar equiretangular, Folium/Leaflet EPSG:4326, com tiles 2×1 no zoom 0).
+
+**Uso:**
+1. Escolha uma cratera nomeada (Tycho, Copernicus, Clavius, Aristarchus,
+   Archimedes ou Eratosthenes), um sítio Apollo, ou um ponto livre.
+2. Navegue pelo mosaico com zoom e clique em qualquer ponto lunar.
+   Também é possível digitar latitude e longitude exatas.
+3. Leia o centro geográfico e, para crateras cadastradas, o diâmetro
+   **do catálogo USGS/IAU ou LPI**, sempre com referência.
+4. Clique em **Coletar efemérides NASA/JPL deste local** para buscar
+   séries de azimute, elevação e distância ao Sol e à Terra.
+5. Exporte **CSV** com dados astronômicos e cálculos ou uma ficha
+   **JSON** com coordenadas, origem e parâmetros da coleta.
+
+**Limites científicos:** o WAC é fotografia e não altimetria digital.
+Crateras sem identificação no catálogo não recebem diâmetro inventado.
+Não produz profundidade de crateras nem inclinação de encostas sem
+carregar o DEM topográfico. NASA Moon Trek oferece ferramenta externa
+para perfil de elevação e busca NAC. As efemérides vêm do JPL
+quando a chamada funciona; erros são informados sem substituir dados
+por números simulados.
+
+**Fontes e documentação:**
+- NASA Moon Trek: https://trek.nasa.gov/moon/
+- NASA WMTS: https://trek.nasa.gov/tiles/apidoc/trekAPI.html?body=moon
+- USGS/IAU Gazetteer de cratera Tycho: https://planetarynames.wr.usgs.gov/Feature/6163
+- LPI, Appendix III craters: https://www.lpi.usra.edu/publications/books/planetary_science/appendices.pdf
+
 ## Laboratório de crateras com fotografias reais
 
 A aba **Analisar crateras** funciona mesmo sem consultar as efemérides do JPL.
