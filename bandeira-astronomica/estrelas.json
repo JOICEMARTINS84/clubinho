@@ -5,9 +5,12 @@
     "nome": "Spica",
     "designacao": "α Virginis",
     "constelacao": "Virgem",
-    "x": 43.8,
-    "y": 34.8,
-    "curiosidade": "Estrela azul-branca, uma das mais brilhantes do céu noturno."
+    "x": 55.2,
+    "y": 42.43,
+    "curiosidade": "Estrela azul-branca, uma das mais brilhantes do céu noturno.",
+    "cx": 1103.95,
+    "cy": 593.95,
+    "grandeza": 1
   },
   {
     "uf": "AM",
@@ -15,9 +18,12 @@
     "nome": "Procyon",
     "designacao": "α Canis Minoris",
     "constelacao": "Cão Menor",
-    "x": 38.8,
-    "y": 46,
-    "curiosidade": "Uma das estrelas próximas do Sol na vizinhança estelar."
+    "x": 35.74,
+    "y": 45.5,
+    "curiosidade": "Uma das estrelas próximas do Sol na vizinhança estelar.",
+    "cx": 714.75,
+    "cy": 637,
+    "grandeza": 1
   },
   {
     "uf": "MS",
@@ -25,9 +31,12 @@
     "nome": "Alphard",
     "designacao": "α Hydrae",
     "constelacao": "Hidra Fêmea",
-    "x": 44.4,
-    "y": 50,
-    "curiosidade": "Uma gigante alaranjada, destaque da constelação de Hidra."
+    "x": 43.53,
+    "y": 50.75,
+    "curiosidade": "Uma gigante alaranjada, destaque da constelação de Hidra.",
+    "cx": 870.5,
+    "cy": 710.5,
+    "grandeza": 2
   },
   {
     "uf": "AC",
@@ -35,9 +44,12 @@
     "nome": "Gamma Hydrae",
     "designacao": "γ Hydrae",
     "constelacao": "Hidra Fêmea",
-    "x": 47.2,
-    "y": 53.3,
-    "curiosidade": "Estrela da longa constelação Hidra Fêmea."
+    "x": 54.59,
+    "y": 48.6,
+    "curiosidade": "Estrela da longa constelação Hidra Fêmea.",
+    "cx": 1091.7,
+    "cy": 680.4,
+    "grandeza": 3
   },
   {
     "uf": "MT",
@@ -45,9 +57,12 @@
     "nome": "Sirius",
     "designacao": "α Canis Majoris",
     "constelacao": "Cão Maior",
-    "x": 52.8,
-    "y": 43.4,
-    "curiosidade": "É a estrela mais brilhante do céu noturno, vista da Terra."
+    "x": 37.16,
+    "y": 56,
+    "curiosidade": "É a estrela mais brilhante do céu noturno, vista da Terra.",
+    "cx": 743.1,
+    "cy": 784,
+    "grandeza": 1
   },
   {
     "uf": "AP",
@@ -55,9 +70,12 @@
     "nome": "Mirzam",
     "designacao": "β Canis Majoris",
     "constelacao": "Cão Maior",
-    "x": 50.6,
-    "y": 40.1,
-    "curiosidade": "Estrela associada ao Cão Maior, próxima de Sirius no céu."
+    "x": 35.2,
+    "y": 58.18,
+    "curiosidade": "Estrela associada ao Cão Maior, próxima de Sirius no céu.",
+    "cx": 703.9,
+    "cy": 814.45,
+    "grandeza": 2
   },
   {
     "uf": "RO",
@@ -65,9 +83,12 @@
     "nome": "Muliphein",
     "designacao": "γ Canis Majoris",
     "constelacao": "Cão Maior",
-    "x": 55,
-    "y": 47.4,
-    "curiosidade": "Também identificada pela designação Gamma Canis Majoris."
+    "x": 38.85,
+    "y": 54.38,
+    "curiosidade": "Também identificada pela designação Gamma Canis Majoris.",
+    "cx": 777.05,
+    "cy": 761.25,
+    "grandeza": 4
   },
   {
     "uf": "RR",
@@ -75,9 +96,12 @@
     "nome": "Wezen",
     "designacao": "δ Canis Majoris",
     "constelacao": "Cão Maior",
-    "x": 57.8,
-    "y": 45.4,
-    "curiosidade": "Supergigante amarela na constelação do Cão Maior."
+    "x": 40.88,
+    "y": 58.35,
+    "curiosidade": "Supergigante amarela na constelação do Cão Maior.",
+    "cx": 817.65,
+    "cy": 816.9,
+    "grandeza": 2
   },
   {
     "uf": "TO",
@@ -85,9 +109,12 @@
     "nome": "Adhara",
     "designacao": "ε Canis Majoris",
     "constelacao": "Cão Maior",
-    "x": 55.6,
-    "y": 40.8,
-    "curiosidade": "Uma estrela azul muito luminosa do Cão Maior."
+    "x": 40.41,
+    "y": 60.95,
+    "curiosidade": "Uma estrela azul muito luminosa do Cão Maior.",
+    "cx": 808.2,
+    "cy": 853.3,
+    "grandeza": 3
   },
   {
     "uf": "GO",
@@ -95,9 +122,12 @@
     "nome": "Canopus",
     "designacao": "α Carinae",
     "constelacao": "Carina (Quilha)",
-    "x": 51.1,
-    "y": 52.6,
-    "curiosidade": "A segunda estrela mais brilhante do céu noturno."
+    "x": 43,
+    "y": 63.5,
+    "curiosidade": "A segunda estrela mais brilhante do céu noturno.",
+    "cx": 860,
+    "cy": 889,
+    "grandeza": 1
   },
   {
     "uf": "BA",
@@ -105,9 +135,12 @@
     "nome": "Gacrux",
     "designacao": "γ Crucis",
     "constelacao": "Cruzeiro do Sul",
-    "x": 55,
-    "y": 55.3,
-    "curiosidade": "Gigante avermelhada que marca uma ponta do Cruzeiro do Sul."
+    "x": 49.97,
+    "y": 53.88,
+    "curiosidade": "Gigante avermelhada que marca uma ponta do Cruzeiro do Sul.",
+    "cx": 999.3,
+    "cy": 754.25,
+    "grandeza": 2
   },
   {
     "uf": "MG",
@@ -115,9 +148,12 @@
     "nome": "Delta Crucis",
     "designacao": "δ Crucis",
     "constelacao": "Cruzeiro do Sul",
-    "x": 57.8,
-    "y": 57.9,
-    "curiosidade": "Uma das cinco estrelas representadas no Cruzeiro do Sul da bandeira."
+    "x": 48.29,
+    "y": 56.48,
+    "curiosidade": "Uma das cinco estrelas representadas no Cruzeiro do Sul da bandeira.",
+    "cx": 965.7,
+    "cy": 790.65,
+    "grandeza": 3
   },
   {
     "uf": "ES",
@@ -125,9 +161,12 @@
     "nome": "Epsilon Crucis",
     "designacao": "ε Crucis",
     "constelacao": "Cruzeiro do Sul",
-    "x": 56.2,
-    "y": 59.9,
-    "curiosidade": "Conhecida popularmente como a Intrometida."
+    "x": 49.25,
+    "y": 57.9,
+    "curiosidade": "Conhecida popularmente como a Intrometida.",
+    "cx": 984.95,
+    "cy": 810.6,
+    "grandeza": 4
   },
   {
     "uf": "SP",
@@ -135,9 +174,12 @@
     "nome": "Acrux",
     "designacao": "α Crucis",
     "constelacao": "Cruzeiro do Sul",
-    "x": 55,
-    "y": 64.5,
-    "curiosidade": "Sistema estelar que marca a extremidade inferior do Cruzeiro do Sul."
+    "x": 50,
+    "y": 61.33,
+    "curiosidade": "Sistema estelar que marca a extremidade inferior do Cruzeiro do Sul.",
+    "cx": 1000,
+    "cy": 858.55,
+    "grandeza": 1
   },
   {
     "uf": "RJ",
@@ -145,9 +187,12 @@
     "nome": "Mimosa",
     "designacao": "β Crucis",
     "constelacao": "Cruzeiro do Sul",
-    "x": 52.2,
-    "y": 59.9,
-    "curiosidade": "Estrela azul brilhante do Cruzeiro do Sul."
+    "x": 51.94,
+    "y": 56.18,
+    "curiosidade": "Estrela azul brilhante do Cruzeiro do Sul.",
+    "cx": 1038.85,
+    "cy": 786.45,
+    "grandeza": 2
   },
   {
     "uf": "PI",
@@ -155,9 +200,12 @@
     "nome": "Antares",
     "designacao": "α Scorpii",
     "constelacao": "Escorpião",
-    "x": 64,
-    "y": 51.3,
-    "curiosidade": "Supergigante vermelha que marca o coração do Escorpião."
+    "x": 62.25,
+    "y": 58.58,
+    "curiosidade": "Supergigante vermelha que marca o coração do Escorpião.",
+    "cx": 1245,
+    "cy": 820.05,
+    "grandeza": 1
   },
   {
     "uf": "MA",
@@ -165,9 +213,12 @@
     "nome": "Acrab (Graffias)",
     "designacao": "β Scorpii",
     "constelacao": "Escorpião",
-    "x": 61.2,
-    "y": 48,
-    "curiosidade": "Sistema estelar conhecido também por Graffias."
+    "x": 64.72,
+    "y": 58.78,
+    "curiosidade": "Sistema estelar conhecido também por Graffias.",
+    "cx": 1294.35,
+    "cy": 822.85,
+    "grandeza": 3
   },
   {
     "uf": "CE",
@@ -175,9 +226,12 @@
     "nome": "Wei",
     "designacao": "ε Scorpii",
     "constelacao": "Escorpião",
-    "x": 66.8,
-    "y": 54.6,
-    "curiosidade": "Estrela identificada por Epsilon Scorpii."
+    "x": 62.92,
+    "y": 61.08,
+    "curiosidade": "Estrela identificada por Epsilon Scorpii.",
+    "cx": 1258.3,
+    "cy": 855.05,
+    "grandeza": 2
   },
   {
     "uf": "RN",
@@ -185,9 +239,12 @@
     "nome": "Shaula",
     "designacao": "λ Scorpii",
     "constelacao": "Escorpião",
-    "x": 70.7,
-    "y": 64.5,
-    "curiosidade": "Estrela muito luminosa na região do ferrão do Escorpião."
+    "x": 61.88,
+    "y": 62.95,
+    "curiosidade": "Estrela muito luminosa na região do ferrão do Escorpião.",
+    "cx": 1237.65,
+    "cy": 881.3,
+    "grandeza": 2
   },
   {
     "uf": "PB",
@@ -195,9 +252,12 @@
     "nome": "Girtab",
     "designacao": "κ Scorpii",
     "constelacao": "Escorpião",
-    "x": 69,
-    "y": 61.9,
-    "curiosidade": "Estrela associada à cauda do Escorpião."
+    "x": 60.45,
+    "y": 64.18,
+    "curiosidade": "Estrela associada à cauda do Escorpião.",
+    "cx": 1208.95,
+    "cy": 898.45,
+    "grandeza": 3
   },
   {
     "uf": "PE",
@@ -205,9 +265,12 @@
     "nome": "Mu Scorpii",
     "designacao": "μ Scorpii",
     "constelacao": "Escorpião",
-    "x": 67.9,
-    "y": 57.9,
-    "curiosidade": "Designação de um sistema estelar do Escorpião."
+    "x": 58.75,
+    "y": 64.03,
+    "curiosidade": "Designação de um sistema estelar do Escorpião.",
+    "cx": 1175,
+    "cy": 896.35,
+    "grandeza": 3
   },
   {
     "uf": "AL",
@@ -215,9 +278,12 @@
     "nome": "Sargas",
     "designacao": "θ Scorpii",
     "constelacao": "Escorpião",
-    "x": 66.2,
-    "y": 60.6,
-    "curiosidade": "Estrela brilhante próxima à cauda do Escorpião."
+    "x": 58.75,
+    "y": 66.43,
+    "curiosidade": "Estrela brilhante próxima à cauda do Escorpião.",
+    "cx": 1175,
+    "cy": 929.95,
+    "grandeza": 2
   },
   {
     "uf": "SE",
@@ -225,9 +291,12 @@
     "nome": "Iota Scorpii",
     "designacao": "ι Scorpii",
     "constelacao": "Escorpião",
-    "x": 64.6,
-    "y": 57.9,
-    "curiosidade": "Identificada pela letra grega iota na constelação do Escorpião."
+    "x": 58.77,
+    "y": 68.72,
+    "curiosidade": "Identificada pela letra grega iota na constelação do Escorpião.",
+    "cx": 1175.35,
+    "cy": 962.15,
+    "grandeza": 3
   },
   {
     "uf": "RS",
@@ -235,9 +304,12 @@
     "nome": "Atria",
     "designacao": "α Trianguli Australis",
     "constelacao": "Triângulo Austral",
-    "x": 51.1,
-    "y": 67.2,
-    "curiosidade": "Uma gigante alaranjada do Triângulo Austral."
+    "x": 55.2,
+    "y": 66.93,
+    "curiosidade": "Uma gigante alaranjada do Triângulo Austral.",
+    "cx": 1103.95,
+    "cy": 936.95,
+    "grandeza": 2
   },
   {
     "uf": "SC",
@@ -245,9 +317,12 @@
     "nome": "Beta Trianguli Australis",
     "designacao": "β Trianguli Australis",
     "constelacao": "Triângulo Austral",
-    "x": 49.4,
-    "y": 64.5,
-    "curiosidade": "Uma das três estrelas principais do Triângulo Austral."
+    "x": 56.72,
+    "y": 64.47,
+    "curiosidade": "Uma das três estrelas principais do Triângulo Austral.",
+    "cx": 1134.4,
+    "cy": 902.65,
+    "grandeza": 3
   },
   {
     "uf": "PR",
@@ -255,9 +330,12 @@
     "nome": "Gamma Trianguli Australis",
     "designacao": "γ Trianguli Australis",
     "constelacao": "Triângulo Austral",
-    "x": 48.3,
-    "y": 68.5,
-    "curiosidade": "Completa o trio principal do Triângulo Austral."
+    "x": 53.8,
+    "y": 63.88,
+    "curiosidade": "Completa o trio principal do Triângulo Austral.",
+    "cx": 1075.95,
+    "cy": 894.25,
+    "grandeza": 3
   },
   {
     "uf": "DF",
@@ -265,8 +343,11 @@
     "nome": "Polaris Australis",
     "designacao": "σ Octantis",
     "constelacao": "Oitante",
-    "x": 56.7,
-    "y": 71.8,
-    "curiosidade": "Estrela próxima ao polo sul celeste, menos brilhante que muitas outras na bandeira."
+    "x": 50.04,
+    "y": 69.38,
+    "curiosidade": "Estrela próxima ao polo sul celeste, menos brilhante que muitas outras na bandeira.",
+    "cx": 1000.7,
+    "cy": 971.25,
+    "grandeza": 5
   }
 ]
