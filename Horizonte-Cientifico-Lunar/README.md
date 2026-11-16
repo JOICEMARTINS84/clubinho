@@ -12,6 +12,7 @@ Autora: **Joice Souza Martins Santos**.
 - Calcula **irradiância e energia solar teóricas** com fluxo solar variável pela lei do inverso do quadrado da distância. Simula painéis horizontais, inclinados ou com rastreamento ideal.
 - Permite escolher sítios Apollo 11, 15 e 17 com coordenadas publicadas pela NASA.
 - Indica o acesso externo ao mapa real **NASA Moon Trek** e exporta os dados do JPL junto às colunas calculadas em CSV.
+- Exibe uma **imagem científica real NASA/LRO/LOLA** de topografia regional do polo sul e regiões permanentemente sombreadas, com link para a fonte. A imagem é referência visual e **não é** incorporada à modelagem de sombras local.
 
 ## Executar no computador com Python (recomendado: Python 3.11 ou 3.12)
 
