@@ -1,24 +1,28 @@
-"""Testes da seleção cartográfica lunar sem fazer consultas externas."""
+"""Testes sem rede do explorador lunar baseado apenas em coordenadas."""
 import pytest
-from lunar_explorer import CRATERS, NOMINATED, NASA_WAC_TILES, valid_coords, site_record
 
-def test_wmts_uses_moon_not_earth():
+from lunar_explorer import NASA_WAC_TILES, valid_coords, _map
+
+
+def test_uses_lunar_not_terrestrial_tiles():
     assert "/Moon/EQ/LRO_WAC_Mosaic_Global_303ppd_v02/" in NASA_WAC_TILES
-    assert all(part in NASA_WAC_TILES for part in ("{z}", "{x}", "{y}"))
+    assert all(token in NASA_WAC_TILES for token in ("{z}", "{x}", "{y}"))
 
-def test_catalogued_tycho_has_traceable_source():
-    tycho = site_record("Cratera · Tycho")
-    assert tycho["diameter_km"] == pytest.approx(85.29)
-    assert tycho["lat"] == pytest.approx(-43.30)
-    assert "usgs.gov" in tycho["source"]
-    assert len(CRATERS) >= 5
 
-def test_free_location_does_not_invent_a_crater():
-    assert site_record(NOMINATED[0]) is None
+def test_coordinates_valid_without_a_place_name():
+    assert valid_coords(-43.30, -11.22) == (-43.30, -11.22)
+    assert valid_coords(0, 0) == (0, 0)
 
-def test_coords_and_limits():
-    assert valid_coords(-45.5, 130.2) == (-45.5, 130.2)
+
+def test_coordinates_out_of_range():
     with pytest.raises(ValueError):
-        valid_coords(-91.0, 0)
+        valid_coords(-91, 0)
     with pytest.raises(ValueError):
         valid_coords(0, 190)
+
+
+def test_map_marker_has_no_named_geological_feature():
+    content = _map(-43.3, -11.22).get_root().render()
+    assert "Coordenadas selecionadas" in content
+    assert "Tycho" not in content
+    assert "Copernicus" not in content
