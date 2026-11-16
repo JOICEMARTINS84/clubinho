@@ -56,9 +56,12 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 PRESETS = {
-    "Polo Sul · exemplo (0°; −89,5°)": (-89.5, 0.0),
-    "Sul lunar · exemplo (45°; −85°)": (-85.0, 45.0),
-    "Equador lunar · exemplo (0°; 0°)": (0.0, 0.0),
+    "Polo Sul · ponto de estudo (89,5°S)": (-89.5, 0.0),
+    "Sul lunar · ponto de estudo (85°S)": (-85.0, 45.0),
+    "Apollo 11 · Mare Tranquillitatis (NASA)": (0.67416, 23.47314),
+    "Apollo 15 · Hadley Rille (NASA)": (26.13239, 3.63330),
+    "Apollo 17 · Taurus–Littrow (NASA)": (20.19110, 30.77230),
+    "Equador lunar · ponto de estudo": (0.0, 0.0),
     "Personalizar coordenadas": None,
 }
 
@@ -70,7 +73,11 @@ with st.sidebar:
         lon = st.number_input("Longitude leste (°)", min_value=-180.0, max_value=180.0, value=0.0, step=1.0)
     else:
         lat, lon = PRESETS[place]
-    st.caption(f"Latitude: {lat:.2f}° · Longitude: {lon:.2f}° leste")
+    st.caption(f"Latitude: {lat:.4f}° · Longitude: {lon:.4f}° leste")
+    if "Apollo" in place:
+        st.caption("Coordenadas publicadas pela NASA/NSSDC, referencial planetocêntrico, "
+                   "usadas aqui como aproximação para a entrada geodética do JPL.")
+        st.markdown("[Fonte dos locais Apollo · NASA](https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html)")
     st.divider()
     st.subheader("Período de análise")
     day = st.date_input("Data inicial (UTC)", value=datetime.now(timezone.utc).date(),
@@ -273,8 +280,10 @@ with method:
     do tipo `OBSERVER`, origem `coord@301` (Lua), alvos `10` (Sol) e `399` (Terra),
     quantidades `4,20` (azimute/elevação e distância), `RANGE_UNITS=KM`, UTC.
 
-    **Coordenadas:** planetodéticas, longitude positiva para leste e altitude adotada de
-    0 km relativa ao elipsoide de referência da Lua.
+    **Coordenadas:** locais personalizados com latitude geodética, longitude positiva a leste,
+    altitude adotada de 0 km no elipsoide lunar. Coordenadas dos locais Apollo vêm da
+    base planetocêntrica NASA/NSSDC e foram usadas como aproximação geodética;
+    nenhuma correção cartográfica detalhada foi aplicada.
 
     **Critério visual:** elevação do centro do astro superior a 0°. Não considera o
     tamanho angular do disco, sombras produzidas pelo relevo ou obstáculos artificiais.
