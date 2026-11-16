@@ -21,57 +21,29 @@ local lunar, data e resolução, modelo de energia e execução da consulta JPL.
 O modo **Guiado** apresenta parâmetros essenciais com explicações para estudantes;
 o modo **Técnico** libera ajuste detalhado de coordenadas e parâmetros do painel.
 
-## Explorar qualquer local lunar — mapa geográfico NASA
+## Explorar qualquer ponto na Lua — sem identificar nomes
 
-A aba **Explorar um local** funciona mesmo sem executar primeiro a análise de efemérides.
+A aba **Explorar um local** usa o mosaico fotográfico **LRO/WAC** da NASA
+(servido pelo NASA Moon Trek) para seleção de coordenadas.
 
-**Novidade — identificação de nomes ao selecionar um ponto:**
-- Após clicar ou digitar coordenadas, o sistema consulta o KML de centros de feições
-  do **Gazetteer oficial USGS/IAU**, atualizado diariamente pelo fornecedor.
-- O programa tenta identificar um nome registrado **próximo ao ponto**. Quando há
-  diâmetro nominal, pode mostrar "área nominal de" a feição (aproximação circular);
-  caso contrário mostra somente "nome próximo".
-- Informa distância em quilômetros até o centro catalogado, eventuais outros nomes
-  próximos e o endereço da fonte para verificação.
-- Se a conexão com o catálogo falhar, identifica apenas um pequeno conjunto de
-  crateras de referência previamente cadastradas e avisa que o resultado é parcial.
-- Se não houver correspondência dentro da regra conservadora, informa que não
-  encontrou nome. Isso **não significa que o local não tenha nome**, pois a base
-  registra centros e não necessariamente limites cartográficos precisos.
-- Inclui nome, tipo de associação e fonte no JSON exportado. Não usa geocodificação
-  terrestre, nem atribui nomes criados pelo aplicativo.
+1. Navegue pelo mapa e clique em qualquer região lunar ou digite latitude/longitude.
+2. Observe **apenas as coordenadas selecionadas**; o aplicativo não inventa
+   nem atribui nomes de crateras ou locais a partir de um clique.
+3. Clique em **Coletar dados NASA/JPL do ponto** para consultar as posições
+   e distâncias do Sol e da Terra calculadas para aquelas coordenadas.
+4. Exporte CSV com efemérides e cálculos ou JSON com coordenadas, período e
+   fontes utilizadas.
 
-Fonte original: https://planetarynames.wr.usgs.gov/GIS_Downloads
-Download KML para a Lua: https://asc-planetarynames-data.s3.us-west-2.amazonaws.com/MOON_nomenclature_center_pts.kmz
+**Limitações:** a fotografia não é um modelo de altitude. Este módulo não
+identifica crateras, diâmetros, alturas ou profundidades automaticamente.
+O catálogo de nomes oficial não é consultado nem aplicado ao mapa.
+O mapa lunar oficial NASA Moon Trek oferece instrumentos adicionais de
+topografia e pesquisa sem induzir associações automáticas incorretas.
 
-É um mapa de mosaicos **LRO WAC** fornecidos pelo WMTS oficial NASA Moon Trek
-(projeção lunar equiretangular, Folium/Leaflet EPSG:4326, com tiles 2×1 no zoom 0).
-
-**Uso:**
-1. Escolha uma cratera nomeada (Tycho, Copernicus, Clavius, Aristarchus,
-   Archimedes ou Eratosthenes), um sítio Apollo, ou um ponto livre.
-2. Navegue pelo mosaico com zoom e clique em qualquer ponto lunar.
-   Também é possível digitar latitude e longitude exatas.
-3. Leia o centro geográfico e, para crateras cadastradas, o diâmetro
-   **do catálogo USGS/IAU ou LPI**, sempre com referência.
-4. Clique em **Coletar efemérides NASA/JPL deste local** para buscar
-   séries de azimute, elevação e distância ao Sol e à Terra.
-5. Exporte **CSV** com dados astronômicos e cálculos ou uma ficha
-   **JSON** com coordenadas, origem e parâmetros da coleta.
-
-**Limites científicos:** o WAC é fotografia e não altimetria digital.
-Crateras sem identificação no catálogo não recebem diâmetro inventado.
-Não produz profundidade de crateras nem inclinação de encostas sem
-carregar o DEM topográfico. NASA Moon Trek oferece ferramenta externa
-para perfil de elevação e busca NAC. As efemérides vêm do JPL
-quando a chamada funciona; erros são informados sem substituir dados
-por números simulados.
-
-**Fontes e documentação:**
+Fontes:
 - NASA Moon Trek: https://trek.nasa.gov/moon/
-- NASA WMTS: https://trek.nasa.gov/tiles/apidoc/trekAPI.html?body=moon
-- USGS/IAU Gazetteer de cratera Tycho: https://planetarynames.wr.usgs.gov/Feature/6163
-- LPI, Appendix III craters: https://www.lpi.usra.edu/publications/books/planetary_science/appendices.pdf
+- NASA Moon Trek WMTS: https://trek.nasa.gov/tiles/apidoc/trekAPI.html?body=moon
+- NASA/JPL Horizons: https://ssd-api.jpl.nasa.gov/doc/horizons.html
 
 ## Laboratório de crateras com fotografias reais
 
