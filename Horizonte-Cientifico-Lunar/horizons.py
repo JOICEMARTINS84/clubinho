@@ -23,10 +23,10 @@ class HorizonsError(RuntimeError):
 
 
 def parse_horizons_csv(text: str, target: str) -> pd.DataFrame:
-    """Extrai azimute e elevação de QUANTITIES=4 e CSV_FORMAT=YES.
+    """Extrai azimute, elevação e distância de QUANTITIES=4,20, CSV_FORMAT=YES.
 
-    Os campos finais numéricos são azimute e elevação; colunas de visibilidade
-    e marcadores do observador podem antecedê-los. Não inventa dados faltantes.
+    SUPPRESS_RANGE_RATE=YES deixa apenas o range após AZ e EL.
+    Ignoramos símbolos de presença de Sol e Lua, que não são valores numéricos.
     """
     if "$$SOE" not in text or "$$EOE" not in text:
         details = text[:450].strip().replace("\n", " ")
@@ -47,15 +47,16 @@ def parse_horizons_csv(text: str, target: str) -> pd.DataFrame:
         except ValueError:
             continue
         numbers = [float(c.strip()) for c in cells[1:] if NUMBER.fullmatch(c.strip())]
-        if len(numbers) < 2:
+        if len(numbers) < 3:
             continue
-        azimuth, altitude = numbers[-2], numbers[-1]
-        if not 0.0 <= azimuth <= 360.0 or not -90.0 <= altitude <= 90.0:
+        azimuth, altitude, range_km = numbers[-3:]
+        if (not 0.0 <= azimuth <= 360.0 or not -90.0 <= altitude <= 90.0
+                or not 1.0 < range_km < 1e12):
             continue
-        rows.append((timestamp, azimuth, altitude))
+        rows.append((timestamp, azimuth, altitude, range_km))
     if not rows:
-        raise HorizonsError("A API respondeu, mas não encontramos azimute/elevação legíveis.")
-    return pd.DataFrame(rows, columns=["instante_utc", f"{target}_az", f"{target}_elev"])
+        raise HorizonsError("A NASA respondeu, mas não encontramos azimute, elevação e distância legíveis. Confira os parâmetros da consulta.")
+    return pd.DataFrame(rows, columns=["instante_utc", f"{target}_az", f"{target}_elev", f"{target}_dist_km"])
 
 
 def request_body(
@@ -71,8 +72,8 @@ def request_body(
         raise ValueError(f"Alvo desconhecido: {target}")
     if not -90 <= latitude <= 90 or not -180 <= longitude <= 180:
         raise ValueError("Latitude/longitude fora da faixa permitida.")
-    if step_hours not in (3, 6, 12):
-        raise ValueError("O intervalo deve ser 3, 6 ou 12 horas.")
+    if step_hours not in (1, 3, 6, 12):
+        raise ValueError("O intervalo deve ser 1, 3, 6 ou 12 horas.")
     # Longitudes de -180° a 180° são equivalentes a 0° a 360° leste.
     east_lon = longitude % 360.0
     params = {
@@ -87,8 +88,10 @@ def request_body(
         "START_TIME": f"'{start:%Y-%m-%d %H:%M}'",
         "STOP_TIME": f"'{stop:%Y-%m-%d %H:%M}'",
         "STEP_SIZE": f"'{step_hours}h'",
-        "QUANTITIES": "'4'",  # azimute e elevação aparentes
+        "QUANTITIES": "'4,20'",  # azimute, elevação, distância alvo-observador
         "CSV_FORMAT": "'YES'",
+        "RANGE_UNITS": "'KM'",
+        "SUPPRESS_RANGE_RATE": "'YES'",
         "ANG_FORMAT": "'DEG'",
         "TIME_TYPE": "'UT'",
         "TIME_DIGITS": "'MINUTES'",
