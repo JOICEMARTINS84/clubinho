@@ -14,6 +14,41 @@ Autora: **Joice Souza Martins Santos**.
 - Indica o acesso externo ao mapa real **NASA Moon Trek** e exporta os dados do JPL junto às colunas calculadas em CSV.
 - Exibe uma **imagem científica real NASA/LRO/LOLA** de topografia regional do polo sul e regiões permanentemente sombreadas, com link para a fonte. A imagem é referência visual e **não é** incorporada à modelagem de sombras local.
 
+## Interface didática (modo Guiado e Técnico)
+
+A barra lateral foi redesenhada como painel de controle de missão, com quatro etapas:
+local lunar, data e resolução, modelo de energia e execução da consulta JPL.
+O modo **Guiado** apresenta parâmetros essenciais com explicações para estudantes;
+o modo **Técnico** libera ajuste detalhado de coordenadas e parâmetros do painel.
+
+## Laboratório de crateras com fotografias reais
+
+A aba **Analisar crateras** funciona mesmo sem consultar as efemérides do JPL.
+
+- Selecione uma fotografia LROC/WAC de Tycho, um detalhe NAC da superfície de Tycho,
+  ou carregue seu próprio JPG/PNG (até 16 MB).
+- Marque manualmente centro e raio de um contorno circular de interesse.
+- Leia o diâmetro em pixels; se existir barra de escala da própria imagem,
+  informe seu comprimento em quilômetros e pixels para uma estimativa em quilômetros.
+- Observe o perfil horizontal de brilho extraído dos pixels da fotografia e exporte-o em CSV.
+- A medição física pode ser distorcida por projeção, perspectiva, recorte, resolução e
+  erro de calibração. No caso da fotografia NAC do piso de Tycho, a imagem não inclui
+  a cratera toda: **nunca infira o diâmetro total de Tycho pelo recorte**.
+- Brilho e sombra **não** fornecem diretamente altitude ou profundidade.
+  A profundidade científica precisa de um modelo digital de terreno LRO/LOLA,
+  e isso permanece como desenvolvimento futuro.
+
+As fotografias são buscadas de endereços públicos da NASA/GSFC/ASU ou da NASA Science,
+quando a imagem é selecionada. Se o servidor remoto não responder, é possível baixar
+a fotografia no site original e enviá-la ao laboratório. Não utiliza imagens geradas
+por IA como evidência científica.
+
+Fontes:
+- LROC Tycho contexto WAC: https://lroc.im-ldi.com/images/559
+- NASA The Floor of Tycho, PIA12941: https://science.nasa.gov/photojournal/the-floor-of-tycho/
+- NASA Moon Trek: https://trek.nasa.gov/moon/
+- NASA LRO Data Products: https://science.nasa.gov/mission/lro/data-products/
+
 ## Executar no computador com Python (recomendado: Python 3.11 ou 3.12)
 
 No **Windows**, você também pode abrir `INICIAR_WINDOWS.bat` com dois cliques (é necessário ter Python instalado).
