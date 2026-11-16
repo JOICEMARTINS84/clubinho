@@ -105,7 +105,9 @@ def _map(current_lat: float, current_lon: float, label: str | None = None):
         location=[current_lat, current_lon], radius=6,
         color="#f13b2d", fill=True, fill_color="#f13b2d",
         fill_opacity=0.85, weight=2,
-        tooltip=escape(label) if label else "Ponto selecionado",
+        tooltip=(folium.Tooltip(escape(label), permanent=True, direction="top",
+                               offset=(0, -8), sticky=False)
+                 if label else "Ponto selecionado"),
     ).add_to(m)
     return m
 
