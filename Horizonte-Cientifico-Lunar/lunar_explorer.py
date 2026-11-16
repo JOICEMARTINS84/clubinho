@@ -124,6 +124,9 @@ def _selection_callback() -> None:
     """Converte um clique em ponto de pesquisa ou em borda A/B, conforme o modo."""
     result = st.session_state.get("moon_wac_map") or {}
     click = result.get("last_clicked") if isinstance(result, dict) else None
+    zoom = result.get("zoom") if isinstance(result, dict) else None
+    if isinstance(zoom, (int, float)) and 1 <= zoom <= 8:
+        st.session_state.lunar_map_zoom = int(zoom)
     if not isinstance(click, dict):
         return
     try:
@@ -239,7 +242,8 @@ def render_lunar_explorer(
             key="moon_wac_map",
             use_container_width=True,
             height=455,
-            returned_objects=["last_clicked"],
+            returned_objects=["last_clicked", "zoom"],
+            zoom=st.session_state.get("lunar_map_zoom", 4),
             on_change=_selection_callback,
         )
         st.caption(
@@ -345,17 +349,24 @@ def render_lunar_explorer(
             f"[Verificar a região no mapa original NASA Moon Trek]({MOON_TREK})"
         )
 
-    st.markdown("**03 — Coleta de dados para as coordenadas escolhidas**")
-    st.caption(
-        "A consulta busca posições e distâncias astronômicas do Sol e da Terra, "
-        "calculadas pelo JPL para o ponto e o período definidos. "
-        "Não mede profundidade nem diâmetro de crateras."
-    )
+    st.markdown("**03 — Efemérides astronômicas para o local**")
+    if action == "Medir cratera":
+        st.caption(
+            "Após as duas marcações, o JPL consultará o centro geométrico estimado "
+            "da região. A medição da cratera usa somente a geometria do mapa, "
+            "sem precisar conectar ao JPL."
+        )
+    else:
+        st.caption(
+            "O JPL calcula as posições e distâncias do Sol e da Terra "
+            "para as coordenadas selecionadas."
+        )
     collect_key = (round(lat, 5), round(lon, 5),
                    start.isoformat(), stop.isoformat(), int(step))
     if st.button(
         "Coletar dados NASA/JPL do ponto", type="primary",
         use_container_width=True, key="collect_lunar_site",
+        disabled=(action == "Medir cratera" and crater_estimate is None),
     ):
         try:
             with st.spinner("Consultando efemérides do JPL Horizons para as coordenadas..."):
@@ -388,6 +399,18 @@ def render_lunar_explorer(
         ),
         "gerado_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
     }
+
+    if action == "Medir cratera":
+        meta["medicao_cratera"] = {
+            "bordas_lat_lon": [list(p) for p in rim_points],
+            "metodo": "distância sobre esfera de raio 1737.4 km",
+            "hipotese": "dois pontos pertencem a bordas opostas; área de círculo plano",
+            "raio_lua_km": MOON_RADIUS_KM,
+            "diametro_km": crater_estimate.diameter_km if crater_estimate else None,
+            "area_circular_km2": crater_estimate.area_km2 if crater_estimate else None,
+            "centro_estimado_lat_lon": list(crater_estimate.midpoint) if crater_estimate else None,
+            "observacao": "não é medição de profundidade; sem correção de relevo",
+        }
 
     data = st.session_state.get("lunar_site_results")
     if data is not None and st.session_state.get("lunar_site_query_key") == collect_key:
