@@ -1,15 +1,17 @@
-# Horizonte Científico / Lua — v1.0
+# Horizonte Científico / Lua — v2.0
 
 Laboratório científico interativo em Python + Streamlit, do projeto **Matemática & Contexto**.
 Autora: **Joice Souza Martins Santos**.
 
 ## O que faz
 
-- Consulta **posições reais do Sol e da Terra vistas de um ponto lunar** usando a API NASA/JPL Horizons.
-- Exibe gráficos das elevações sobre o horizonte geométrico (em UTC).
-- Mostra um diagrama polar do céu local.
-- Calcula **energia solar teórica**, comparando painéis horizontais, inclinados ou com rastreamento ideal.
-- Exporta os resultados para CSV.
+- Consulta **azimute, elevação e distância ao centro do Sol e da Terra** de um ponto lunar pela API NASA/JPL Horizons.
+- Exibe gráficos das distâncias e elevações em UTC e a separação angular Sol–Terra.
+- Calcula tempo de propagação aproximado Terra–observador lunar (distância / velocidade da luz).
+- Apresenta um diagrama polar das direções do céu local.
+- Calcula **irradiância e energia solar teóricas** com fluxo solar variável pela lei do inverso do quadrado da distância. Simula painéis horizontais, inclinados ou com rastreamento ideal.
+- Permite escolher sítios Apollo 11, 15 e 17 com coordenadas publicadas pela NASA.
+- Indica o acesso externo ao mapa real **NASA Moon Trek** e exporta os dados do JPL junto às colunas calculadas em CSV.
 
 ## Executar no computador com Python (recomendado: Python 3.11 ou 3.12)
 
@@ -42,13 +44,17 @@ Selecione local, período, orientação do painel e pressione **Consultar NASA /
 
 ## Metodologia e limites
 
-**Efemérides NASA/JPL:** `OBSERVER`, observador `coord@301` (ponto topocêntrico na Lua), alvos 10=Sol e 399=Terra, `QUANTITIES=4` para azimute e elevação, `TIME_TYPE=UT`, `CSV_FORMAT=YES`. Latitude geodética entre -90 e 90, longitude leste entre -180 e +180. Altitude do sítio fixada em **0 km** sobre o elipsoide lunar de referência.
+**Efemérides NASA/JPL:** `OBSERVER`, observador `coord@301` (ponto topocêntrico na Lua), alvos 10=Sol e 399=Terra, `QUANTITIES=4,20` para azimute, elevação e distância aparente, `RANGE_UNITS=KM`, `SUPPRESS_RANGE_RATE=YES`, `TIME_TYPE=UT`, `CSV_FORMAT=YES`. Latitude geodética entre -90 e 90, longitude leste entre -180 e +180. Altitude do sítio fixada em **0 km** sobre o elipsoide lunar de referência.
 
 **Visibilidade:** somente o centro do corpo acima de 0° em um horizonte geométrico plano. **Não** modela sombras de cristas, crateras, obstáculos, ângulo da antena ou comunicação de rádio. Um Sol geometricamente acima do horizonte pode estar bloqueado pelo terreno.
 
-**Modelo energético:** potência teórica = 1361 W/m² × área × eficiência × fator de incidência solar, aplicada apenas com elevação solar positiva. Irradiância fixa convencional, não medida no ponto; perdas reais (temperatura, poeira, baterias, reguladores, degradação) não modeladas. O modo rastreamento ideal mantém a normal do painel alinhada à direção solar enquanto a elevação for positiva; é um limite superior, não uma sugestão de hardware real.
+**Modelo energético:** irradiância teórica \(S(r)=1361\times(1\,UA/r)^2\) W/m², com a distância `r` do Sol fornecida pelo JPL (não uma medição radiométrica na Lua). A potência combina irradiância, área, eficiência e fator de incidência. Perdas por temperatura, poeira, baterias, reguladores e degradação não são modeladas. Rastreamento ideal mantém o painel alinhado ao Sol e é limite superior idealizado, não sugestão de hardware real.
 
-**Integração de energia:** método dos trapézios com dados a cada 3, 6 ou 12 horas, sem interpolação dos períodos de transição pelo horizonte. Precisão limitada pela resolução temporal e pelas hipóteses de cálculo.
+**Distância e comunicação:** a distância aparente Terra–observador lunar vem da quantidade 20 do JPL. O tempo de propagação aproximado de um sinal em um sentido é \(t = d/c\). Não são avaliadas perdas de enlace, antenas, obstruções ou processamento de telecomunicação.
+
+**Sítios Apollo:** coordenadas NASA/NSSDC são planetocêntricas e usadas como aproximação de latitude geodética; essa limitação deve ser considerada em análises de precisão.
+
+**Integração de energia:** método dos trapézios com dados a cada 1, 3, 6 ou 12 horas, sem interpolação dos períodos de transição pelo horizonte. Precisão limitada pela resolução temporal e pelas hipóteses de cálculo.
 
 **Próxima fase:** mapas reais de elevação LRO/LOLA e perfil do horizonte por azimute, para calcular sombras e iluminações do relevo, além de efeitos de perda energética.
 
@@ -57,6 +63,8 @@ Selecione local, período, orientação do painel e pressione **Consultar NASA /
 - JPL Horizons API: https://ssd-api.jpl.nasa.gov/doc/horizons.html
 - JPL Horizons manual: https://ssd.jpl.nasa.gov/horizons/manual.html
 - Dados da missão LOLA/LRO: https://pds-geosciences.wustl.edu/missions/lro/lola.htm
+- NASA Moon Trek: https://trek.nasa.gov/moon/
+- Locais históricos Apollo (NASA/NSSDC): https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html
 - Streamlit Community Cloud: https://docs.streamlit.io/deploy/streamlit-community-cloud
 
 ## Testes locais (opcional)
