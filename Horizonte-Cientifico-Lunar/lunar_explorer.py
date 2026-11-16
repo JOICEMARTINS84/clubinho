@@ -130,6 +130,8 @@ def _selection_callback() -> None:
     st.session_state["lunar_place_choice"] = NOMINATED[0]
     st.session_state.pop("lunar_site_results", None)
     st.session_state.pop("lunar_site_query_key", None)
+    st.session_state.pop("lunar_site_error", None)
+    st.session_state.pop("lunar_site_error", None)
 
 
 def _apply_manual_coordinates() -> None:
@@ -205,6 +207,11 @@ def render_lunar_explorer(start: datetime, stop: datetime, step: int,
             st.caption("Ponto livre: sem cratera identificada automaticamente. "
                        "As coordenadas serão usadas para a consulta astronômica.")
         with st.expander("Digitar coordenadas exatas"):
+            origin = (round(lat, 5), round(lon, 5))
+            if st.session_state.get("lunar_manual_origin") != origin:
+                st.session_state["lunar_manual_lat"] = lat
+                st.session_state["lunar_manual_lon"] = lon
+                st.session_state["lunar_manual_origin"] = origin
             with st.form("manual_lunar_coords"):
                 st.number_input("Latitude norte (+) / sul (−)", -90.0, 90.0, lat,
                                 step=0.01, format="%.5f", key="lunar_manual_lat")
