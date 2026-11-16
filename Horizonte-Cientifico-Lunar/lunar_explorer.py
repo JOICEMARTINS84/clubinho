@@ -413,6 +413,8 @@ def render_lunar_explorer(
         }
 
     data = st.session_state.get("lunar_site_results")
+    if action == "Medir cratera" and crater_estimate is None:
+        data = None  # não mostrar resultados de um ponto antes da medida ficar pronta
     if data is not None and st.session_state.get("lunar_site_query_key") == collect_key:
         try:
             computed = add_solar_power(data, area, efficiency, mode, tilt, az_panel)
