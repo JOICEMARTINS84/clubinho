@@ -48,3 +48,53 @@ def test_energy_constant_power_and_integration():
 def test_reject_invalid_site():
     with pytest.raises(ValueError):
         request_body("sun", -92, 0, datetime.now(timezone.utc), datetime.now(timezone.utc), 6)
+
+
+def test_horizons_request_uses_supported_parameters():
+    class StubResponse:
+        status_code = 200
+
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return {"result": EXAMPLE}
+
+    class StubSession:
+        params = None
+
+        def get(self, _url, params, timeout):
+            self.params = params
+            return StubResponse()
+
+    session = StubSession()
+    result = request_body(
+        "sun", -89.5, 0.0,
+        datetime(2026, 11, 16, tzinfo=timezone.utc),
+        datetime(2026, 11, 17, tzinfo=timezone.utc),
+        6, session,
+    )
+    assert len(result) == 3
+    assert session.params["APPARENT"] == "'AIRLESS'"
+    assert "REFRACT" not in session.params
+
+
+def test_horizons_http_error_shows_nasa_message():
+    class StubResponse:
+        status_code = 400
+        text = '{"message": "Invalid input keyword"}'
+
+        def json(self):
+            return {"message": "Invalid input keyword"}
+
+    class StubSession:
+        def get(self, _url, params, timeout):
+            return StubResponse()
+
+    with pytest.raises(HorizonsError, match="Invalid input keyword"):
+        request_body(
+            "sun", -89.5, 0,
+            datetime(2026, 11, 16, tzinfo=timezone.utc),
+            datetime(2026, 11, 17, tzinfo=timezone.utc),
+            6, StubSession(),
+        )
