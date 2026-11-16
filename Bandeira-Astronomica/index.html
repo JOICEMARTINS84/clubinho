@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Explore as 27 estrelas da bandeira brasileira e descubra constelações, estados e história astronômica.">
+<title>O céu da bandeira brasileira — Matemática & Contexto</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main id="ba-app" class="ba-app">
+<header class="ba-header">
+<div class="ba-overline"><span><i class="ba-led"></i> OBSERVATÓRIO INTERATIVO · BRASIL</span><span>MATEMÁTICA & CONTEXTO</span></div>
+<h1>O céu da <em>bandeira brasileira</em></h1>
+<p class="ba-subtitle">27 estrelas. 9 constelações. Uma história escrita no céu — e preservada no símbolo nacional.</p>
+<div class="ba-stats"><span><strong>27</strong> ESTRELAS</span><span><strong>09</strong> CONSTELAÇÕES</span><span><strong>1889</strong> CÉU DE REFERÊNCIA</span></div>
+</header>
+<nav class="ba-tabs" aria-label="Navegação do observatório">
+<button class="ba-tab on" data-tab="explorar">Explorar estrelas</button><button class="ba-tab" data-tab="historia">A história</button><button class="ba-tab" data-tab="quiz">Desafio astronômico</button>
+</nav>
+<section class="ba-view on" data-view="explorar">
+<div class="ba-grid">
+<div class="ba-left">
+<div class="ba-caption-row"><span class="ba-label">MAPA INTERATIVO · 27 PONTOS</span><span>Selecione uma estrela ou um estado</span></div>
+<div class="ba-flagbox">
+<svg class="ba-flag" id="ba-flag" viewBox="0 0 1000 700" role="img" aria-label="Reconstituição didática da bandeira brasileira com 27 estrelas clicáveis">
+<defs><clipPath id="ba-clip"><circle cx="500" cy="350" r="175"/></clipPath>
+<radialGradient id="ba-gradient"><stop stop-color="#193c71"/><stop offset="1" stop-color="#082148"/></radialGradient>
+<path id="ba-text-path" d="M313 294 Q500 288 687 399"/></defs>
+<rect width="1000" height="700" fill="#087541"/>
+<polygon points="500,85 915,350 500,615 85,350" fill="#f5cb4b"/>
+<circle cx="500" cy="350" r="175" fill="url(#ba-gradient)"/>
+<g clip-path="url(#ba-clip)">
+<path d="M305 305 Q502 293 695 409" fill="none" stroke="white" stroke-width="34"/>
+<text font-size="23" letter-spacing="2" font-family="sans-serif" font-weight="800" fill="#087541"><textPath href="#ba-text-path" startOffset="50%" text-anchor="middle">ORDEM E PROGRESSO</textPath></text>
+<g id="ba-star-layer"></g>
+</g>
+</svg>
+<div class="ba-watermark">RECONSTITUIÇÃO DIDÁTICA · POSIÇÕES APROXIMADAS</div>
+</div>
+<div class="ba-map-hint"><span>✦ Clique em qualquer estrela</span><button type="button" id="ba-reset">Mostrar todas</button></div>
+<div id="ba-filters" class="ba-filters" aria-label="Constelações"></div>
+</div>
+<aside class="ba-panel">
+<div class="ba-kicker" id="ba-kicker">ESTRELA SELECIONADA</div>
+<h2 id="ba-name">Sirius</h2><p class="ba-bayer" id="ba-bayer"></p>
+<div class="ba-divider"></div>
+<div class="ba-facts">
+<div><small>CONSTELAÇÃO</small><strong id="ba-con"></strong></div>
+<div><small>UNIDADE FEDERATIVA</small><strong id="ba-uf"></strong></div>
+<div><small>CLASSE NO DESENHO OFICIAL</small><strong id="ba-class"></strong></div>
+</div>
+<p class="ba-explain" id="ba-explain"></p>
+<div class="ba-api" id="ba-api">Identificação: documentos oficiais</div>
+<div class="ba-actions"><button id="ba-speak" type="button">▶ Ouvir explicação</button><a id="ba-cds" target="_blank" rel="noopener noreferrer">Consultar SIMBAD ↗</a></div>
+<label class="ba-label ba-field-label" for="ba-search">LOCALIZAR POR ESTADO</label>
+<select id="ba-search" aria-label="Escolha uma estrela pelo estado"></select>
+<div class="ba-note"><b>Rigor científico</b><p>O tamanho desenhado na bandeira (classes de 1 a 5) não é a magnitude astronômica. A posição neste mapa é uma aproximação didática, não uma reprodução legal nem uma carta celeste com coordenadas.</p></div>
+</aside>
+</div>
+</section>
+<section class="ba-view" data-view="historia">
+<div class="ba-story-intro"><div class="ba-label">DOCUMENTOS · MEMÓRIA · ASTRONOMIA</div><h2>O céu de um momento histórico</h2><p>A disposição das estrelas foi definida a partir de uma interpretação da esfera celeste e integra a legislação brasileira.</p></div>
+<div class="ba-timeline">
+<article><span>01 — NOVEMBRO DE 1889</span><h3>A nova bandeira republicana</h3><p>A bandeira foi adotada em 19 de novembro de 1889, depois da Proclamação da República. O projeto foi idealizado por Raimundo Teixeira Mendes, com colaboração de Miguel Lemos e do astrônomo Manuel Pereira Reis; o desenho foi feito por Décio Vilares.</p></article>
+<article><span>02 — CÉU DE REFERÊNCIA</span><h3>Rio de Janeiro, 15 de novembro, 8h30</h3><p>Na redação legal, as constelações correspondem ao aspecto do céu naquela data e hora, considerando a visão de um observador fora da esfera celeste. Portanto, não se trata de uma fotografia comum do céu vista de dentro da Terra.</p></article>
+<article><span>03 — 1992</span><h3>Uma estrela para cada unidade federativa</h3><p>A Lei 8.421/1992 consolidou as regras e determinou que o desenho seja atualizado em caso de criação ou extinção de estados. O conjunto atual contém 26 estados e o Distrito Federal.</p></article>
+<article><span>04 — AS CONSTELAÇÕES</span><h3>Mais do que o Cruzeiro do Sul</h3><p>O símbolo reúne estrelas de nove constelações: Cão Maior, Cão Menor, Hidra Fêmea, Virgem, Cruzeiro do Sul, Escorpião, Triângulo Austral, Oitante e Carina. Canopus aparece na nomenclatura histórica Argus, hoje correspondente à Carina.</p></article>
+</div>
+</section>
+<section class="ba-view" data-view="quiz">
+<div class="ba-story-intro"><span class="ba-label">DESAFIO DIDÁTICO</span><h2>Você conhece esse céu?</h2><p>Cinco questões para aprender a ler a bandeira pela Astronomia.</p></div>
+<div class="ba-quiz"><small id="ba-progress">PERGUNTA 1 DE 5</small><h3 id="ba-question"></h3><div id="ba-options"></div><p id="ba-feedback" aria-live="polite"></p><button id="ba-next" disabled>Próxima pergunta →</button></div>
+</section>
+<footer class="ba-footer"><span><b>Matemática & Contexto</b> · Joice Souza Martins Santos</span><div><a href="https://plenarinho.leg.br/index.php/2018/10/bandeira-nacional/" target="_blank" rel="noopener">Câmara ↗</a><a href="https://www2.camara.leg.br/legin/fed/lei/1992/lei-8421-11-maio-1992-362960-anexos-pl.pdf" target="_blank" rel="noopener">Anexo legal ↗</a><a href="https://simbad.cds.unistra.fr/" target="_blank" rel="noopener">SIMBAD ↗</a></div></footer>
+</main>
+<script defer src="app.js"></script>
+</body></html>
