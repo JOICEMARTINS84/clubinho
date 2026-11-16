@@ -93,6 +93,42 @@ button[data-baseweb="tab"][aria-selected="true"]{
  .hero h1{font-size:clamp(2.35rem,9vw,3.4rem)!important;}
  .hero-meta{gap:10px;}
 }
+
+/* Painel de controle lateral — visual de console educativo */
+[data-testid="stSidebar"]{min-width:325px!important;max-width:395px!important;}
+[data-testid="stSidebar"] > div:first-child{padding-top:0.4rem!important;}
+[data-testid="stSidebar"] [data-baseweb="select"] > div,
+[data-testid="stSidebar"] [data-baseweb="input"] > div {
+ background:#101a28!important; border-color:#334057!important;
+ border-radius:5px!important; min-height:39px;
+}
+[data-testid="stSidebar"] [data-testid="stSlider"]{padding:1px 2px 10px;}
+[data-testid="stSidebar"] [data-testid="stWidgetLabel"]{color:#d9e0ed!important;}
+.side-console{background:linear-gradient(145deg,#18263b,#0a1220);
+ border:1px solid #354866;border-top:3px solid #f13b2d;
+ padding:19px 16px 15px;margin:0 0 14px;border-radius:3px;}
+.side-console-tag{color:#92a8c3;font-size:.66rem;letter-spacing:.18em;font-weight:800;}
+.side-console-name{color:#fff;font-size:1.43rem;font-weight:800;
+ letter-spacing:-.03em;margin:9px 0 12px;}
+.side-console-status{display:flex;align-items:center;gap:9px;font-size:.71rem;
+ letter-spacing:.085em;color:#c7d5e8;font-weight:700;}
+.indicator{width:8px;height:8px;display:inline-block;background:#9dd9af;
+ box-shadow:0 0 10px #56b87988;border-radius:50%;}
+.side-step{border-top:1px solid #2b3b52;margin:19px 0 12px;padding-top:16px;
+ display:flex;align-items:center;gap:12px;}
+.side-step b{width:34px;height:31px;display:flex;align-items:center;justify-content:center;
+ background:#f13b2d;color:#fff;font-weight:800;font-size:.8rem;border-radius:2px;}
+.side-step span{font-size:.77rem;color:#dfe6f1;letter-spacing:.095em;font-weight:800;}
+.coordinate-box,.side-readout{display:flex;justify-content:space-between;flex-wrap:wrap;
+ gap:8px;background:#0e1826;border:1px solid #25344a;padding:11px;
+ margin:8px 0;font-size:.72rem;color:#9eb1ca;letter-spacing:.025em;}
+.coordinate-box span,.side-readout span{display:flex;flex-direction:column;gap:3px;}
+.coordinate-box b,.side-readout b{color:#eef2fb;font-family:monospace;font-size:.85rem;}
+.side-readout{margin:14px 0 4px;}
+@media(max-width:800px){
+ [data-testid="stSidebar"]{min-width:0!important;max-width:100%!important;}
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -119,38 +155,124 @@ PRESETS = {
 }
 
 with st.sidebar:
-    st.markdown("**CONFIGURAÇÃO DE OBSERVAÇÃO**")
-    st.subheader("Local lunar")
-    place = st.selectbox("Ponto lunar", list(PRESETS))
+    status_name = (
+        "FALHA NA ÚLTIMA CONSULTA" if st.session_state.get("horizons_error")
+        else "DADOS ARMAZENADOS" if "horizons_data" in st.session_state
+        else "PRONTO PARA CONSULTA"
+    )
+    st.markdown(
+        '<div class="side-console">'
+        '<div class="side-console-tag">ESTAÇÃO DE PESQUISA / HC-01</div>'
+        '<div class="side-console-name">Controle de missão</div>'
+        f'<div class="side-console-status"><span class="indicator"></span>{status_name}</div>'
+        '</div>', unsafe_allow_html=True,
+    )
+    experience = st.radio(
+        "Nível de operação",
+        ["Guiado", "Técnico"], horizontal=True, key="mode_experience",
+        help="Guiado: controles essenciais e explicações. Técnico: expõe coordenadas e hipóteses completas.",
+    )
+    st.caption(
+        "Guiado: ideal para estudantes. Técnico: parâmetros detalhados para investigação."
+        if experience == "Guiado"
+        else "Modo técnico: parâmetros de observação e modelo fotovoltaico disponíveis."
+    )
+
+    st.markdown('<div class="side-step"><b>01</b><span>LOCAL DE OBSERVAÇÃO</span></div>',
+                unsafe_allow_html=True)
+    place = st.selectbox(
+        "Onde vamos observar?", list(PRESETS), key="study_location",
+        help="O local é um ponto de observação imaginário na superfície da Lua.",
+    )
     if PRESETS[place] is None:
-        lat = st.number_input("Latitude (°)", min_value=-90.0, max_value=90.0, value=-89.5, step=0.1)
-        lon = st.number_input("Longitude leste (°)", min_value=-180.0, max_value=180.0, value=0.0, step=1.0)
+        lat = st.number_input("Latitude lunar (°)", min_value=-90.0, max_value=90.0,
+                              value=-89.5, step=0.1, help="Latitude sul é negativa.")
+        lon = st.number_input("Longitude leste (°)", min_value=-180.0, max_value=180.0,
+                              value=0.0, step=1.0, help="Longitude leste positiva.")
     else:
         lat, lon = PRESETS[place]
-    st.caption(f"Latitude: {lat:.4f}° · Longitude: {lon:.4f}° leste")
+    st.markdown(
+        f'<div class="coordinate-box"><span>LATITUDE <b>{lat:+.4f}°</b></span>'
+        f'<span>LONGITUDE <b>{lon:+.4f}°</b></span></div>',
+        unsafe_allow_html=True,
+    )
     if "Apollo" in place:
-        st.caption("Coordenadas publicadas pela NASA/NSSDC, referencial planetocêntrico, "
-                   "usadas aqui como aproximação para a entrada geodética do JPL.")
-        st.markdown("[Fonte dos locais Apollo · NASA](https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html)")
-    st.divider()
-    st.subheader("Janela temporal")
-    day = st.date_input("Data inicial (UTC)", value=datetime.now(timezone.utc).date(),
-                        min_value=datetime(1900, 1, 1).date(), max_value=datetime(2099, 12, 31).date())
-    days = st.slider("Duração (dias)", 1, 14, 7)
-    step = st.select_slider("Amostragem", options=[1, 3, 6, 12], value=3,
-                            format_func=lambda v: f"{v} hora" if v == 1 else f"{v} horas")
-    st.divider()
-    st.subheader("Modelo fotovoltaico")
-    area = st.slider("Área (m²)", 0.5, 30.0, 4.0, 0.5)
-    efficiency = st.slider("Eficiência (%)", 5, 35, 22)
-    mode = st.selectbox("Orientação", ["Horizontal", "Inclinado fixo", "Rastreamento ideal"])
-    tilt, az_panel = 0.0, 0.0
-    if mode == "Inclinado fixo":
-        tilt = st.slider("Inclinação desde a horizontal (°)", 0, 90, 75)
-        az_panel = st.slider("Direção da face do painel (°)", 0, 359, 180)
-    load = st.button("Executar análise", type="primary", use_container_width=True)
-    st.caption("As efemérides vêm do JPL. Resultados calculados pelo modelo são identificados.")
-    st.markdown("[Cartografia lunar real · NASA Moon Trek](https://trek.nasa.gov/moon/)")
+        st.caption("Local histórico NASA/NSSDC; latitude planetocêntrica aproximada como geodética.")
+        if experience == "Técnico":
+            st.markdown("[Ver coordenadas originais NASA](https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html)")
+    else:
+        st.caption("Este é o ponto a partir do qual o JPL calculará onde o Sol e a Terra aparecem.")
+
+    st.markdown('<div class="side-step"><b>02</b><span>PERÍODO E RESOLUÇÃO</span></div>',
+                unsafe_allow_html=True)
+    day = st.date_input(
+        "Quando começa a investigação? (UTC)",
+        value=datetime.now(timezone.utc).date(),
+        min_value=datetime(1900,1,1).date(),
+        max_value=datetime(2099,12,31).date(),
+        help="A NASA calcula posições astronômicas para a data selecionada; não é uma câmera ao vivo.",
+    )
+    days = st.slider("Quantos dias vamos estudar?", 1, 14, 7,
+                      help="Intervalo total, de 1 até 14 dias.")
+    if experience == "Guiado":
+        step = 3
+        st.caption("Resolução: uma amostra a cada 3 horas (configuração guiada).")
+    else:
+        step = st.select_slider("Intervalo entre medições calculadas",
+                                options=[1,3,6,12], value=3,
+                                format_func=lambda v: f"{v} h",
+                                help="Intervalos menores dão mais detalhes, mas geram mais linhas na consulta.")
+        st.caption("O horário adotado é UTC. Resolução temporal não corresponde a precisão espacial.")
+
+    st.markdown('<div class="side-step"><b>03</b><span>EXPERIMENTO SOLAR</span></div>',
+                unsafe_allow_html=True)
+    if experience == "Guiado":
+        area = st.slider("Tamanho do painel (m²)", 1.0, 12.0, 4.0, 0.5,
+                         help="Área útil de células fotovoltaicas: mais área tende a gerar mais potência.")
+        efficiency = 22
+        mode = st.selectbox("Posição do painel",
+                            ["Horizontal", "Rastreamento ideal"],
+                            help="Horizontal: painel paralelo ao solo. Rastreamento ideal: painel sempre apontado ao Sol quando visível.")
+        tilt, az_panel = 0.0, 0.0
+        st.caption("Eficiência adotada: 22% (hipótese de ensino). "
+                   "Energia é calculada; não existe sensor nem painel real conectado.")
+    else:
+        area = st.slider("Área fotovoltaica (m²)", 0.5, 30.0, 4.0, 0.5,
+                         help="Área geométrica das células no modelo.")
+        efficiency = st.slider("Eficiência elétrica (%)", 5, 35, 22,
+                               help="Fração idealizada da irradiância convertida em eletricidade.")
+        mode = st.selectbox("Geometria do painel",
+                            ["Horizontal","Inclinado fixo","Rastreamento ideal"],
+                            help="O rastreamento perfeito é um limite superior idealizado.")
+        tilt, az_panel = 0.0, 0.0
+        if mode == "Inclinado fixo":
+            tilt = st.slider("Inclinação sobre o solo (°)", 0,90,75,
+                             help="0° é horizontal; 90° é vertical.")
+            az_panel = st.slider("Azimute frontal do painel (°)", 0,359,180,
+                                 help="Direção da normal projetada: 0° norte, 90° leste.")
+        st.caption("Hipótese matemática: perdas térmicas, poeira e relevo ainda não entram no cálculo.")
+
+    st.markdown('<div class="side-step"><b>04</b><span>EXECUTAR INVESTIGAÇÃO</span></div>',
+                unsafe_allow_html=True)
+    st.caption("Envia coordenadas e datas ao JPL Horizons. O processamento físico acontece em Python.")
+    load = st.button("▶  Executar análise lunar", type="primary",
+                     use_container_width=True, key="run_horizons")
+    st.markdown(
+        '<div class="side-readout"><span>FONTE <b>JPL HORIZONS</b></span>'
+        '<span>ESCALA <b>UTC</b></span>'
+        '<span>ESTADO <b>CONSULTA SOB DEMANDA</b></span></div>',
+        unsafe_allow_html=True,
+    )
+    with st.expander("Guia rápido: o que significa cada resultado?"):
+        st.markdown(
+            "**Elevação:** altura angular do Sol ou da Terra acima do horizonte ideal.\n\n"
+            "**Distância:** separação calculada pelo JPL, em quilômetros.\n\n"
+            "**Irradiância:** potência solar recebida por área; é uma estimativa física.\n\n"
+            "**Energia:** modelo de geração do painel, não medição.\n\n"
+            "**Imagem de cratera:** fotografia real que podemos analisar em pixels."
+        )
+    st.markdown("[Mapas reais e perfis de altitude · NASA Moon Trek](https://trek.nasa.gov/moon/)")
+
 
 start = datetime.combine(day, datetime.min.time()).replace(tzinfo=timezone.utc)
 stop = start + timedelta(days=days)
