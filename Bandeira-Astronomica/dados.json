@@ -89,7 +89,7 @@
       "bayer": "δ Canis Majoris",
       "nome": "Wezen",
       "identificador_simbad": "* del CMa",
-      "x": 341,
+      "x": 352,
       "y": 405,
       "classe_desenho": 2,
       "fato": "Wezen é uma estrela supergigante amarela."
@@ -245,8 +245,8 @@
       "bayer": "β Scorpii",
       "nome": "Graffias",
       "identificador_simbad": "* bet Sco",
-      "x": 620,
-      "y": 413,
+      "x": 611,
+      "y": 393,
       "classe_desenho": 3,
       "fato": "Graffias aparece na região da cabeça do Escorpião."
     },
@@ -257,8 +257,8 @@
       "bayer": "α Scorpii",
       "nome": "Antares",
       "identificador_simbad": "* alf Sco",
-      "x": 629,
-      "y": 430,
+      "x": 626,
+      "y": 423,
       "classe_desenho": 1,
       "fato": "Antares é uma supergigante vermelha, o coração do Escorpião."
     },
@@ -269,8 +269,8 @@
       "bayer": "ε Scorpii",
       "nome": "Wei",
       "identificador_simbad": "* eps Sco",
-      "x": 647,
-      "y": 413,
+      "x": 649,
+      "y": 408,
       "classe_desenho": 2,
       "fato": "A constelação do Escorpião é marcante no céu brasileiro."
     },
@@ -281,8 +281,8 @@
       "bayer": "λ Scorpii",
       "nome": "Shaula",
       "identificador_simbad": "* lam Sco",
-      "x": 588,
-      "y": 489,
+      "x": 561,
+      "y": 492,
       "classe_desenho": 2,
       "fato": "Shaula marca a extremidade da cauda do Escorpião."
     },
@@ -293,8 +293,8 @@
       "bayer": "κ Scorpii",
       "nome": "Girtab",
       "identificador_simbad": "* kap Sco",
-      "x": 584,
-      "y": 470,
+      "x": 581,
+      "y": 473,
       "classe_desenho": 3,
       "fato": "Kappa Scorpii aparece próxima à cauda do Escorpião."
     },
@@ -305,8 +305,8 @@
       "bayer": "μ Scorpii",
       "nome": "Mu Scorpii",
       "identificador_simbad": "* mu Sco",
-      "x": 605,
-      "y": 458,
+      "x": 596,
+      "y": 455,
       "classe_desenho": 3,
       "fato": "Mu Scorpii compõe a constelação do Escorpião."
     },
@@ -317,8 +317,8 @@
       "bayer": "θ Scorpii",
       "nome": "Sargas",
       "identificador_simbad": "* tet Sco",
-      "x": 627,
-      "y": 461,
+      "x": 618,
+      "y": 455,
       "classe_desenho": 2,
       "fato": "Sargas está na parte sul da figura do Escorpião."
     },
@@ -329,8 +329,8 @@
       "bayer": "ι Scorpii",
       "nome": "Iota Scorpii",
       "identificador_simbad": "* iot Sco",
-      "x": 650,
-      "y": 451,
+      "x": 640,
+      "y": 445,
       "classe_desenho": 3,
       "fato": "Iota Scorpii é identificada pela letra grega iota."
     }
