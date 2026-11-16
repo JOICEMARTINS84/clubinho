@@ -4,3 +4,5 @@ numpy>=1.26,<3
 plotly>=5.20,<7
 requests>=2.31,<3
 Pillow>=10,<13
+folium>=0.17,<0.21
+streamlit-folium>=0.23,<0.30
