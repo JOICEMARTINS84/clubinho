@@ -133,9 +133,14 @@ button,select,input{touch-action:manipulation}
  .panel{padding:11px}
  .tag{max-width:100%}
 }
+</style><style>
+.development-notice{display:flex;gap:12px;align-items:flex-start;max-width:100%;padding:13px 16px;margin:0 0 24px;border-radius:12px;border:1px solid #447260;background:#112d2c;color:#d6f4e9;font-size:.92rem;line-height:1.5}
+.development-notice strong{color:#fff;font-weight:750}
+.development-dot{flex:0 0 8px;width:8px;height:8px;margin-top:.5em;border-radius:50%;background:#82e0b5;box-shadow:0 0 0 4px #82e0b51e}
+@media(max-width:640px){.development-notice{padding:11px 12px;margin:0 0 17px;font-size:.83rem;gap:10px;border-radius:9px}}
 </style></head>
 <body><header><div class="brand">MATEMÁTICA & CONTEXTO <span style="color:#6e8b9e">/ LABORATÓRIO</span></div><div class="tag">Astronomia · História · Educação</div></header>
-<main><div class="eyebrow">Atlas astronômico interativo · edição educativa</div><h1>O céu na<br>Bandeira do Brasil</h1>
+<main><div class="development-notice" role="status"><span class="development-dot" aria-hidden="true"></span><span><strong>Projeto em fase de desenvolvimento.</strong> Algumas funcionalidades ainda estão sendo aperfeiçoadas. Obrigada por explorar esta versão.</span></div><div class="eyebrow">Atlas astronômico interativo · edição educativa</div><h1>O céu na<br>Bandeira do Brasil</h1>
 <p class="intro">Cada estrela da bandeira representa uma unidade da Federação e pertence a uma constelação real. Explore a relação entre o símbolo nacional, o céu e a história da República.</p>
 <div class="stats"><span><strong>27</strong> estrelas</span><span><strong>9</strong> constelações</span><span><strong>1889</strong> céu de referência</span></div>
 <section class="layout"><div class="panel"><div class="toolbar"><h2>Mapa estelar da bandeira</h2><button class="secondary" id="zoom" type="button" aria-pressed="false">Ampliar céu</button><select id="filter" aria-label="Filtrar por constelação"><option value="">Todas as constelações</option></select></div>
