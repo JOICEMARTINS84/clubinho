@@ -10,7 +10,7 @@ Autoria: **Joice Souza Martins Santos**, projeto Matemática & Contexto.
 - Texto histórico e referências institucionais;
 - Interface responsiva em HTML, CSS e JavaScript incorporada a uma aplicação Python + Streamlit.
 
-**Nota científica:** a posição dos ícones é didática e esquemática, não uma reprodução geométrica oficial nem efemérides. A estrela selecionada é identificada por seu nome e sua designação; os ícones não indicam brilho, distância ou coordenadas reais. Não há API astronômica ativa nesta versão.
+**Nota científica (versão revisada):** a bandeira foi reconstruída em SVG com proporção 20:14, círculo de raio 3,5 módulos, losango e arco segundo a Lei nº 5.700/1971, e centros das 27 estrelas baseados em estudo da geometria do desenho modular. As estrelas têm as cinco grandezas gráficas previstas na lei. A interface permite ampliar o círculo azul. Este desenho vetorial é uma reconstituição didática baseada na legislação; não é uma imagem oficial fornecida pelo governo, nem uma projeção astronômica de dados observacionais. Não há API astronômica ativa nesta versão.
 
 ## Publicar como aplicativo SEPARADO do Horizonte Lunar
 
@@ -51,5 +51,12 @@ Também é possível abrir `bandeira-astronomica/index.html` diretamente no nave
 
 ## Etapas futuras
 
-- Refinar o desenho para concordar com a geometria oficial (posição e tamanhos).
+- Conferir visualmente a reconstituição vetorial com o Anexo nº 2 da Lei nº 8.421/1992.
 - Acrescentar dados físicos astronômicos e referências por estrela com curadoria, e eventualmente uma API/catalogador como SIMBAD/VizieR.
+
+
+## Revisão geométrica
+
+Os centros das 27 estrelas foram organizados em coordenadas de SVG 2000×1400 com consulta ao estudo de construção vetorial de [Daniel Madeira](https://github.com/danmadeira/bandeira-nacional), realizado com base nas medidas legais. A implementação do HTML desenha as formas por comandos SVG próprios e calcula os pentagramas por funções trigonométricas. As correspondências astronômicas são conferidas com materiais do INPE e do Observatório Nacional.
+
+O arquivo `estrelas.json` contém `cx`, `cy` e `grandeza`, além de estado, estrela e constelação. `x` e `y` guardam a posição percentual correspondente na bandeira.
