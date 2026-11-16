@@ -62,6 +62,77 @@ svg.star-layer .star-hit{fill:transparent;stroke:transparent;stroke-width:0;poin
 .constellation-caption{font-size:.84rem;color:#d1e1eb;line-height:1.5;margin:8px 0}
 .constellation-source{font-size:.72rem;color:#90aebd;margin:12px 0 0;line-height:1.4}
 @media(max-width:860px){.constellation-panel{padding:12px}#constellationMap{min-height:160px}}
+</style><style>
+/* Adaptação mobile-first, sem rolagem horizontal nem cortes de painéis */
+html{width:100%;max-width:100%;overflow-x:hidden}
+body{width:100%;max-width:100%;margin:0;overflow-x:hidden;overflow-wrap:break-word}
+main{width:100%;min-width:0;max-width:1320px;overflow:visible}
+header,section,aside,.panel,.toolbar,.bottom,.layout,.intro,.fact,.constellation-panel{min-width:0;max-width:100%}
+.layout{grid-template-columns:minmax(0,1.45fr) minmax(0,.85fr)}
+.toolbar select,.toolbar button,.flag-wrap,svg.flag,#stars,#constellationMap{max-width:100%}
+.info-note{font-size:.76rem;color:#a6c4d0;margin:8px 0 0}
+.star-picker{display:none;margin:14px 0 4px;padding:12px;border:1px solid #32536a;background:#122638;border-radius:11px}
+.star-picker label{display:block;color:#b9e3e2;font-size:.83rem;font-weight:750;margin:0 0 8px}
+.star-picker select{display:block;width:100%;max-width:100%;min-height:48px;font-size:16px}
+.searchbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
+.searchbar input{flex:1 1 190px;min-width:0;max-width:100%;min-height:44px;font-size:16px}
+.searchbar button{flex:0 1 auto;min-height:44px}
+button,select,input{touch-action:manipulation}
+.results button{min-height:40px}
+.fact{overflow-wrap:anywhere}
+.fact span{min-width:0}
+@media(max-width:1050px){
+ .layout,.bottom{grid-template-columns:minmax(0,1fr)}
+ .detail{min-height:0}
+ main{padding:25px 16px 38px}
+ .panel{padding:18px}
+}
+@media(max-width:640px){
+ :root{font-size:15px}
+ body{font-size:15px;line-height:1.48}
+ header{padding:13px 14px;gap:7px}
+ .brand{font-size:.69rem;letter-spacing:.075em}
+ .tag{font-size:.68rem;padding:4px 9px}
+ main{padding:22px 10px 32px}
+ h1{font-size:clamp(2rem,8.7vw,2.85rem);line-height:1.06;margin:9px 0 12px}
+ .eyebrow{font-size:.68rem;letter-spacing:.13em}
+ .intro{font-size:.94rem;line-height:1.55;margin-bottom:12px}
+ .stats{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:16px 0}
+ .stats span{padding:8px 9px;font-size:.78rem}
+ .stats span:last-child{grid-column:span 2}
+ .stats strong{font-size:1.08rem}
+ .layout,.bottom{gap:12px}
+ .panel{padding:13px;border-radius:12px}
+ .toolbar{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:13px}
+ .toolbar h2{grid-column:1/-1;font-size:1.05rem;margin:0}
+ .toolbar #zoom{grid-column:1/-1;width:100%;min-height:44px}
+ .toolbar #filter{grid-column:1/-1;min-width:0;width:100%;min-height:46px;font-size:16px}
+ .flag-wrap{border-radius:7px}
+ .flag-wrap.zoomed{width:100%;max-width:100%;aspect-ratio:1/1}
+ .legend{font-size:.75rem;line-height:1.5;margin:11px 0 0}
+ .star-picker{display:block}
+ .searchbar{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+ .searchbar input,.searchbar button{width:100%;min-width:0}
+ .results{max-height:160px;overflow-y:auto;gap:7px}
+ .results button{min-height:44px;font-size:.8rem}
+ .detail h3{font-size:1.7rem;line-height:1.15;overflow-wrap:anywhere}
+ .fact{display:grid;grid-template-columns:minmax(0,1fr);gap:4px;padding:10px 0}
+ .fact span{text-align:left;overflow-wrap:anywhere}
+ .constellation-panel{margin:16px 0 13px;padding:12px 10px}
+ #constellationMap{min-height:0;width:100%;height:auto}
+ .constellation-legend{gap:9px}
+ .constellation-head h4{font-size:1rem}
+ .constellation-index{font-size:.66rem}
+ .small,.constellation-caption{line-height:1.55}
+ .bottom{margin-top:13px}
+ footer{font-size:.78rem}
+}
+@media(max-width:380px){
+ header{padding:12px 10px}
+ main{padding-inline:8px}
+ .panel{padding:11px}
+ .tag{max-width:100%}
+}
 </style></head>
 <body><header><div class="brand">MATEMÁTICA & CONTEXTO <span style="color:#6e8b9e">/ LABORATÓRIO</span></div><div class="tag">Astronomia · História · Educação</div></header>
 <main><div class="eyebrow">Atlas astronômico interativo · edição educativa</div><h1>O céu na<br>Bandeira do Brasil</h1>
@@ -79,7 +150,8 @@ svg.star-layer .star-hit{fill:transparent;stroke:transparent;stroke-width:0;poin
 </svg>
 <svg id="stars" class="star-layer" viewBox="0 0 2000 1400" role="group" aria-label="27 estrelas interativas da bandeira"></svg></div>
 <p class="legend">Reconstituição vetorial baseada nas proporções legais e nas posições do desenho modular. As áreas clicáveis são ampliadas para facilitar a seleção. Use a lupa para explorar as estrelas.</p>
-<div id="results" class="results" aria-live="polite" hidden></div><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:15px"><input id="search" placeholder="Buscar estrela ou estado..." aria-label="Buscar estrela ou estado" style="flex:1"><button class="secondary" id="random">Escolher uma estrela</button></div>
+<div id="results" class="results" aria-live="polite" hidden></div><div class="star-picker"><label for="star-picker">Escolha um estado ou estrela</label><select id="star-picker" aria-label="Escolher estrela pela unidade da Federação"></select><p class="info-note">No celular, esta lista facilita a escolha de estrelas próximas umas das outras.</p></div>
+<div class="searchbar"><input id="search" placeholder="Buscar estrela ou estado..." aria-label="Buscar estrela ou estado"><button class="secondary" id="random" type="button">Escolher uma estrela</button></div>
 </div>
 <aside class="panel detail" aria-live="polite"><div class="subtitle">Observatório · ficha da estrela</div><h3 id="name">Selecione uma estrela</h3><div id="state"></div><p id="desc">Clique em uma das estrelas ou busque pelo nome de um estado.</p>
 <div class="fact"><b>Constelação</b><span id="con">—</span></div><div class="fact"><b>Designação astronômica</b><span id="des">—</span></div><div class="fact"><b>Grandeza na bandeira</b><span id="grade">—</span></div><div class="fact"><b>Unidade da Federação</b><span id="uf">—</span></div>
@@ -113,6 +185,23 @@ const filter=document.querySelector('#filter');
 const search=document.querySelector('#search');
 const zoomButton=document.querySelector('#zoom');
 const results=document.querySelector('#results');
+const starPicker=document.querySelector('#star-picker');
+const sortByState=[...starsData].sort((a,b)=>a.estado.localeCompare(b.estado,'pt-BR'));
+for(const s of sortByState){
+ const option=document.createElement('option');
+ option.value=s.uf;
+ option.textContent=s.estado+' — '+s.nome;
+ starPicker.appendChild(option);
+}
+starPicker.addEventListener('change',()=>{
+ const s=starsData.find(item=>item.uf===starPicker.value);
+ if(!s)return;
+ // A seleção pelo estado deve ser possível mesmo depois de filtrar.
+ filter.value='';search.value='';
+ showStar(s);
+ document.querySelector('.detail').scrollIntoView({behavior:'smooth',block:'start'});
+});
+
 let selected='PA';
 let zoomed=window.matchMedia('(max-width:650px)').matches;
 const constellations=[...new Set(starsData.map(s=>s.constelacao))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
@@ -214,6 +303,7 @@ function drawConstellationChart(selectedStar){
 
 function showStar(s){
  selected=s.uf;
+ starPicker.value=s.uf;
  document.querySelector('#name').textContent=s.nome;
  document.querySelector('#state').replaceChildren();
  const pill=document.createElement('span');pill.className='state';pill.textContent=s.estado+' · '+s.uf;
@@ -251,7 +341,7 @@ function render(){
   const title=svgEl('title');title.textContent=s.nome+' — '+s.estado;group.append(title);
   const ring=svgEl('circle',{cx:s.cx,cy:s.cy,r:[15,12.5,10,7,5][s.grandeza-1]+8,'class':'star-ring'});
   const shape=svgEl('polygon',{points:starPoints(s),'class':'star-shape'});
-  const hit=svgEl('circle',{cx:s.cx,cy:s.cy,r:22,'class':'star-hit'});
+  const hit=svgEl('circle',{cx:s.cx,cy:s.cy,r:zoomed?31:24,'class':'star-hit'});
   group.append(ring,shape,hit);
   group.addEventListener('click',()=>showStar(s));
   group.addEventListener('keydown',event=>{
@@ -267,6 +357,7 @@ function setZoom(next){
  flag.setAttribute('viewBox',viewBox);layer.setAttribute('viewBox',viewBox);
  zoomButton.textContent=zoomed?'Ver bandeira inteira':'Ampliar céu';
  zoomButton.setAttribute('aria-pressed',String(zoomed));
+ render();
 }
 filter.addEventListener('change',render);
 search.addEventListener('input',render);
