@@ -172,7 +172,7 @@ def style_chart(fig, height=415):
     return fig
 
 
-v, distances, power, sky, method = st.tabs(["01 · Geometria", "02 · Distâncias JPL", "03 · Energia", "04 · Céu lunar", "05 · Métodos"])
+v, distances, power, sky, topo, method = st.tabs(["01 · Geometria", "02 · Distâncias JPL", "03 · Energia", "04 · Céu lunar", "05 · Topografia NASA", "06 · Métodos"])
 with v:
     st.subheader("Elevação dos astros · JPL Horizons")
     fig = go.Figure()
@@ -276,6 +276,20 @@ with sky:
     az2.metric("Terra · azimute / elevação", f"{selected['earth_az']:.1f}° / {selected['earth_elev']:.1f}°")
     st.caption("Azimute: norte 0°, leste 90°, sul 180°, oeste 270°. "
                "A projeção mostra apenas direções; não é um mapa de terreno.")
+
+with topo:
+    st.subheader("Polo sul lunar · cartografia real")
+    st.caption("Produto visual NASA/LRO/LOLA: topografia regional e regiões permanentemente sombreadas.")
+    try:
+        st.image("https://science.nasa.gov/wp-content/uploads/2024/06/psrs-n-topo3.png",
+                 caption="NASA/LRO — topografia regional do polo sul (LOLA). Áreas azuis: regiões permanentemente sombreadas mapeadas.",
+                 use_container_width=True)
+    except Exception:
+        st.warning("A imagem da NASA não pôde ser carregada neste momento. Abra a fonte abaixo.")
+    st.markdown("[Ver pesquisa e imagem original na NASA](https://science.nasa.gov/solar-system/moon/nasas-lro-lunar-ice-deposits-are-widespread/)")
+    st.markdown("[Explorar relevo, imagens e camadas no NASA Moon Trek](https://trek.nasa.gov/moon/)")
+    st.info("O mapa é um dado cartográfico real da região polar. Nesta versão, o modelo de energia "
+            "não utiliza a altitude de cada pixel nem as sombras para corrigir os cálculos do ponto selecionado.")
 
 with method:
     st.subheader("Procedência e limites científicos")
