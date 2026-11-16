@@ -72,13 +72,17 @@ def render_crater_lab():
     with cphoto:
         image_choice = st.selectbox(
             "Imagem para estudar",
-            list(PHOTO_SOURCES) + ["Enviar fotografia JPG/PNG"],
+            ["Selecione uma imagem para começar"] + list(PHOTO_SOURCES) + ["Enviar fotografia JPG/PNG"],
             key="crater_photo_choice",
             help="Escolha uma imagem real da missão LRO ou carregue uma fotografia própria."
         )
     with cinfo:
         st.markdown("**O que este módulo mede?**")
         st.caption("Tamanho em pixels, perfil de luminância e diâmetro estimado somente quando uma escala confiável é informada.")
+
+    if image_choice == "Selecione uma imagem para começar":
+        st.info("Escolha uma fotografia LRO na lista, ou envie um arquivo para iniciar a análise.")
+        return
 
     source = PHOTO_SOURCES.get(image_choice)
     if source:
