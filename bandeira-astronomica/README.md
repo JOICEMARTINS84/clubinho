@@ -93,3 +93,16 @@ A bandeira abre inteira no celular; o botão **Ampliar disco** auxilia a seleç�
 
 O projeto permanece em desenvolvimento e a representação não deve ser tratada como uma
 efeméride, observação em tempo real ou imagem oficial da bandeira.
+
+
+## Interface — mesa de consulta (novembro de 2026)
+
+A navegação principal deixou o formato de página promocional e passou a usar três
+áreas contínuas: índice alfabético por UF, bandeira em prancha central e registro
+astronômico com carta celeste. No celular, a ordem é bandeira, registro e índice;
+o seletor por estado fica acima da prancha para acesso rápido.
+
+A versão usa somente fontes nativas do sistema (sem dependências de fontes da web),
+não adiciona dados estelares e mantém as fontes do catálogo. O índice acompanha
+a seleção, a busca e os filtros. A consulta no Streamlit usa o mesmo `index.html`
+proveniente de `build.py`.

@@ -64,7 +64,7 @@
     page: $('.page'), detail: $('.detail'),
     wrap: $('#flag-wrap'), flag: $('#flag'), stars: $('#stars'), mag: $('#mag-legend'),
     filter: $('#filter'), search: $('#search'), zoom: $('#zoom'), random: $('#random'),
-    results: $('#results'), picker: $('#picker'), prev: $('#prev'), next: $('#next'), counter: $('#counter'),
+    results: $('#results'), index: $('#star-index'), picker: $('#picker'), prev: $('#prev'), next: $('#next'), counter: $('#counter'),
     name: $('#name'), state: $('#state'), desc: $('#desc'), con: $('#con'), des: $('#des'),
     pips: $('#pips'), grade: $('#grade'), uf: $('#uf'), apparentMag: $('#mag-aparente'),
     chart: $('#chart'), chartTitle: $('#chart-title'), chartCode: $('#chart-code'), chartCaption: $('#chart-caption'),
@@ -155,6 +155,19 @@
 
     const byState = [...STARS].sort((a, b) => a.estado.localeCompare(b.estado, 'pt-BR'));
     for (const s of byState) ui.picker.append(new Option(`${s.estado} — ${s.nome}`, s.uf));
+    byState.forEach((s, number) => {
+      const button = htmlEl('button', 'index-entry');
+      button.type = 'button';
+      button.setAttribute('aria-label', `${s.estado}: ${s.nome}`);
+      button.dataset.uf = s.uf;
+      button.append(
+        htmlEl('span', 'ordinal', String(number + 1).padStart(2, '0')),
+        htmlEl('span', 'uf', s.uf),
+        htmlEl('span', 'star-name', s.nome)
+      );
+      button.addEventListener('click', () => showStar(s, { reveal: true }));
+      ui.index.append(button);
+    });
   }
 
   function renderResults() {
@@ -183,9 +196,21 @@
   }
 
   /** Reaplica filtro e busca em todos os pontos da interface. */
+  function updateIndex() {
+    ui.index.querySelectorAll('.index-entry').forEach((entry) => {
+      const s = byUf.get(entry.dataset.uf);
+      const current = entry.dataset.uf === state.selected;
+      entry.classList.toggle('is-selected', current);
+      entry.classList.toggle('is-dim', !matches(s));
+      entry.setAttribute('aria-current', current ? 'true' : 'false');
+      entry.hidden = !matches(s) && Boolean(state.query || state.constellation);
+    });
+  }
+
   function refresh() {
     renderResults();
     updateStarLayer();
+    updateIndex();
     updateCounter();
   }
 
@@ -218,6 +243,7 @@
 
     drawChart(s);
     updateStarLayer();
+    updateIndex();
     updateCounter();
 
     // Com os painéis empilhados, leva a pessoa até a ficha depois do toque.
@@ -404,7 +430,7 @@
     state.constellation = '';
     state.query = '';
     showStar(s, { reveal: true });
-    renderResults();
+    refresh();
   });
 
   buildControls();

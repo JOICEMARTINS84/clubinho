@@ -3,160 +3,107 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#16252f">
-<title>O céu na Bandeira do Brasil | Matemática &amp; Contexto</title>
-<meta name="description" content="Atlas interativo das estrelas da Bandeira do Brasil. Consulte os estados, as constelações e as cartas celestes correspondentes.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&amp;display=swap" rel="stylesheet">
+<meta name="theme-color" content="#1c2527">
+<title>O céu na Bandeira do Brasil — Matemática &amp; Contexto</title>
+<meta name="description" content="Catálogo astronômico interativo das 27 estrelas da Bandeira do Brasil, com consulta por estado, constelação e cartas celestes.">
 <style>{{STYLE}}</style>
 </head>
 <body>
 <div class="page">
-<a class="skip-link" href="#mapa">Ir diretamente ao mapa da bandeira</a>
-<header class="topbar">
-  <div class="topbar-inner">
-    <div class="brand"><span class="brand-rule" aria-hidden="true"></span><span>Matemática <span class="brand-amp">&amp;</span> Contexto</span></div>
-    <span class="topbar-right">Arquivo digital <span aria-hidden="true">/</span> Astronomia e História</span>
+<a class="skip-link" href="#mapa">Ir ao mapa interativo</a>
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="identity"><span class="monogram" aria-hidden="true">M<span>·</span>C</span><span class="identity-name">Matemática &amp; Contexto<small>Laboratório de astronomia</small></span></div>
+    <div class="masthead-right">ATLAS DIGITAL <span class="masthead-slash">/</span> EDIÇÃO DE PESQUISA <span class="edition-year">2026</span></div>
   </div>
-  <nav class="index-nav" aria-label="Seções do atlas">
-    <div class="index-nav-inner">
-      <a href="#mapa"><span>01</span> A bandeira</a>
-      <a href="#registro"><span>02</span> Registro estelar</a>
-      <a href="#contexto"><span>03</span> Nota histórica</a>
-      <a href="#fontes"><span>04</span> Referências</a>
-      <span class="index-nav-edition">ESTUDO VISUAL · VERSÃO 01</span>
-    </div>
-  </nav>
 </header>
 <main>
-  <section class="hero" aria-labelledby="page-heading">
-    <div class="hero-meta"><span>ATLAS DE ASTRONOMIA <span class="meta-separator">/</span> CADERNO 01</span><span>MATEMÁTICA &amp; CONTEXTO · 2026</span></div>
-    <div class="hero-grid">
-      <div class="hero-lead">
-        <h1 id="page-heading">O céu na<br><span class="accent">Bandeira do Brasil</span></h1>
-        <p class="intro">As estrelas da bandeira não são apenas símbolos. Cada uma corresponde a uma estrela identificada no céu e representa uma unidade da Federação. Este atlas reúne essas correspondências em uma consulta visual.</p>
-      </div>
-      <aside class="hero-aside" aria-label="Orientação para leitura">
-        <span class="aside-index">NOTA DE LEITURA <b>01</b></span>
-        <p>O desenho da bandeira é uma representação histórica, não uma fotografia do céu. As cartas ao lado usam posições astronômicas para localizar as estrelas de referência.</p>
-      </aside>
+  <div class="introbar">
+    <div class="intro-left"><span class="eyebrow">CADERNO DE OBSERVAÇÃO <span>01 / BRASIL</span></span>
+      <h1>O céu na Bandeira do Brasil</h1>
+      <p>Um registro interativo das estrelas associadas às 27 unidades da Federação, acompanhado de cartas celestes e notas sobre a representação histórica.</p>
     </div>
-    <div class="hero-foot">
-      <div class="stats" aria-label="Dados do atlas">
-        <div class="stat"><strong>27</strong><span>estrelas catalogadas</span></div>
-        <div class="stat"><strong>09</strong><span>constelações</span></div>
-        <div class="stat"><strong>1889</strong><span>referência histórica</span></div>
-      </div>
-      <p class="notice"><span class="notice-dot" aria-hidden="true"></span><span>Projeto em desenvolvimento · dados e visualizações sujeitos a revisão.</span></p>
-    </div>
-  </section>
+    <div class="edition-meta"><span>CATÁLOGO</span><strong>27 <em>estrelas</em></strong><strong>09 <em>constelações</em></strong><small>Em desenvolvimento · visualização educativa</small></div>
+  </div>
 
-  <section class="layout" aria-label="Atlas interativo">
-    <div class="panel map-panel" id="mapa">
-      <div class="section-heading"><div><span class="section-number">01 — PRANCHA CARTOGRÁFICA</span><h2>Estrelas do pavilhão nacional</h2></div><p>Selecione um ponto para abrir o registro correspondente.</p></div>
-      <div class="toolbar">
-        <label class="sr-only" for="filter">Filtrar constelação</label>
-        <select id="filter" aria-label="Filtrar por constelação"><option value="">Todas as constelações</option></select>
-        <button class="btn" id="zoom" type="button" aria-pressed="false">Ampliar disco</button>
+  <div class="workspace" aria-label="Mesa de consulta do atlas">
+    <aside class="index-column" id="indice" aria-label="Índice de estrelas">
+      <div class="column-heading"><span class="label-number">A / ÍNDICE</span><h2>Consultar</h2><p>Busque por estado, nome ou constelação.</p></div>
+      <div class="search-fields">
+        <label for="search">ESTRELA OU UF</label>
+        <input id="search" type="search" placeholder="Ex.: Bahia, Sirius" autocomplete="off">
+        <label for="filter">CONSTELAÇÃO</label>
+        <select id="filter"><option value="">Todas as constelações</option></select>
+      </div>
+      <div id="results" class="results" aria-live="polite" hidden></div>
+      <div class="index-list-head"><span>REGISTROS</span><span>27 ENTRADAS</span></div>
+      <div id="star-index" class="star-index" aria-label="Lista de estrelas por unidade da Federação"></div>
+      <button class="text-button" id="random" type="button">Selecionar estrela aleatória <span aria-hidden="true">↗</span></button>
+    </aside>
+
+    <section class="map-column" id="mapa" aria-labelledby="map-title">
+      <div class="column-heading map-heading"><div><span class="label-number">B / PEÇA CENTRAL</span><h2 id="map-title">Bandeira Nacional</h2></div><span class="sheet-id">PRANCHA Nº 01</span></div>
+      <div class="map-controls">
+        <div class="picker"><label for="picker" class="sr-only">Selecionar unidade da Federação</label><select id="picker" aria-label="Selecionar estado e estrela"></select></div>
+        <button class="plain-button" id="zoom" aria-pressed="false" type="button">Ampliar disco</button>
       </div>
       <figure class="atlas-plate">
-      <figcaption class="plate-head"><span>FIGURA 01 <i aria-hidden="true">/</i> DESENHO MODULAR</span><span>VISTA SIMBÓLICA</span></figcaption>
-      <div class="flag-stage">
-        <div class="flag-wrap" id="flag-wrap">
-          <svg id="flag" viewBox="0 0 2000 1400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Bandeira do Brasil: composição geométrica baseada nas proporções da legislação">
-            <rect width="2000" height="1400" fill="#009b3a"/>
-            <polygon points="170,700 1000,170 1830,700 1000,1230" fill="#ffdf00"/>
-            <circle cx="1000" cy="700" r="350" fill="#002776"/>
-            <defs><path id="motto-line" d="M 659.73473 603.76015 A 808.5 808.5 0 0 1 1339.74817 798.04970"/></defs>
-            <path d="M 661.20938 612.13125 A 350 350 0 0 1 679.86412 558.53261 A 850 850 0 0 1 1346.55097 749.01457 A 350 350 0 0 1 1334.07364 804.37818 A 800 800 0 0 0 661.20938 612.13125 Z" fill="#fff"/>
-            <text font-family="Verdana,Arial,sans-serif" font-size="45" font-weight="600" letter-spacing="5" word-spacing="10" fill="#007024" text-anchor="middle"><textPath href="#motto-line" startOffset="50%">ORDEM <tspan font-size="41">E</tspan> PROGRESSO</textPath></text>
-          </svg>
-          <svg id="stars" viewBox="0 0 2000 1400" role="group" aria-label="27 estrelas interativas da bandeira"></svg>
+        <div class="flag-stage">
+          <div class="flag-wrap" id="flag-wrap">
+            <svg id="flag" viewBox="0 0 2000 1400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Bandeira do Brasil: reconstituição gráfica baseada nas proporções legais">
+              <rect width="2000" height="1400" fill="#009b3a"/>
+              <polygon points="170,700 1000,170 1830,700 1000,1230" fill="#ffdf00"/>
+              <circle cx="1000" cy="700" r="350" fill="#002776"/>
+              <defs><path id="motto-line" d="M 659.73473 603.76015 A 808.5 808.5 0 0 1 1339.74817 798.04970"/></defs>
+              <path d="M 661.20938 612.13125 A 350 350 0 0 1 679.86412 558.53261 A 850 850 0 0 1 1346.55097 749.01457 A 350 350 0 0 1 1334.07364 804.37818 A 800 800 0 0 0 661.20938 612.13125 Z" fill="#fff"/>
+              <text font-family="Verdana,Arial,sans-serif" font-size="45" font-weight="600" letter-spacing="5" word-spacing="10" fill="#007024" text-anchor="middle"><textPath href="#motto-line" startOffset="50%">ORDEM <tspan font-size="41">E</tspan> PROGRESSO</textPath></text>
+            </svg>
+            <svg id="stars" viewBox="0 0 2000 1400" role="group" aria-label="27 estrelas selecionáveis da bandeira"></svg>
+          </div>
         </div>
-      </div>
-      <figcaption class="plate-caption">Bandeira Nacional — reconstrução geométrica para consulta das 27 estrelas. A proporção do desenho é de 20 × 14 módulos.</figcaption>
+        <figcaption class="plate-caption"><span>FIG. 01</span> Reconstituição vetorial em proporção 20 × 14 módulos. Selecione as estrelas para consultar suas correspondências.</figcaption>
       </figure>
       <div class="mag-legend" id="mag-legend" aria-label="Grandezas gráficas das estrelas"></div>
-      <p class="legend-note">Desenho vetorial reconstruído a partir das proporções legais. As áreas de seleção são ampliadas para facilitar o uso.</p>
-      <div class="query-panel"><div class="query-title">ÍNDICE DE CONSULTA <span>LOCALIZAR ESTRELAS E ESTADOS</span></div>
-        <div class="searchbar">
-          <label class="sr-only" for="search">Buscar estrela ou estado</label>
-          <input id="search" type="search" placeholder="Buscar por estrela ou estado" aria-label="Buscar estrela ou estado" autocomplete="off">
-          <button class="btn" id="random" type="button">Sortear estrela</button>
-        </div>
-        <div class="results" id="results" aria-live="polite" hidden></div>
-        <div class="picker">
-          <label for="picker">Selecionar por estado</label>
-          <select id="picker" aria-label="Escolher estrela pela unidade da Federação"></select>
-        </div>
-      </div>
-    </div>
+      <p class="legend-note">Os tamanhos das estrelas na bandeira são convenções do desenho. Não indicam magnitude aparente ou distância astronômica.</p>
+      <div class="map-bottom"><span>1889 <small>céu de referência</small></span><span>27 <small>unidades da Federação</small></span><span>09 <small>constelações</small></span></div>
+    </section>
 
-    <aside class="panel detail" id="registro" aria-live="polite">
-      <div class="detail-top">
-        <span class="section-number">02 — REGISTRO ESTELAR</span>
-        <div class="stepper">
-          <button class="btn btn-icon" id="prev" type="button" aria-label="Estrela anterior">‹</button>
-          <span class="counter" id="counter">—</span>
-          <button class="btn btn-icon" id="next" type="button" aria-label="Próxima estrela">›</button>
-        </div>
-      </div>
-      <div class="detail-identity">
-        <div class="kicker">Identificação astronômica</div>
-        <h3 id="name">Selecione uma estrela</h3>
-        <div id="state"></div>
-      </div>
-      <p class="desc" id="desc">Clique em uma das estrelas ou busque pelo nome de um estado.</p>
+    <aside class="detail" id="registro" aria-live="polite" aria-label="Registro astronômico da estrela selecionada">
+      <div class="detail-top"><span class="label-number">C / FICHA ESTELAR</span><div class="stepper"><button id="prev" class="arrow-button" type="button" aria-label="Estrela anterior">‹</button><span id="counter" class="counter">—</span><button id="next" class="arrow-button" type="button" aria-label="Próxima estrela">›</button></div></div>
+      <div class="detail-identity"><div class="kicker">ESTRELA SELECIONADA</div><h2 id="name">Selecione uma estrela</h2><div id="state"></div></div>
+      <p class="desc" id="desc">Selecione uma estrela na bandeira ou no índice para consultar o registro.</p>
       <dl class="facts">
         <div class="fact"><dt>Constelação</dt><dd id="con">—</dd></div>
         <div class="fact"><dt>Designação</dt><dd class="designation" id="des">—</dd></div>
-        <div class="fact"><dt>Grandeza no desenho</dt><dd><span class="pips" id="pips" aria-hidden="true"></span><span id="grade">—</span></dd></div>
         <div class="fact"><dt>Magnitude aparente</dt><dd id="mag-aparente">—</dd></div>
+        <div class="fact"><dt>Grandeza na bandeira</dt><dd><span class="pips" id="pips" aria-hidden="true"></span><span id="grade">—</span></dd></div>
         <div class="fact"><dt>Unidade da Federação</dt><dd id="uf">—</dd></div>
       </dl>
-      <section class="chart-panel" aria-labelledby="chart-title">
-        <div class="chart-head">
-          <div><div class="kicker">Prancha complementar / carta celeste</div><h4 id="chart-title">Constelação selecionada</h4></div>
-          <span class="chart-code" id="chart-code">—</span>
-        </div>
-        <svg id="chart" viewBox="0 0 440 285" role="img" aria-label="Carta celeste da constelação com a estrela da bandeira destacada" preserveAspectRatio="xMidYMid meet"><text class="chart-empty" x="220" y="145" text-anchor="middle">Selecione uma estrela</text></svg>
-        <div class="chart-legend">
-          <span><i class="dot-star" aria-hidden="true"></i> Estrelas de referência</span>
-          <span><i class="dot-peer" aria-hidden="true"></i> Outras da bandeira</span>
-          <span><i class="dot-active" aria-hidden="true"></i> Em consulta</span>
-        </div>
-        <p class="chart-caption" id="chart-caption">Uma carta celeste correspondente aparecerá aqui.</p>
-        <p class="chart-source">Posições de catálogo; as linhas entre estrelas são convencionais e não representam os limites oficiais das constelações. <a href="https://github.com/ofrohn/d3-celestial" target="_blank" rel="noopener noreferrer">Dados: D3-Celestial</a>.</p>
+      <section class="chart-panel" aria-label="Carta celeste da constelação">
+        <div class="chart-head"><div><span class="kicker">CARTA CELESTE / POSIÇÕES DE CATÁLOGO</span><h3 id="chart-title">Constelação selecionada</h3></div><span class="chart-code" id="chart-code">—</span></div>
+        <svg id="chart" viewBox="0 0 440 285" role="img" aria-label="Carta celeste com a estrela selecionada destacada" preserveAspectRatio="xMidYMid meet"><text class="chart-empty" x="220" y="145" text-anchor="middle">Selecione uma estrela</text></svg>
+        <div class="chart-legend"><span><i class="dot-star" aria-hidden="true"></i> Referência</span><span><i class="dot-peer" aria-hidden="true"></i> Bandeira</span><span><i class="dot-active" aria-hidden="true"></i> Selecionada</span></div>
+        <p class="chart-caption" id="chart-caption">Carta celeste correspondente à estrela selecionada.</p>
+        <p class="chart-source">Posições de catálogo; ligações convencionais entre estrelas. <a href="https://github.com/ofrohn/d3-celestial" target="_blank" rel="noopener noreferrer">Fonte: D3-Celestial</a>.</p>
       </section>
-      <p class="small">As grandezas de 1ª a 5ª são tamanhos gráficos da bandeira, não medidas de brilho. A magnitude aparente é uma propriedade astronômica: números menores indicam maior brilho observado.</p>
+      <p class="small">Magnitude aparente: quanto menor o número, maior o brilho observado. A grandeza do desenho obedece a outra escala.</p>
     </aside>
-  </section>
+  </div>
 
-  <section class="bottom" aria-label="Contexto e referências">
-    <section class="panel context" id="contexto">
-      <span class="section-number">03 — NOTA HISTÓRICA</span>
-      <h2>O céu de referência: 15 de novembro de 1889</h2>
-      <p>A lei brasileira estabelece como referência o aspecto do céu do Rio de Janeiro em <strong>15 de novembro de 1889, às 8h30</strong> (12 horas siderais). O desenho é concebido como visto de fora da esfera celeste, e não como uma fotografia do céu obtida do solo.</p>
-      <p>A bandeira foi adotada em 19 de novembro de 1889 e posteriormente atualizada para representar as 27 unidades da Federação.</p>
-    </section>
-    <section class="panel sources" id="fontes">
-      <span class="section-number">04 — FONTES E CRITÉRIOS</span>
-      <h2>Fontes e metodologia</h2>
-      <ol class="reference-list">
-        <li><a href="https://www2.camara.leg.br/legin/fed/lei/1970-1979/lei-5700-1-setembro-1971-357915-normaatualizada-pl.html" target="_blank" rel="noopener">Lei nº 5.700/1971</a></li>
-        <li><a href="https://www.gov.br/aeb/pt-br/centrais-de-conteudo/publicacoes/instagram-do-periodo-de-defeso-eleitoral-2022/curiosidades-do-espaco-bandeira-nacional-e-constelacoes" target="_blank" rel="noopener">AEB — bandeira e constelações</a></li>
-        <li><a href="https://github.com/ofrohn/d3-celestial" target="_blank" rel="noopener">D3-Celestial — cartas e dados estelares</a></li>
-        <li><a href="https://www.gov.br/observatorio/pt-br/assuntos/areas-de-atuacao/divulgacao-e-popularizacao-da-ciencia/revistas/pdf/bandeiras.pdf" target="_blank" rel="noopener">Observatório Nacional</a></li>
-        <li><a href="https://github.com/danmadeira/bandeira-nacional" target="_blank" rel="noopener">Geometria do desenho modular</a></li>
-      </ol>
-      <p class="small">Os centros das estrelas no desenho são posições gráficas; não são coordenadas celestes. As magnitudes exibidas vêm dos dados de catálogo incorporados ao projeto. Não há consulta a observações em tempo real.</p>
-    </section>
+  <section class="footnotes" aria-label="Contexto, método e referências">
+    <section class="context" id="contexto"><span class="label-number">NOTA 01 / CONTEXTO</span><h2>O céu de referência</h2><p>A legislação estabelece como referência o céu do Rio de Janeiro em <strong>15 de novembro de 1889, às 8h30</strong> (12 horas siderais), representado como visto de fora da esfera celeste. A bandeira foi adotada em 19 de novembro de 1889 e posteriormente atualizada para as 27 unidades da Federação.</p></section>
+    <section class="sources" id="fontes"><span class="label-number">NOTA 02 / DOCUMENTAÇÃO</span><h2>Critérios e fontes</h2><ol>
+      <li><a href="https://www2.camara.leg.br/legin/fed/lei/1970-1979/lei-5700-1-setembro-1971-357915-normaatualizada-pl.html" target="_blank" rel="noopener noreferrer">Lei nº 5.700/1971</a> — normas da bandeira</li>
+      <li><a href="https://www.gov.br/aeb/pt-br/centrais-de-conteudo/publicacoes/instagram-do-periodo-de-defeso-eleitoral-2022/curiosidades-do-espaco-bandeira-nacional-e-constelacoes" target="_blank" rel="noopener noreferrer">Agência Espacial Brasileira</a> — constelações</li>
+      <li><a href="https://github.com/ofrohn/d3-celestial" target="_blank" rel="noopener noreferrer">D3-Celestial</a> — dados das cartas</li>
+      <li><a href="https://www.gov.br/observatorio/pt-br/assuntos/areas-de-atuacao/divulgacao-e-popularizacao-da-ciencia/revistas/pdf/bandeiras.pdf" target="_blank" rel="noopener noreferrer">Observatório Nacional</a> — contexto histórico</li>
+      <li><a href="https://github.com/danmadeira/bandeira-nacional" target="_blank" rel="noopener noreferrer">Geometria modular</a> — reconstrução gráfica</li>
+    </ol><p class="small">As posições das estrelas no desenho não são coordenadas celestes. Não há dados em tempo real nesta edição.</p></section>
   </section>
-  <footer><span><b>MATEMÁTICA &amp; CONTEXTO</b> <span class="footer-separator">/</span> ATLAS DE ASTRONOMIA</span><span>Concepção e autoria: Joice Souza Martins Santos</span><span>Projeto educativo independente · 2026</span></footer>
 </main>
+<footer><span>MATEMÁTICA &amp; CONTEXTO <span class="footer-separator">/</span> CADERNO 01</span><span>Pesquisa e autoria: Joice Souza Martins Santos</span><span>Brasil · 2026</span></footer>
 </div>
-<noscript><p style="padding:20px;text-align:center">Este atlas precisa de JavaScript para funcionar.</p></noscript>
+<noscript><p style="padding:20px">Este catálogo requer JavaScript para a consulta das estrelas.</p></noscript>
 <script>{{DATA}}</script>
 <script>{{SCRIPT}}</script>
 </body>
