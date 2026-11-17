@@ -20,8 +20,8 @@ FALLBACK_HEIGHT = 2400
 
 PAGE_CSS = """
 <style>
-  [data-testid="stAppViewContainer"] { background: #f5f5f1; }
-  [data-testid="stHeader"] { background: #f5f5f1; }
+  [data-testid="stAppViewContainer"] { background: #f6f4ee; }
+  [data-testid="stHeader"] { background: #f6f4ee; }
   [data-testid="stMainBlockContainer"] {
     max-width: 1500px;
     padding: 0 !important;

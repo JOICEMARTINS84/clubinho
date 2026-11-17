@@ -215,3 +215,179 @@ footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wr
   .fact dd { text-align: left; }
 }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
+
+
+/* ----------------------------------------------------------------------
+   EDIÇÃO II · CADERNO DE ASTRONOMIA — direção editorial de catálogo
+   Estrutura em papel, tipografia em escala editorial, sem aparência de cards.
+   ---------------------------------------------------------------------- */
+:root {
+  --paper: #f6f4ee;
+  --surface: transparent;
+  --panel-alt: #f1efe8;
+  --dark: #182b34;
+  --ink: #24323a;
+  --quiet: #4e5d63;
+  --subtle: #68787b;
+  --border: #cbcfc9;
+  --rule: #dbdcd5;
+  --accent: #255c56;
+  --accent-light: #e9efeb;
+  --amber: #ac966c;
+  --page-width: 1400px;
+}
+body { font-size: 16px; background: var(--paper); }
+.topbar { background: #f6f4ee; border-bottom: 1px solid #c9cbc4; }
+.topbar-inner { min-height: 72px; max-width: calc(var(--page-width) + 40px); }
+.brand { color: var(--dark); font-family: var(--font-serif); font-weight: 600; font-size: 1.35rem; }
+.brand-rule { background: #8d7752; height: 30px; width: 3px; flex-basis: 3px; }
+.brand-amp { color: var(--accent); }
+.topbar-right { color: #53636a; font: 500 .7rem/1.4 var(--font-mono); text-transform: uppercase; letter-spacing: .035em; }
+.topbar-right span { margin-inline: 6px; color: #9c9990; }
+.skip-link { position: absolute; top: -80px; left: 20px; background: #fff; color: var(--dark); padding: 12px; z-index: 100; }
+.skip-link:focus { top: 10px; }
+.index-nav { border-top: 1px solid #dddcd3; }
+.index-nav-inner { display: flex; align-items: center; flex-wrap: wrap; gap: 0; max-width: calc(var(--page-width) + 40px); margin: 0 auto; padding: 0 20px; min-height: 45px; }
+.index-nav a { display: inline-flex; gap: 9px; align-items: center; padding: 12px 23px 12px 0; margin-right: 20px; font-size: .77rem; color: #33484c; text-decoration: none; }
+.index-nav a:hover { text-decoration: underline; }
+.index-nav a span { font: 500 .65rem var(--font-mono); color: #8d7752; }
+.index-nav-edition { margin-left: auto; font: 500 .66rem/1.4 var(--font-mono); color: #667478; letter-spacing: .055em; }
+main { padding-top: 32px; }
+.hero { border-bottom: 2px solid #263c40; padding-bottom: 21px; margin-bottom: 29px; }
+.hero-meta { display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap; font: 500 .67rem/1.5 var(--font-mono); color: #52686b; letter-spacing: .06em; }
+.meta-separator { margin-inline: 8px; color: #a69e8c; }
+.hero-grid { display: grid; grid-template-columns: minmax(0,1.75fr) minmax(230px,.65fr); align-items: end; gap: clamp(32px,5vw,90px); padding: 23px 0 20px; }
+h1 { font: 600 clamp(3.1rem,6vw,5.2rem)/.99 var(--font-serif); letter-spacing: -.046em; max-width: 960px; }
+h1 .accent { color: var(--dark); }
+.intro { margin-top: 22px; max-width: 780px; font-size: 1.03rem; line-height: 1.72; }
+.hero-aside { padding: 15px 0 3px 22px; border-left: 1px solid #b2b6ae; }
+.aside-index { font: 600 .66rem/1.4 var(--font-mono); letter-spacing: .07em; color: #345c5e; }
+.aside-index b { font-weight: 500; color: #8b8b7e; margin-left: 6px; }
+.hero-aside p { font-size: .85rem; line-height: 1.75; margin-top: 12px; max-width: 320px; }
+.hero-foot { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; column-gap: 24px; row-gap: 6px; border-top: 1px solid var(--border); padding-top: 13px; }
+.stats { margin-top: 0; }
+.stat { gap: 8px; padding: 0 21px; }
+.stat strong { font-size: 1.04rem; }
+.stat span { font-size: .76rem; }
+.notice { margin: 0; font-size: .69rem; }
+.notice-dot { background: #87734a; }
+.layout { grid-template-columns: minmax(0,1.4fr) minmax(0,.88fr); gap: 30px; align-items: stretch; }
+.panel { border: 0; border-radius: 0; background: transparent; }
+.map-panel { padding: 0; }
+.detail { padding: 0 0 0 28px; border-left: 1px solid #c6cbc5; }
+.section-number { font-size: .64rem; letter-spacing: .095em; color: #356160; margin-bottom: 7px; }
+.panel h2 { font-size: 1.5rem; font-weight: 600; }
+.section-heading { margin: 0 0 17px; padding-bottom: 15px; border-bottom: 1px solid var(--border); }
+.section-heading p { color: #687579; max-width: 220px; }
+.toolbar { justify-content: space-between; margin-bottom: 15px; }
+input,select,.btn { border-radius: 0; }
+input,select { border-color: #b9c1bb; background: #fcfcf9; }
+.btn { background: transparent; border-color: #a8b2ac; }
+.btn:hover { background: #e9eee9; }
+.atlas-plate { margin: 0; }
+.plate-head { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px; margin: 0 0 9px; color: #526267; font: 500 .64rem/1.6 var(--font-mono); letter-spacing: .04em; }
+.plate-head i { font-style: normal; margin: 0 7px; color: #a3a79e; }
+.plate-head span:last-child { color: #7a817b; }
+.flag-stage { padding: 21px; border: 1px solid #c6c9c2; background: #e8e9e2; }
+.flag-wrap { box-shadow: 0 1px 6px #0000000b; }
+.plate-caption { margin: 10px 0 0; font-size: .74rem; color: #5a6a6e; line-height: 1.5; }
+.mag-legend { padding-top: 12px; gap: 7px 13px; }
+.legend-note { margin-top: 5px; }
+.query-panel { margin-top: 18px; border-top: 1px solid #bcc8c4; padding-top: 14px; }
+.query-title { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px; margin-bottom: 11px; color: #33605b; font: 600 .69rem/1.4 var(--font-mono); letter-spacing: .03em; }
+.query-title span { font-weight: 400; color: #718079; }
+.searchbar input { border-color: #b6c0ba; }
+.detail-top { border-bottom-color: #a9b9b5; }
+.detail h3 { font-size: clamp(2.4rem,3.5vw,3.15rem); }
+.detail-identity { padding: 4px 0; }
+.state { border-left: 2px solid #9c8354; }
+.desc { margin: 17px 0 23px; }
+.facts { border-top-color: #b6c1bb; }
+.fact { padding: 12px 0; }
+.fact dt { font-size: .8rem; }
+.fact dd { font-size: .87rem; }
+.chart-panel { margin: 22px 0 15px; border-radius: 0; padding: 18px; background: #162932; }
+.chart-head h4 { font-size: 1.38rem; }
+#chart { border-color: #3a5360; background: #0c1b24; }
+.bottom { gap: 40px; margin-top: 41px; padding-top: 23px; border-top: 2px solid #293f43; }
+.bottom .panel { padding: 0; }
+.bottom h2 { font-size: 1.7rem; margin: 8px 0 17px; }
+.bottom p { font-size: .91rem; }
+.sources { border-left: 1px solid #c6cbc5; padding-left: 35px !important; }
+.reference-list { margin: 8px 0 16px; list-style: none; padding: 0; counter-reset: source; border-top: 1px solid #cdd3cd; }
+.reference-list li { counter-increment: source; position: relative; border-bottom: 1px solid #e0e1da; padding: 9px 0 9px 37px; font-size: .85rem; }
+.reference-list li::before { content: counter(source,decimal-leading-zero); position: absolute; left: 0; top: 9px; font: 500 .7rem var(--font-mono); color: #6c817a; }
+.reference-list a { color: #315851; text-decoration: none; border-bottom: 1px solid #afc1b7; }
+.reference-list a:hover { border-color: #315851; }
+footer { margin-top: 40px; padding-top: 15px; border-top-color: #aab5af; color: #65746f; font-size: .7rem; }
+footer b { color: #2f4c4b; font: 600 .7rem var(--font-mono); }
+.footer-separator { color: #acada1; padding: 0 7px; }
+@media (max-width: 1100px) {
+  .layout { grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 24px; }
+  .detail { padding-left: 20px; }
+  .hero-grid { grid-template-columns: minmax(0,1.6fr) minmax(220px,.65fr); }
+}
+@media (max-width: 890px) {
+  .layout { grid-template-columns: 1fr; gap: 32px; }
+  .detail { padding: 24px 0 0; border-left: 0; border-top: 2px solid #243f43; }
+  .hero-grid { grid-template-columns: 1fr; gap: 10px; }
+  .hero-aside { border-left: 0; border-top: 1px solid #c6cbc5; padding: 16px 0 0; }
+  .hero-aside p { max-width: 750px; margin-top: 7px; }
+  .hero-foot { align-items: flex-start; }
+  .bottom { gap: 24px; }
+  .index-nav-edition { display: none; }
+}
+@media (max-width: 720px) {
+  .topbar-inner { min-height: 59px; padding: 10px 15px; }
+  .brand { font-size: 1.13rem; }
+  .brand-rule { height: 23px; }
+  .index-nav-inner { min-height: 43px; padding: 0 10px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .index-nav-inner::-webkit-scrollbar { display:none; }
+  .index-nav a { flex: 0 0 auto; margin-right: 9px; padding: 12px 10px; white-space: nowrap; font-size: .73rem; }
+  main { padding: 22px 15px 22px; }
+  .hero { margin-bottom: 23px; }
+  .hero-meta { font-size: .59rem; gap: 4px; }
+  .hero-meta span:last-child { display: none; }
+  .hero-grid { padding-top: 15px; padding-bottom: 18px; }
+  h1 { font-size: clamp(2.55rem, 9vw, 3.85rem); line-height: 1.025; }
+  .intro { margin-top: 14px; font-size: .96rem; line-height: 1.62; }
+  .hero-aside { padding-top: 12px; }
+  .hero-aside p { font-size: .8rem; line-height: 1.6; }
+  .hero-foot { display: block; }
+  .stats { gap: 0; flex-wrap: wrap; }
+  .stat { padding: 0 10px; gap: 5px; }
+  .stat strong { font-size: .88rem; }
+  .stat span { font-size: .66rem; }
+  .notice { margin-top: 12px; font-size: .67rem; }
+  .layout { gap: 25px; }
+  .section-heading { margin-bottom: 12px; }
+  .section-heading p { margin-top: 6px; }
+  .flag-stage { padding: 8px; }
+  .plate-head { font-size: .58rem; }
+  .plate-caption { font-size: .69rem; }
+  .query-title { font-size: .62rem; }
+  .query-title span { display: none; }
+  .detail { padding: 20px 0 0; }
+  .detail h3 { font-size: 2.65rem; }
+  .chart-panel { padding: 13px; }
+  .bottom { display: grid; margin-top: 30px; padding-top: 18px; grid-template-columns: 1fr; }
+  .sources { border-left: 0; padding: 20px 0 0 !important; border-top: 1px solid #c6cbc5; }
+  .bottom .panel { padding: 0; }
+  .bottom h2 { font-size: 1.45rem; }
+  footer { margin-top: 26px; gap: 5px; display: grid; }
+}
+@media (max-width: 375px) {
+  .hero-meta { letter-spacing: 0; }
+  .stats { gap: 7px 0; }
+  .stat { padding: 0 8px; }
+  .stat span { font-size: .61rem; }
+  .plate-head span:last-child { display: none; }
+}
+@media print {
+  .topbar { background: transparent; }
+  .index-nav,.toolbar,.query-panel,.stepper,.notice { display: none; }
+  .layout { grid-template-columns: 55% 45%; gap: 15px; }
+  .detail { padding-left: 15px; }
+  .hero { padding-bottom: 12px; }
+  .chart-panel { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+}

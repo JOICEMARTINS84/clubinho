@@ -56,7 +56,7 @@
   const haystack = new Map(
     STARS.map((s) => [s.uf, fold([s.nome, s.estado, s.uf, s.constelacao, s.designacao].join(' '))])
   );
-  const state = { selected: null, zoomed: mobileQuery.matches, query: '', constellation: '' };
+  const state = { selected: null, zoomed: false, query: '', constellation: '' };
   const starParts = new Map(); // uf -> { group, hit }
   let starLabel = null;
 
@@ -131,7 +131,7 @@
     const viewBox = on ? VIEW_ZOOM : VIEW_FULL;
     ui.flag.setAttribute('viewBox', viewBox);
     ui.stars.setAttribute('viewBox', viewBox);
-    ui.zoom.textContent = on ? 'Ver bandeira inteira' : 'Ampliar céu';
+    ui.zoom.textContent = on ? 'Ver bandeira inteira' : 'Ampliar disco';
     ui.zoom.setAttribute('aria-pressed', String(on));
     updateStarLayer();
   }
