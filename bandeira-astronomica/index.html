@@ -1,459 +1,772 @@
 <!DOCTYPE html>
-<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>O céu na Bandeira do Brasil | Matemática & Contexto</title>
-<meta name="description" content="Laboratório astronômico interativo: descubra as 27 estrelas da bandeira brasileira.">
-<style>
-:root{color-scheme:dark;--bg:#07111c;--panel:#0e1d2c;--line:#254254;--ink:#e8f3f6;--muted:#a9c0cc;--accent:#6ee7d5}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 70% 0%,#163149 0%,#07111c 55%);color:var(--ink);font:16px/1.5 system-ui,Segoe UI,Arial,sans-serif}
-header{border-bottom:1px solid #244154;padding:17px max(20px,calc((100vw - 1320px)/2));display:flex;align-items:center;gap:16px;justify-content:space-between;flex-wrap:wrap}
-.brand{letter-spacing:.14em;font-weight:800;font-size:.85rem;color:#a7f5e6}.tag{border:1px solid #315367;padding:6px 12px;border-radius:100px;color:#bcd3de;font-size:.76rem}
-main{max-width:1320px;margin:auto;padding:35px 20px 60px}.eyebrow{color:var(--accent);text-transform:uppercase;letter-spacing:.2em;font-size:.76rem;font-weight:700}
-h1{font-size:clamp(2rem,5vw,3.8rem);letter-spacing:-.045em;line-height:1.08;margin:.3em 0}h2{font-size:1.15rem;margin:0 0 10px}p{color:var(--muted)}.intro{max-width:830px;margin-bottom:25px}
-.stats{display:flex;gap:12px;flex-wrap:wrap;margin:24px 0}.stats span{border:1px solid var(--line);background:#0c202e;padding:10px 16px;border-radius:12px;color:#cee3ea}.stats strong{color:white;font-size:1.15rem}
-.layout{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(290px,.85fr);gap:18px}.panel{border:1px solid var(--line);background:linear-gradient(160deg,#102536,#0b1725);border-radius:18px;padding:20px;min-width:0;box-shadow:0 18px 40px #0002}
-.toolbar{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:18px}select,input{background:#091827;border:1px solid #355268;color:white;border-radius:10px;padding:11px;max-width:100%}select{width:240px}
-.flag-wrap{position:relative;aspect-ratio:20/14;width:100%;border:1px solid #365a52;border-radius:9px;overflow:hidden;background:#149447}
-.flag{width:100%;height:100%;display:block}.star-layer{position:absolute;inset:0}.star{position:absolute;transform:translate(-50%,-50%);height:clamp(19px,2.4vw,32px);width:clamp(19px,2.4vw,32px);border:0;background:transparent;color:#fff;cursor:pointer;filter:drop-shadow(0 0 6px #c7e9ff);padding:0;display:grid;place-items:center}
-.star span{font-size:clamp(14px,1.8vw,24px);line-height:1}.star:hover,.star:focus-visible,.star.active{color:#fff1a6;outline:2px solid #f6e7a2;outline-offset:1px;border-radius:50%;z-index:3}
-.legend{font-size:.8rem;color:#97b3c0;margin:13px 0 0}.detail{min-height:460px}.detail h3{font-size:2rem;margin:8px 0}.detail .subtitle{font-size:.85rem;color:#83e7d7;text-transform:uppercase;letter-spacing:.14em}.fact{border-top:1px solid #294455;padding:12px 0;display:flex;justify-content:space-between;gap:14px}.fact b{color:#accbd4;font-size:.85rem}.fact span{text-align:right}.state{display:inline-block;background:#1d4553;border:1px solid #35717b;color:#ccfff6;padding:5px 11px;border-radius:50px}
-.small{font-size:.85rem}.bottom{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
-button.secondary{background:#163447;color:#e9ffff;border:1px solid #3b6c79;border-radius:8px;padding:10px 14px;cursor:pointer}button.secondary:hover{background:#245064}
-a{color:#7ae8d5}footer{margin-top:30px;color:#8fa9b5;font-size:.85rem}ul{color:#b5cad2;padding-left:20px}
-@media(max-width:860px){.layout,.bottom{grid-template-columns:1fr}.panel{padding:15px}.star{height:22px;width:22px}.star span{font-size:15px}.detail{min-height:0}}
-</style><style>
-/* Interação por SVG sobre desenho geométrico de 20×14 módulos */
-.flag-wrap{border:0;background:#009b3a;border-radius:8px;box-shadow:0 1px 0 #335c61,0 20px 52px #0004;transition:aspect-ratio .2s}
-.flag-wrap.zoomed{aspect-ratio:1/1;max-width:640px;margin-inline:auto;background:#002776}
-svg.flag{width:100%;height:100%;display:block}
-svg.star-layer{inset:0;width:100%;height:100%;position:absolute;display:block;overflow:visible}
-svg.star-layer .star-group{cursor:pointer;outline:none}
-svg.star-layer .star-shape{fill:#fff;stroke:#fff;stroke-width:.65;pointer-events:none;filter:drop-shadow(0 0 2px #ffffff38)}
-svg.star-layer .star-ring{fill:none;stroke:#ffe68a;stroke-width:4;pointer-events:none;opacity:0}
-svg.star-layer .star-group.is-selected .star-ring,svg.star-layer .star-group:focus-visible .star-ring{opacity:1}
-svg.star-layer .star-group.is-selected .star-shape{fill:#fff6cf;stroke:#fff6cf}
-svg.star-layer .star-group.is-dim{opacity:.25}
-svg.star-layer .star-hit{fill:transparent;stroke:transparent;stroke-width:0;pointer-events:all}
-.results{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px}
-.results[hidden]{display:none}
-.results button{background:#17394a;color:#edfaff;border:1px solid #396275;border-radius:7px;padding:7px 10px;cursor:pointer;font-size:.78rem}
-.results button:hover{background:#27556a}
-.toolbar{align-items:center}
-.toolbar h2{margin-right:auto}
-#zoom{white-space:nowrap}
-@media(max-width:860px){.flag-wrap.zoomed{max-width:100%}.toolbar{gap:9px}.toolbar select{width:100%;flex:1;min-width:170px}}
-</style><style>
-/* Carta celeste: dados equatoriais reais com seleção destacada */
-.constellation-panel{margin:22px 0 17px;padding:17px;border:1px solid #304e64;border-radius:13px;background:linear-gradient(145deg,#0d2030,#06121f)}
-.constellation-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px}
-.constellation-kicker{font-size:.66rem;letter-spacing:.15em;font-weight:800;color:#76d5d0}
-.constellation-head h4{margin:5px 0 0;font-size:1.08rem;line-height:1.3;color:#f0fcff}
-.constellation-index{font-size:.7rem;letter-spacing:.08em;border:1px solid #3a6676;color:#b5d5df;border-radius:30px;padding:5px 9px;white-space:nowrap}
-#constellationMap{display:block;width:100%;height:auto;min-height:190px;border:1px solid #27455e;border-radius:10px;background:radial-gradient(circle at 50% 42%,#16304b 0%,#071525 72%);overflow:hidden}
-#constellationMap .chart-line{stroke:#6796b4;stroke-width:1.25;stroke-linecap:round;stroke-linejoin:round;fill:none;opacity:.75}
-#constellationMap .chart-star{fill:#e2f2ff;stroke:#cce8fd;stroke-width:.3}
-#constellationMap .chart-highlight{fill:#ffe6a3;stroke:#fff8df;stroke-width:.7}
-#constellationMap .chart-ring{fill:none;stroke:#f4c65c;stroke-width:2.6}
-#constellationMap .chart-pointer{stroke:#f6c969;stroke-width:1.2}
-#constellationMap .chart-label{fill:#fff0c5;font-size:11px;font-family:system-ui,Arial,sans-serif;font-weight:750;paint-order:stroke;stroke:#0b1a2b;stroke-width:3}
-.constellation-legend{display:flex;gap:17px;flex-wrap:wrap;margin:11px 0 7px;font-size:.73rem;color:#b9d4df}
-.constellation-legend span{display:flex;align-items:center;gap:8px}
-.constellation-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#e2f2ff}
-.constellation-ring{display:inline-block;width:14px;height:14px;border-radius:50%;border:2px solid #f4c65c}
-.constellation-caption{font-size:.84rem;color:#d1e1eb;line-height:1.5;margin:8px 0}
-.constellation-source{font-size:.72rem;color:#90aebd;margin:12px 0 0;line-height:1.4}
-@media(max-width:860px){.constellation-panel{padding:12px}#constellationMap{min-height:160px}}
-</style><style>
-/* Adaptação mobile-first, sem rolagem horizontal nem cortes de painéis */
-html{width:100%;max-width:100%;overflow-x:hidden}
-body{width:100%;max-width:100%;margin:0;overflow-x:hidden;overflow-wrap:break-word}
-main{width:100%;min-width:0;max-width:1320px;overflow:visible}
-header,section,aside,.panel,.toolbar,.bottom,.layout,.intro,.fact,.constellation-panel{min-width:0;max-width:100%}
-.layout{grid-template-columns:minmax(0,1.45fr) minmax(0,.85fr)}
-.toolbar select,.toolbar button,.flag-wrap,svg.flag,#stars,#constellationMap{max-width:100%}
-.info-note{font-size:.76rem;color:#a6c4d0;margin:8px 0 0}
-.star-picker{display:none;margin:14px 0 4px;padding:12px;border:1px solid #32536a;background:#122638;border-radius:11px}
-.star-picker label{display:block;color:#b9e3e2;font-size:.83rem;font-weight:750;margin:0 0 8px}
-.star-picker select{display:block;width:100%;max-width:100%;min-height:48px;font-size:16px}
-.searchbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
-.searchbar input{flex:1 1 190px;min-width:0;max-width:100%;min-height:44px;font-size:16px}
-.searchbar button{flex:0 1 auto;min-height:44px}
-button,select,input{touch-action:manipulation}
-.results button{min-height:40px}
-.fact{overflow-wrap:anywhere}
-.fact span{min-width:0}
-@media(max-width:1050px){
- .layout,.bottom{grid-template-columns:minmax(0,1fr)}
- .detail{min-height:0}
- main{padding:25px 16px 38px}
- .panel{padding:18px}
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#16252f">
+<title>O céu na Bandeira do Brasil | Matemática &amp; Contexto</title>
+<meta name="description" content="Atlas interativo das estrelas da Bandeira do Brasil. Consulte os estados, as constelações e as cartas celestes correspondentes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&amp;display=swap" rel="stylesheet">
+<style>/* Matemática & Contexto | Atlas da Bandeira — edição editorial científica */
+:root {
+  color-scheme: light;
+  --paper: #f5f5f1;
+  --surface: #ffffff;
+  --panel-alt: #fbfbf8;
+  --dark: #162630;
+  --ink: #202d32;
+  --quiet: #56646a;
+  --subtle: #748088;
+  --border: #d6dbd9;
+  --rule: #e4e8e6;
+  --accent: #155d65;
+  --accent-light: #eaf3f1;
+  --amber: #d9b66a;
+  --font-body: "IBM Plex Sans", "Segoe UI", Arial, sans-serif;
+  --font-serif: "Source Serif 4", Georgia, serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  --page-width: 1350px;
 }
-@media(max-width:640px){
- :root{font-size:15px}
- body{font-size:15px;line-height:1.48}
- header{padding:13px 14px;gap:7px}
- .brand{font-size:.69rem;letter-spacing:.075em}
- .tag{font-size:.68rem;padding:4px 9px}
- main{padding:22px 10px 32px}
- h1{font-size:clamp(2rem,8.7vw,2.85rem);line-height:1.06;margin:9px 0 12px}
- .eyebrow{font-size:.68rem;letter-spacing:.13em}
- .intro{font-size:.94rem;line-height:1.55;margin-bottom:12px}
- .stats{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:16px 0}
- .stats span{padding:8px 9px;font-size:.78rem}
- .stats span:last-child{grid-column:span 2}
- .stats strong{font-size:1.08rem}
- .layout,.bottom{gap:12px}
- .panel{padding:13px;border-radius:12px}
- .toolbar{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:13px}
- .toolbar h2{grid-column:1/-1;font-size:1.05rem;margin:0}
- .toolbar #zoom{grid-column:1/-1;width:100%;min-height:44px}
- .toolbar #filter{grid-column:1/-1;min-width:0;width:100%;min-height:46px;font-size:16px}
- .flag-wrap{border-radius:7px}
- .flag-wrap.zoomed{width:100%;max-width:100%;aspect-ratio:1/1}
- .legend{font-size:.75rem;line-height:1.5;margin:11px 0 0}
- .star-picker{display:block}
- .searchbar{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
- .searchbar input,.searchbar button{width:100%;min-width:0}
- .results{max-height:160px;overflow-y:auto;gap:7px}
- .results button{min-height:44px;font-size:.8rem}
- .detail h3{font-size:1.7rem;line-height:1.15;overflow-wrap:anywhere}
- .fact{display:grid;grid-template-columns:minmax(0,1fr);gap:4px;padding:10px 0}
- .fact span{text-align:left;overflow-wrap:anywhere}
- .constellation-panel{margin:16px 0 13px;padding:12px 10px}
- #constellationMap{min-height:0;width:100%;height:auto}
- .constellation-legend{gap:9px}
- .constellation-head h4{font-size:1rem}
- .constellation-index{font-size:.66rem}
- .small,.constellation-caption{line-height:1.55}
- .bottom{margin-top:13px}
- footer{font-size:.78rem}
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; min-width: 0; overflow-x: hidden; color: var(--ink); background: var(--paper); font: 400 15px/1.6 var(--font-body); }
+h1,h2,h3,h4,p,dl,dd,ul { margin: 0; }
+p { color: var(--quiet); }
+a { color: var(--accent); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+a:hover { color: #0b343a; }
+strong { font-weight: 600; color: var(--ink); }
+button,input,select { font: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.sr-only { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0,0,0,0) !important; white-space: nowrap !important; border: 0 !important; }
+
+/* Cabeçalho institucional */
+.topbar { background: var(--dark); border-bottom: 3px solid #aa9261; }
+.topbar-inner { max-width: calc(var(--page-width) + 40px); margin: auto; min-height: 65px; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.brand { display: flex; align-items: center; gap: 13px; color: #f5f5f2; font-weight: 600; font-size: 1.05rem; letter-spacing: -0.02em; }
+.brand-rule { display: block; flex: 0 0 4px; height: 26px; background: #d6b775; }
+.brand-amp { font-weight: 400; color: #d5bb80; }
+.topbar-right { color: #bfc9c9; font-size: .76rem; letter-spacing: .015em; }
+.topbar-right span { color: #7d9299; margin: 0 7px; }
+main { max-width: var(--page-width); margin: auto; padding: 35px 20px 28px; }
+
+/* Introdução editorial */
+.hero { padding: 0 0 27px; margin-bottom: 24px; border-bottom: 1px solid var(--border); }
+.eyebrow { display: flex; align-items: center; gap: 13px; margin-bottom: 8px; color: #617278; font: 500 .69rem/1.5 var(--font-mono); letter-spacing: .09em; }
+.eyebrow-index { color: var(--accent); font-weight: 600; }
+h1 { font: 600 clamp(2.25rem, 4.2vw, 3.65rem)/1.09 var(--font-serif); letter-spacing: -.035em; color: var(--dark); }
+h1 .accent { color: inherit; }
+.intro { max-width: 850px; margin-top: 12px; font-size: .99rem; line-height: 1.6; }
+.stats { display: flex; align-items: center; flex-wrap: wrap; gap: 0; margin-top: 19px; }
+.stat { display: flex; align-items: baseline; gap: 7px; padding: 0 23px; border-left: 1px solid #c4cccb; }
+.stat:first-child { padding-left: 0; border-left: 0; }
+.stat strong { font: 600 1.15rem/1.4 var(--font-mono); color: var(--dark); }
+.stat span { font-size: .82rem; color: var(--quiet); }
+.notice { display: flex; align-items: baseline; gap: 8px; margin-top: 19px; font-size: .76rem; color: #627178; }
+.notice strong { color: #42535b; }
+.notice-dot { width: 5px; height: 5px; border-radius: 50%; flex: 0 0 5px; background: #b69c60; transform: translateY(-2px); }
+
+/* Grades e módulos */
+.layout { display: grid; grid-template-columns: minmax(0,1.52fr) minmax(0,1fr); gap: 20px; align-items: start; }
+.panel { min-width: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 3px; }
+.map-panel { padding: 22px; }
+.section-heading { display: flex; align-items: end; justify-content: space-between; gap: 14px; margin-bottom: 16px; }
+.section-heading p { max-width: 240px; text-align: right; font-size: .76rem; line-height: 1.45; color: var(--subtle); }
+.section-number { display: block; margin-bottom: 5px; color: var(--accent); font: 500 .67rem/1.5 var(--font-mono); letter-spacing: .06em; }
+.panel h2 { font: 600 1.35rem/1.2 var(--font-serif); letter-spacing: -.02em; color: var(--dark); }
+.toolbar { display: flex; justify-content: flex-end; align-items: center; flex-wrap: wrap; gap: 9px; margin-bottom: 14px; }
+input,select { min-height: 40px; padding: 8px 10px; background: #fff; border: 1px solid #c9d0cd; border-radius: 3px; color: var(--ink); font-size: .85rem; }
+input::placeholder { color: #788589; opacity: 1; }
+select { width: 225px; max-width: 100%; }
+.btn { min-height: 40px; padding: 8px 13px; background: #f5f6f3; border: 1px solid #c9d0cd; border-radius: 3px; color: #294149; font: 500 .84rem/1.4 var(--font-body); cursor: pointer; transition: border-color .13s, background-color .13s; }
+.btn:hover { background: #e8efed; border-color: #7b9a9a; }
+.btn:active { background: #dceae6; }
+.btn[aria-pressed="true"] { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
+.btn-icon { min-width: 33px; min-height: 33px; padding: 0 7px; font-size: 1.25rem; }
+
+/* Bandeira: peça principal do atlas */
+.flag-stage { padding: 17px; background: #192d38; border: 1px solid #192d38; }
+.flag-wrap { width: 100%; aspect-ratio: 20/14; position: relative; overflow: hidden; background: #009b3a; }
+.flag-wrap.zoomed { max-width: 640px; margin: 0 auto; aspect-ratio: 1/1; background: #002776; }
+.flag-wrap svg { display: block; width: 100%; height: 100%; }
+.flag-wrap #stars { position: absolute; inset: 0; overflow: visible; }
+.star-group { cursor: pointer; outline: none; }
+.star-shape { fill: #fff; stroke: #fff; stroke-width: .65; pointer-events: none; }
+.star-ring { fill: none; stroke: #f3d389; stroke-width: 4; opacity: 0; pointer-events: none; }
+.star-hit { fill: transparent; pointer-events: all; }
+.star-group:hover .star-ring { opacity: .65; }
+.star-group.is-selected .star-ring, .star-group:focus-visible .star-ring { opacity: 1; }
+.star-group.is-selected .star-shape { fill: #fff0bb; stroke: #fff0bb; }
+.star-group.is-dim { opacity: .22; }
+.star-label { fill: #fff; stroke: #071625; paint-order: stroke; stroke-linejoin: round; font: 600 36px/1 var(--font-body); pointer-events: none; }
+.mag-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 7px 16px; padding: 14px 0 0; font-size: .74rem; color: var(--quiet); }
+.mag-title { color: var(--subtle); }
+.mag-item { display: inline-flex; gap: 4px; align-items: center; white-space: nowrap; }
+.mag-item svg { width: 20px; height: 20px; fill: #637884; }
+.legend-note { margin-top: 8px; font-size: .73rem; line-height: 1.45; color: var(--subtle); }
+.query-panel { margin-top: 18px; padding-top: 17px; border-top: 1px solid var(--rule); }
+.searchbar { display: flex; align-items: stretch; gap: 8px; }
+.searchbar input { flex: 1 1 auto; min-width: 0; font-size: 16px; }
+.searchbar .btn { flex: 0 0 auto; }
+.results { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 11px; }
+.results[hidden] { display: none; }
+.results .chip { min-height: 32px; padding: 5px 9px; font: 500 .76rem var(--font-body); }
+.results .empty { font-size: .86rem; color: var(--quiet); }
+.picker { display: none; margin-top: 15px; }
+.picker label { display: block; font-size: .77rem; color: var(--quiet); margin-bottom: 6px; }
+.picker select { display: block; width: 100%; font-size: 16px; }
+
+/* Ficha técnica da estrela */
+.detail { padding: 22px; }
+.detail-top { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 13px; padding-bottom: 12px; border-bottom: 1px solid var(--rule); }
+.detail-top .section-number { margin: 0; }
+.stepper { display: flex; align-items: center; gap: 5px; }
+.counter { font: 400 .7rem/1 var(--font-mono); color: var(--quiet); min-width: 48px; text-align: center; }
+.kicker { font: 500 .69rem/1.5 var(--font-mono); text-transform: uppercase; letter-spacing: .05em; color: var(--accent); }
+.detail h3 { margin: 5px 0 10px; font: 600 clamp(2rem,2.8vw,2.8rem)/1.12 var(--font-serif); letter-spacing: -.025em; color: var(--dark); overflow-wrap: anywhere; }
+.state { display: inline-block; padding-left: 10px; border-left: 2px solid #a88c51; color: #56636b; font-size: .85rem; font-weight: 500; }
+.desc { margin: 18px 0; font-size: .92rem; line-height: 1.58; }
+.facts { border-top: 1px solid var(--border); }
+.fact { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--rule); }
+.fact dt { font-size: .78rem; color: #63727a; }
+.fact dd { font-size: .85rem; font-weight: 500; text-align: right; color: #243740; overflow-wrap: anywhere; }
+.designation { font-family: var(--font-serif); font-size: 1rem !important; }
+.pips { display: inline-flex; gap: 3px; margin-right: 6px; vertical-align: middle; }
+.pips i { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #d4dcda; }
+.pips i.on { background: #ad9668; }
+.small { color: var(--subtle); font-size: .74rem; line-height: 1.5; }
+
+/* Carta celeste: superfície escura somente onde é funcional */
+.chart-panel { margin: 23px 0 14px; padding: 16px; color: #e5edef; background: #162630; border: 1px solid #162630; border-radius: 2px; }
+.chart-head { display: flex; justify-content: space-between; align-items: start; gap: 12px; margin-bottom: 12px; }
+.chart-panel .kicker { color: #a6bec6; }
+.chart-head h4 { margin-top: 4px; font: 600 1.22rem/1.25 var(--font-serif); color: #f0f3f2; }
+.chart-code { font: 500 .71rem/1.5 var(--font-mono); color: #a7b7bd; }
+#chart { display: block; width: 100%; height: auto; min-height: 190px; background: #0b1a26; border: 1px solid #35505d; overflow: hidden; }
+#chart .chart-line { fill: none; stroke: #7799ad; stroke-width: 1.25; opacity: .78; stroke-linecap: round; stroke-linejoin: round; }
+#chart .chart-star { fill: #dcebf3; stroke: #9eb7c7; stroke-width: .3; }
+#chart .chart-peer { cursor: pointer; }
+#chart .chart-peer circle.dot { fill: #f0dcab; stroke: #d4b872; stroke-width: 1; }
+#chart .chart-peer:hover circle.dot { r: 5; }
+#chart .chart-peer:focus-visible circle.dot { stroke-width: 2; }
+#chart .chart-peer circle.hit { fill: transparent; }
+#chart .chart-active { fill: #f8e5ab; stroke: #ffefc0; stroke-width: .8; }
+#chart .chart-ring { fill: none; stroke: #e6bd66; stroke-width: 2.4; }
+#chart .chart-pointer { stroke: #e0b867; stroke-width: 1.2; }
+#chart text { font-family: var(--font-body); paint-order: stroke; stroke: #0b1a26; stroke-linejoin: round; }
+#chart .chart-label { fill: #fff0c5; font-size: 11.5px; font-weight: 600; stroke-width: 3; }
+#chart .chart-uf { fill: #f4dfaf; font-size: 9px; font-weight: 600; stroke-width: 2.4; pointer-events: none; }
+#chart .chart-empty { fill: #a4b4c0; font-size: 13px; stroke: none; }
+.chart-legend { display: flex; flex-wrap: wrap; gap: 7px 14px; margin: 11px 0 8px; font-size: .69rem; color: #b8c9d0; }
+.chart-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.chart-legend i { display: inline-block; flex: none; border-radius: 50%; }
+.dot-star { width: 7px; height: 7px; background: #e1edf4; }
+.dot-peer { width: 9px; height: 9px; background: #f0dcab; border: 1px solid #d4b872; }
+.dot-active { width: 13px; height: 13px; border: 2px solid #e6bd66; }
+.chart-caption { margin-top: 8px; color: #d7e2e7; font-size: .8rem; line-height: 1.55; }
+.chart-source { margin-top: 12px; font-size: .7rem; line-height: 1.45; color: #a8bac2; }
+.chart-source a { color: #d6e8eb; }
+
+/* Contexto, fontes e assinatura */
+.bottom { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 20px; margin-top: 20px; }
+.bottom .panel { padding: 23px 24px; }
+.bottom h2 { margin: 4px 0 14px; }
+.bottom p { font-size: .87rem; line-height: 1.7; }
+.bottom p + p { margin-top: 12px; }
+.sources ul { padding-left: 18px; color: var(--quiet); }
+.sources li { font-size: .82rem; margin: 4px 0; }
+.sources .small { margin-top: 14px; font-size: .73rem; }
+footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 24px; padding: 16px 2px 8px; border-top: 1px solid var(--border); font-size: .73rem; color: var(--subtle); }
+
+@media (max-width: 1060px) { .layout { grid-template-columns: minmax(0,1fr); } .detail { width: 100%; } }
+@media (max-width: 720px) {
+  main { padding: 24px 13px 20px; }
+  .topbar-inner { padding: 13px 15px; min-height: 57px; }
+  .brand { font-size: .94rem; }
+  .topbar-right { display: none; }
+  .hero { margin-bottom: 14px; padding-bottom: 19px; }
+  h1 { font-size: clamp(2.15rem, 7.5vw, 2.9rem); }
+  .intro { font-size: .91rem; }
+  .stats { margin-top: 14px; }
+  .stat { padding: 0 11px; gap: 5px; }
+  .stat strong { font-size: 1rem; }
+  .stat span { font-size: .73rem; }
+  .notice { font-size: .72rem; margin-top: 12px; }
+  .layout,.bottom { gap: 12px; }
+  .map-panel,.detail { padding: 15px; }
+  .section-heading { display: block; }
+  .section-heading p { max-width: none; margin-top: 5px; text-align: left; }
+  .toolbar { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 8px; }
+  .toolbar select { width: 100%; }
+  .flag-stage { padding: 7px; }
+  .flag-wrap.zoomed { max-width: 100%; }
+  .legend-note { font-size: .71rem; }
+  .mag-legend { gap: 5px 11px; }
+  .searchbar { display: grid; grid-template-columns: minmax(0,1fr); }
+  .searchbar .btn,.searchbar input { width: 100%; }
+  .picker { display: block; }
+  .results { max-height: 168px; overflow: auto; }
+  .results .chip { min-height: 40px; }
+  .detail { padding: 16px; }
+  .detail h3 { font-size: 2rem; }
+  .chart-panel { padding: 12px; }
+  #chart { min-height: 0; }
+  .bottom { grid-template-columns: 1fr; }
+  .bottom .panel { padding: 19px 16px; }
+  footer { margin-top: 17px; }
 }
-@media(max-width:380px){
- header{padding:12px 10px}
- main{padding-inline:8px}
- .panel{padding:11px}
- .tag{max-width:100%}
+@media (max-width: 385px) {
+  .stat { padding: 0 8px; }
+  .stat:first-child { padding-left: 0; }
+  .stat span { font-size: .68rem; }
+  .toolbar { grid-template-columns: 1fr; }
+  .toolbar .btn { width: 100%; }
+  .fact { display: grid; gap: 2px; }
+  .fact dd { text-align: left; }
 }
-</style><style>
-.development-notice{display:flex;gap:12px;align-items:flex-start;max-width:100%;padding:13px 16px;margin:0 0 24px;border-radius:12px;border:1px solid #447260;background:#112d2c;color:#d6f4e9;font-size:.92rem;line-height:1.5}
-.development-notice strong{color:#fff;font-weight:750}
-.development-dot{flex:0 0 8px;width:8px;height:8px;margin-top:.5em;border-radius:50%;background:#82e0b5;box-shadow:0 0 0 4px #82e0b51e}
-@media(max-width:640px){.development-notice{padding:11px 12px;margin:0 0 17px;font-size:.83rem;gap:10px;border-radius:9px}}
-</style>
-<style>
-/* Revisão pedagógica: navegação responsiva e contraste. */
-.fact #mag-aparente{font-variant-numeric:tabular-nums;color:#f6d884;font-weight:700}
-@media(max-width:650px){
-  body{font-size:15px}
-  header{padding:13px 12px}
-  main{padding:22px 10px 34px}
-  h1{font-size:clamp(2rem,9vw,2.9rem);line-height:1.13}
-  .panel{padding:14px;border-radius:15px;min-width:0}
-  .toolbar{display:grid;grid-template-columns:1fr;gap:9px}
-  .toolbar h2,.toolbar select,.toolbar #zoom{width:100%;max-width:100%;min-width:0}
-  .toolbar button,.toolbar select{min-height:44px;font-size:16px}
-  .flag-wrap,.flag-wrap.zoomed{width:100%;max-width:100%}
-  .star-picker{display:block}
-  .searchbar{display:flex;flex-direction:column;gap:9px}
-  .searchbar input,.searchbar button{width:100%;min-height:44px;font-size:16px}
-  .results{max-height:180px;overflow-y:auto}
-  .results button{min-height:44px}
-  #constellationMap{width:100%;max-width:100%;height:auto}
-  .stats{display:flex;flex-wrap:wrap;gap:8px}
-  .stats span{flex:1 1 120px}
-  .fact{display:flex;flex-wrap:wrap;gap:6px;justify-content:space-between}
-  .fact span{overflow-wrap:anywhere}
-}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
 </style>
 </head>
-<body><header><div class="brand">MATEMÁTICA & CONTEXTO <span style="color:#6e8b9e">/ LABORATÓRIO</span></div><div class="tag">Astronomia · História · Educação</div></header>
-<main><div class="development-notice" role="status"><span class="development-dot" aria-hidden="true"></span><span><strong>Projeto em fase de desenvolvimento.</strong> Algumas funcionalidades ainda estão sendo aperfeiçoadas. Obrigada por explorar esta versão.</span></div><div class="eyebrow">Atlas astronômico interativo · edição educativa</div><h1>O céu na<br>Bandeira do Brasil</h1>
-<p class="intro">Cada estrela da bandeira representa uma unidade da Federação e pertence a uma constelação real. Explore a relação entre o símbolo nacional, o céu e a história da República.</p>
-<div class="stats"><span><strong>27</strong> estrelas</span><span><strong>9</strong> constelações</span><span><strong>1889</strong> céu de referência</span></div>
-<section class="layout"><div class="panel"><div class="toolbar"><h2>Mapa estelar da bandeira</h2><button class="secondary" id="zoom" type="button" aria-pressed="false">Ampliar céu</button><select id="filter" aria-label="Filtrar por constelação"><option value="">Todas as constelações</option></select></div>
-<div class="flag-wrap">
-<svg class="flag" id="flag-svg" viewBox="0 0 2000 1400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Bandeira do Brasil: composição geométrica baseada nas proporções da legislação">
-<rect width="2000" height="1400" fill="#009b3a"/>
-<polygon points="170,700 1000,170 1830,700 1000,1230" fill="#ffdf00"/>
-<circle cx="1000" cy="700" r="350" fill="#002776"/>
-<defs><path id="motto-line" d="M 659.73473 603.76015 A 808.5 808.5 0 0 1 1339.74817 798.04970"/></defs>
-<path d="M 661.20938 612.13125 A 350 350 0 0 1 679.86412 558.53261 A 850 850 0 0 1 1346.55097 749.01457 A 350 350 0 0 1 1334.07364 804.37818 A 800 800 0 0 0 661.20938 612.13125 Z" fill="#fff"/>
-<text font-family="Verdana,Arial,sans-serif" font-size="45" font-weight="600" letter-spacing="5" word-spacing="10" fill="#007024" text-anchor="middle"><textPath href="#motto-line" startOffset="50%">ORDEM <tspan font-size="41">E</tspan> PROGRESSO</textPath></text>
-</svg>
-<svg id="stars" class="star-layer" viewBox="0 0 2000 1400" role="group" aria-label="27 estrelas interativas da bandeira"></svg></div>
-<p class="legend">Reconstituição vetorial baseada nas proporções legais e nas posições do desenho modular. As áreas clicáveis são ampliadas para facilitar a seleção. Use a lupa para explorar as estrelas.</p>
-<div id="results" class="results" aria-live="polite" hidden></div><div class="star-picker"><label for="star-picker">Escolha um estado ou estrela</label><select id="star-picker" aria-label="Escolher estrela pela unidade da Federação"></select><p class="info-note">No celular, esta lista facilita a escolha de estrelas próximas umas das outras.</p></div>
-<div class="searchbar"><input id="search" placeholder="Buscar estrela ou estado..." aria-label="Buscar estrela ou estado"><button class="secondary" id="random" type="button">Escolher uma estrela</button></div>
+<body>
+<div class="page">
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand"><span class="brand-rule" aria-hidden="true"></span><span>Matemática <span class="brand-amp">&amp;</span> Contexto</span></div>
+    <span class="topbar-right">Projeto de divulgação científica <span aria-hidden="true">/</span> Astronomia</span>
+  </div>
+</header>
+<main>
+  <section class="hero" aria-labelledby="page-heading">
+    <div class="eyebrow"><span class="eyebrow-index">ATLAS 01</span><span aria-hidden="true">/</span> CIÊNCIA E HISTÓRIA</div>
+    <h1 id="page-heading">O céu na <span class="accent">Bandeira do Brasil</span></h1>
+    <p class="intro">Explore as estrelas que representam os estados brasileiros e conheça suas constelações. Uma leitura astronômica do nosso símbolo nacional, com consulta interativa e cartas celestes.</p>
+    <div class="stats" aria-label="Dados do atlas">
+      <div class="stat"><strong>27</strong><span>estrelas</span></div>
+      <div class="stat"><strong>9</strong><span>constelações</span></div>
+      <div class="stat"><strong>1889</strong><span>céu de referência</span></div>
+    </div>
+    <p class="notice"><span class="notice-dot" aria-hidden="true"></span><span><strong>Versão em desenvolvimento.</strong> O conteúdo e as ferramentas de consulta estão sendo aperfeiçoados.</span></p>
+  </section>
+
+  <section class="layout" aria-label="Atlas interativo">
+    <div class="panel map-panel">
+      <div class="section-heading"><div><span class="section-number">01 / MAPA</span><h2>Bandeira interativa</h2></div><p>Selecione uma estrela para consultar sua identificação.</p></div>
+      <div class="toolbar">
+        <label class="sr-only" for="filter">Filtrar constelação</label>
+        <select id="filter" aria-label="Filtrar por constelação"><option value="">Todas as constelações</option></select>
+        <button class="btn" id="zoom" type="button" aria-pressed="false">Ampliar céu</button>
+      </div>
+      <div class="flag-stage">
+        <div class="flag-wrap" id="flag-wrap">
+          <svg id="flag" viewBox="0 0 2000 1400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Bandeira do Brasil: composição geométrica baseada nas proporções da legislação">
+            <rect width="2000" height="1400" fill="#009b3a"/>
+            <polygon points="170,700 1000,170 1830,700 1000,1230" fill="#ffdf00"/>
+            <circle cx="1000" cy="700" r="350" fill="#002776"/>
+            <defs><path id="motto-line" d="M 659.73473 603.76015 A 808.5 808.5 0 0 1 1339.74817 798.04970"/></defs>
+            <path d="M 661.20938 612.13125 A 350 350 0 0 1 679.86412 558.53261 A 850 850 0 0 1 1346.55097 749.01457 A 350 350 0 0 1 1334.07364 804.37818 A 800 800 0 0 0 661.20938 612.13125 Z" fill="#fff"/>
+            <text font-family="Verdana,Arial,sans-serif" font-size="45" font-weight="600" letter-spacing="5" word-spacing="10" fill="#007024" text-anchor="middle"><textPath href="#motto-line" startOffset="50%">ORDEM <tspan font-size="41">E</tspan> PROGRESSO</textPath></text>
+          </svg>
+          <svg id="stars" viewBox="0 0 2000 1400" role="group" aria-label="27 estrelas interativas da bandeira"></svg>
+        </div>
+      </div>
+      <div class="mag-legend" id="mag-legend" aria-label="Grandezas gráficas das estrelas"></div>
+      <p class="legend-note">Desenho vetorial reconstruído a partir das proporções legais. As áreas de seleção são ampliadas para facilitar o uso.</p>
+      <div class="query-panel">
+        <div class="searchbar">
+          <label class="sr-only" for="search">Buscar estrela ou estado</label>
+          <input id="search" type="search" placeholder="Buscar por estrela ou estado" aria-label="Buscar estrela ou estado" autocomplete="off">
+          <button class="btn" id="random" type="button">Estrela aleatória</button>
+        </div>
+        <div class="results" id="results" aria-live="polite" hidden></div>
+        <div class="picker">
+          <label for="picker">Selecionar por estado</label>
+          <select id="picker" aria-label="Escolher estrela pela unidade da Federação"></select>
+        </div>
+      </div>
+    </div>
+
+    <aside class="panel detail" aria-live="polite">
+      <div class="detail-top">
+        <span class="section-number">02 / IDENTIFICAÇÃO</span>
+        <div class="stepper">
+          <button class="btn btn-icon" id="prev" type="button" aria-label="Estrela anterior">‹</button>
+          <span class="counter" id="counter">—</span>
+          <button class="btn btn-icon" id="next" type="button" aria-label="Próxima estrela">›</button>
+        </div>
+      </div>
+      <div class="detail-identity">
+        <div class="kicker">Estrela selecionada</div>
+        <h3 id="name">Selecione uma estrela</h3>
+        <div id="state"></div>
+      </div>
+      <p class="desc" id="desc">Clique em uma das estrelas ou busque pelo nome de um estado.</p>
+      <dl class="facts">
+        <div class="fact"><dt>Constelação</dt><dd id="con">—</dd></div>
+        <div class="fact"><dt>Designação</dt><dd class="designation" id="des">—</dd></div>
+        <div class="fact"><dt>Grandeza no desenho</dt><dd><span class="pips" id="pips" aria-hidden="true"></span><span id="grade">—</span></dd></div>
+        <div class="fact"><dt>Magnitude aparente</dt><dd id="mag-aparente">—</dd></div>
+        <div class="fact"><dt>Unidade da Federação</dt><dd id="uf">—</dd></div>
+      </dl>
+      <section class="chart-panel" aria-labelledby="chart-title">
+        <div class="chart-head">
+          <div><div class="kicker">Carta celeste</div><h4 id="chart-title">Constelação selecionada</h4></div>
+          <span class="chart-code" id="chart-code">—</span>
+        </div>
+        <svg id="chart" viewBox="0 0 440 285" role="img" aria-label="Carta celeste da constelação com a estrela da bandeira destacada" preserveAspectRatio="xMidYMid meet"><text class="chart-empty" x="220" y="145" text-anchor="middle">Selecione uma estrela</text></svg>
+        <div class="chart-legend">
+          <span><i class="dot-star" aria-hidden="true"></i> Catálogo</span>
+          <span><i class="dot-peer" aria-hidden="true"></i> Outras estrelas</span>
+          <span><i class="dot-active" aria-hidden="true"></i> Selecionada</span>
+        </div>
+        <p class="chart-caption" id="chart-caption">Uma carta celeste correspondente aparecerá aqui.</p>
+        <p class="chart-source">Posições de catálogo; as linhas entre estrelas são convencionais e não representam os limites oficiais das constelações. <a href="https://github.com/ofrohn/d3-celestial" target="_blank" rel="noopener noreferrer">Dados: D3-Celestial</a>.</p>
+      </section>
+      <p class="small">As grandezas de 1ª a 5ª são tamanhos gráficos da bandeira, não medidas de brilho. A magnitude aparente é uma propriedade astronômica: números menores indicam maior brilho observado.</p>
+    </aside>
+  </section>
+
+  <section class="bottom" aria-label="Contexto e referências">
+    <section class="panel context">
+      <span class="section-number">03 / CONTEXTO</span>
+      <h2>O céu de 15 de novembro de 1889</h2>
+      <p>A lei brasileira estabelece como referência o aspecto do céu do Rio de Janeiro em <strong>15 de novembro de 1889, às 8h30</strong> (12 horas siderais). O desenho é concebido como visto de fora da esfera celeste, e não como uma fotografia do céu obtida do solo.</p>
+      <p>A bandeira foi adotada em 19 de novembro de 1889 e posteriormente atualizada para representar as 27 unidades da Federação.</p>
+    </section>
+    <section class="panel sources">
+      <span class="section-number">04 / REFERÊNCIAS</span>
+      <h2>Fontes e metodologia</h2>
+      <ul>
+        <li><a href="https://www2.camara.leg.br/legin/fed/lei/1970-1979/lei-5700-1-setembro-1971-357915-normaatualizada-pl.html" target="_blank" rel="noopener">Lei nº 5.700/1971</a></li>
+        <li><a href="https://www.inpe.br/ciaa2018/arquivos/aulas_pdfs/astronomia_no_dia_adia/AulaCIAA_2b_Astronomianodiadia_DiasNoitesEstacoes_Topocentrismo_SemAnimacoes2015.pdf" target="_blank" rel="noopener">INPE — estados e estrelas</a></li>
+        <li><a href="https://www.gov.br/aeb/pt-br/centrais-de-conteudo/publicacoes/instagram-do-periodo-de-defeso-eleitoral-2022/curiosidades-do-espaco-bandeira-nacional-e-constelacoes" target="_blank" rel="noopener">Agência Espacial Brasileira</a></li>
+        <li><a href="https://www.gov.br/observatorio/pt-br/assuntos/areas-de-atuacao/divulgacao-e-popularizacao-da-ciencia/revistas/pdf/bandeiras.pdf" target="_blank" rel="noopener">Observatório Nacional</a></li>
+        <li><a href="https://github.com/danmadeira/bandeira-nacional" target="_blank" rel="noopener">Geometria do desenho modular</a></li>
+      </ul>
+      <p class="small">Os centros das estrelas no desenho foram reconstruídos a partir da geometria da bandeira. Não devem ser interpretados como coordenadas celestes ou posições calculadas em tempo real.</p>
+    </section>
+  </section>
+  <footer><span>© Matemática &amp; Contexto</span><span>Projeto e autoria: Joice Souza Martins Santos</span></footer>
+</main>
 </div>
-<aside class="panel detail" aria-live="polite"><div class="subtitle">Observatório · ficha da estrela</div><h3 id="name">Selecione uma estrela</h3><div id="state"></div><p id="desc">Clique em uma das estrelas ou busque pelo nome de um estado.</p>
-<div class="fact"><b>Constelação</b><span id="con">—</span></div><div class="fact"><b>Designação astronômica</b><span id="des">—</span></div><div class="fact"><b>Grandeza na bandeira</b><span id="grade">—</span></div><div class="fact"><b>Magnitude aparente (catálogo)</b><span id="mag-aparente">—</span></div><div class="fact"><b>Unidade da Federação</b><span id="uf">—</span></div>
-
-<section class="constellation-panel" aria-labelledby="constellation-heading">
-  <div class="constellation-head">
-    <div><div class="constellation-kicker">ATLAS DO CÉU · CARTA CELESTE</div><h4 id="constellation-heading">Constelação selecionada</h4></div>
-    <span class="constellation-index" id="chart-index">—</span>
-  </div>
-  <svg id="constellationMap" viewBox="0 0 440 285" role="img" aria-label="Carta celeste da constelação com a estrela da bandeira destacada" preserveAspectRatio="xMidYMid meet">
-    <text x="220" y="140" fill="#9ab6c6" text-anchor="middle">Selecione uma estrela</text>
-  </svg>
-  <div class="constellation-legend">
-    <span><i class="constellation-dot" aria-hidden="true"></i> Estrelas do catálogo</span>
-    <span><i class="constellation-ring" aria-hidden="true"></i> Estrela selecionada</span>
-  </div>
-  <p class="constellation-caption" id="constellationCaption">Uma carta celeste correspondente aparecerá aqui.</p>
-  <p class="constellation-source">Posições astronômicas de catálogo; ligações convencionais entre estrelas, não os limites da constelação. <a href="https://github.com/ofrohn/d3-celestial" target="_blank" rel="noopener noreferrer">Fonte: D3-Celestial</a></p>
-</section>
-<p class="small">As designações são astronômicas reais. As cinco grandezas gráficas são tamanhos definidos para o desenho da bandeira, não valores de magnitude astronômica nem distâncias. A magnitude aparente exibida vem do catálogo estelar utilizado nas cartas: quanto menor o número, mais brilhante a estrela parece no céu.</p></aside></section>
-<section class="bottom"><div class="panel"><h2>O que exatamente está representado?</h2><p>A lei brasileira estabelece como referência o aspecto do céu do Rio de Janeiro em <strong>15 de novembro de 1889, às 8h30</strong> (12 horas siderais). O desenho é concebido como visto de fora da esfera celeste, e não como uma fotografia do céu obtida do solo.</p><p>A bandeira foi adotada em 19 de novembro de 1889 e posteriormente atualizada para representar as 27 unidades da Federação. Como prevê a lei, as constelações são consideradas do ponto de vista de quem observa de fora da esfera celeste.</p></div>
-<div class="panel"><h2>Fontes e metodologia</h2><ul><li><a href="https://www2.camara.leg.br/legin/fed/lei/1970-1979/lei-5700-1-setembro-1971-357915-normaatualizada-pl.html" target="_blank" rel="noopener">Lei nº 5.700/1971 (texto atualizado)</a></li><li><a href="https://www.inpe.br/ciaa2018/arquivos/aulas_pdfs/astronomia_no_dia_adia/AulaCIAA_2b_Astronomianodiadia_DiasNoitesEstacoes_Topocentrismo_SemAnimacoes2015.pdf" target="_blank" rel="noopener">INPE: estados e estrelas</a></li><li><a href="https://www.gov.br/aeb/pt-br/centrais-de-conteudo/publicacoes/instagram-do-periodo-de-defeso-eleitoral-2022/curiosidades-do-espaco-bandeira-nacional-e-constelacoes" target="_blank" rel="noopener">AEB: constelações</a></li><li><a href="https://www.gov.br/observatorio/pt-br/assuntos/areas-de-atuacao/divulgacao-e-popularizacao-da-ciencia/revistas/pdf/bandeiras.pdf" target="_blank" rel="noopener">Observatório Nacional: A Nossa Bandeira</a></li><li><a href="https://github.com/danmadeira/bandeira-nacional" target="_blank" rel="noopener">Estudo de geometria do desenho modular (referência)</a></li></ul><p class="small">Os dados históricos e a identidade das estrelas foram revisados com fontes institucionais. O mapa respeita as proporções geométricas legais e utiliza centros de estrelas reconstruídos a partir do desenho modular. Não são coordenadas celestes ou efemérides de uma API.</p></div></section>
-<footer>Projeto educativo e autoria: Joice Souza Martins Santos · Matemática & Contexto</footer></main>
-<script>
-const starsData=[{"uf":"PA","estado":"Pará","nome":"Spica","designacao":"α Virginis","constelacao":"Virgem","x":55.2,"y":42.43,"curiosidade":"Estrela azul-branca, uma das mais brilhantes do céu noturno.","cx":1103.95,"cy":593.95,"grandeza":1},{"uf":"AM","estado":"Amazonas","nome":"Procyon","designacao":"α Canis Minoris","constelacao":"Cão Menor","x":35.74,"y":45.5,"curiosidade":"Uma das estrelas próximas do Sol na vizinhança estelar.","cx":714.75,"cy":637,"grandeza":1},{"uf":"MS","estado":"Mato Grosso do Sul","nome":"Alphard","designacao":"α Hydrae","constelacao":"Hidra Fêmea","x":43.53,"y":50.75,"curiosidade":"Uma gigante alaranjada, destaque da constelação de Hidra.","cx":870.5,"cy":710.5,"grandeza":2},{"uf":"AC","estado":"Acre","nome":"Gamma Hydrae","designacao":"γ Hydrae","constelacao":"Hidra Fêmea","x":54.59,"y":48.6,"curiosidade":"Estrela da longa constelação Hidra Fêmea.","cx":1091.7,"cy":680.4,"grandeza":3},{"uf":"MT","estado":"Mato Grosso","nome":"Sirius","designacao":"α Canis Majoris","constelacao":"Cão Maior","x":37.16,"y":56,"curiosidade":"É a estrela mais brilhante do céu noturno, vista da Terra.","cx":743.1,"cy":784,"grandeza":1},{"uf":"AP","estado":"Amapá","nome":"Mirzam","designacao":"β Canis Majoris","constelacao":"Cão Maior","x":35.2,"y":58.18,"curiosidade":"Estrela associada ao Cão Maior, próxima de Sirius no céu.","cx":703.9,"cy":814.45,"grandeza":2},{"uf":"RO","estado":"Rondônia","nome":"Muliphein","designacao":"γ Canis Majoris","constelacao":"Cão Maior","x":38.85,"y":54.38,"curiosidade":"Também identificada pela designação Gamma Canis Majoris.","cx":777.05,"cy":761.25,"grandeza":4},{"uf":"RR","estado":"Roraima","nome":"Wezen","designacao":"δ Canis Majoris","constelacao":"Cão Maior","x":40.88,"y":58.35,"curiosidade":"Supergigante amarela na constelação do Cão Maior.","cx":817.65,"cy":816.9,"grandeza":2},{"uf":"TO","estado":"Tocantins","nome":"Adhara","designacao":"ε Canis Majoris","constelacao":"Cão Maior","x":40.41,"y":60.95,"curiosidade":"Uma estrela azul muito luminosa do Cão Maior.","cx":808.2,"cy":853.3,"grandeza":3},{"uf":"GO","estado":"Goiás","nome":"Canopus","designacao":"α Carinae","constelacao":"Carina (Quilha)","x":43,"y":63.5,"curiosidade":"A segunda estrela mais brilhante do céu noturno.","cx":860,"cy":889,"grandeza":1},{"uf":"BA","estado":"Bahia","nome":"Gacrux","designacao":"γ Crucis","constelacao":"Cruzeiro do Sul","x":49.97,"y":53.88,"curiosidade":"Gigante avermelhada que marca uma ponta do Cruzeiro do Sul.","cx":999.3,"cy":754.25,"grandeza":2},{"uf":"MG","estado":"Minas Gerais","nome":"Delta Crucis","designacao":"δ Crucis","constelacao":"Cruzeiro do Sul","x":48.29,"y":56.48,"curiosidade":"Uma das cinco estrelas representadas no Cruzeiro do Sul da bandeira.","cx":965.7,"cy":790.65,"grandeza":3},{"uf":"ES","estado":"Espírito Santo","nome":"Epsilon Crucis","designacao":"ε Crucis","constelacao":"Cruzeiro do Sul","x":49.25,"y":57.9,"curiosidade":"Conhecida popularmente como a Intrometida.","cx":984.95,"cy":810.6,"grandeza":4},{"uf":"SP","estado":"São Paulo","nome":"Acrux","designacao":"α Crucis","constelacao":"Cruzeiro do Sul","x":50,"y":61.33,"curiosidade":"Sistema estelar que marca a extremidade inferior do Cruzeiro do Sul.","cx":1000,"cy":858.55,"grandeza":1},{"uf":"RJ","estado":"Rio de Janeiro","nome":"Mimosa","designacao":"β Crucis","constelacao":"Cruzeiro do Sul","x":51.94,"y":56.18,"curiosidade":"Estrela azul brilhante do Cruzeiro do Sul.","cx":1038.85,"cy":786.45,"grandeza":2},{"uf":"PI","estado":"Piauí","nome":"Antares","designacao":"α Scorpii","constelacao":"Escorpião","x":62.25,"y":58.58,"curiosidade":"Supergigante vermelha que marca o coração do Escorpião.","cx":1245,"cy":820.05,"grandeza":1},{"uf":"MA","estado":"Maranhão","nome":"Acrab (Graffias)","designacao":"β Scorpii","constelacao":"Escorpião","x":64.72,"y":58.78,"curiosidade":"Sistema estelar conhecido também por Graffias.","cx":1294.35,"cy":822.85,"grandeza":3},{"uf":"CE","estado":"Ceará","nome":"Wei","designacao":"ε Scorpii","constelacao":"Escorpião","x":62.92,"y":61.08,"curiosidade":"Estrela identificada por Epsilon Scorpii.","cx":1258.3,"cy":855.05,"grandeza":2},{"uf":"RN","estado":"Rio Grande do Norte","nome":"Shaula","designacao":"λ Scorpii","constelacao":"Escorpião","x":61.88,"y":62.95,"curiosidade":"Estrela muito luminosa na região do ferrão do Escorpião.","cx":1237.65,"cy":881.3,"grandeza":2},{"uf":"PB","estado":"Paraíba","nome":"Girtab","designacao":"κ Scorpii","constelacao":"Escorpião","x":60.45,"y":64.18,"curiosidade":"Estrela associada à cauda do Escorpião.","cx":1208.95,"cy":898.45,"grandeza":3},{"uf":"PE","estado":"Pernambuco","nome":"Mu Scorpii","designacao":"μ Scorpii","constelacao":"Escorpião","x":58.75,"y":64.03,"curiosidade":"Designação de um sistema estelar do Escorpião.","cx":1175,"cy":896.35,"grandeza":3},{"uf":"AL","estado":"Alagoas","nome":"Sargas","designacao":"θ Scorpii","constelacao":"Escorpião","x":58.75,"y":66.43,"curiosidade":"Estrela brilhante próxima à cauda do Escorpião.","cx":1175,"cy":929.95,"grandeza":2},{"uf":"SE","estado":"Sergipe","nome":"Iota Scorpii","designacao":"ι Scorpii","constelacao":"Escorpião","x":58.77,"y":68.72,"curiosidade":"Identificada pela letra grega iota na constelação do Escorpião.","cx":1175.35,"cy":962.15,"grandeza":3},{"uf":"RS","estado":"Rio Grande do Sul","nome":"Atria","designacao":"α Trianguli Australis","constelacao":"Triângulo Austral","x":55.2,"y":66.93,"curiosidade":"Uma gigante alaranjada do Triângulo Austral.","cx":1103.95,"cy":936.95,"grandeza":2},{"uf":"SC","estado":"Santa Catarina","nome":"Beta Trianguli Australis","designacao":"β Trianguli Australis","constelacao":"Triângulo Austral","x":56.72,"y":64.47,"curiosidade":"Uma das três estrelas principais do Triângulo Austral.","cx":1134.4,"cy":902.65,"grandeza":3},{"uf":"PR","estado":"Paraná","nome":"Gamma Trianguli Australis","designacao":"γ Trianguli Australis","constelacao":"Triângulo Austral","x":53.8,"y":63.88,"curiosidade":"Completa o trio principal do Triângulo Austral.","cx":1075.95,"cy":894.25,"grandeza":3},{"uf":"DF","estado":"Distrito Federal","nome":"Polaris Australis","designacao":"σ Octantis","constelacao":"Oitante","x":50.04,"y":69.38,"curiosidade":"Estrela próxima ao polo sul celeste, menos brilhante que muitas outras na bandeira.","cx":1000.7,"cy":971.25,"grandeza":5}];
-const NS='http://www.w3.org/2000/svg';
-const layer=document.querySelector('#stars');
-const flag=document.querySelector('#flag-svg');
-const wrap=document.querySelector('.flag-wrap');
-const filter=document.querySelector('#filter');
-const search=document.querySelector('#search');
-const zoomButton=document.querySelector('#zoom');
-const results=document.querySelector('#results');
-const starPicker=document.querySelector('#star-picker');
-const sortByState=[...starsData].sort((a,b)=>a.estado.localeCompare(b.estado,'pt-BR'));
-for(const s of sortByState){
- const option=document.createElement('option');
- option.value=s.uf;
- option.textContent=s.estado+' — '+s.nome;
- starPicker.appendChild(option);
-}
-starPicker.addEventListener('change',()=>{
- const s=starsData.find(item=>item.uf===starPicker.value);
- if(!s)return;
- // A seleção pelo estado deve ser possível mesmo depois de filtrar.
- filter.value='';search.value='';
- showStar(s,true);
-});
-
-let selected='PA';
-let zoomed=window.matchMedia('(max-width:650px)').matches;
-const constellations=[...new Set(starsData.map(s=>s.constelacao))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
-for(const name of constellations){
- const opt=document.createElement('option');opt.value=name;opt.textContent=name;filter.append(opt);
-}
-function svgEl(tag,attributes){
- const el=document.createElementNS(NS,tag);
- for(const [key,value] of Object.entries(attributes||{}))el.setAttribute(key,String(value));
- return el;
-}
-function starPoints(s){
- const radius=[15,12.5,10,7,5][s.grandeza-1],inner=radius*0.381966;
- const pts=[];
- for(let i=0;i<10;i++){
-  const angle=-Math.PI/2+i*Math.PI/5,r=i%2?inner:radius;
-  pts.push((s.cx+Math.cos(angle)*r).toFixed(3)+','+(s.cy+Math.sin(angle)*r).toFixed(3));
- }
- return pts.join(' ');
-}
-
-const constellationCharts={"Virgem":{"code":"Vir","lines":[[[176.4648,6.5294],[177.6738,1.7647],[-175.0235,-0.6668],[-169.5848,-1.4494],[-162.5125,-5.539],[-158.7018,-11.1613],[-145.9964,-6.0005],[-139.2349,-5.6582]],[[-164.4558,10.9592],[-166.0991,3.3975],[-169.5848,-1.4494]],[[-162.5125,-5.539],[-156.3267,-0.5958],[-149.5884,1.5445],[-138.4378,1.8929]]],"stars":[{"h":65474,"l":[-158.7018,-11.1613],"m":0.98},{"h":61941,"l":[-169.5848,-1.4494],"m":2.74},{"h":63608,"l":[-164.4558,10.9592],"m":2.85},{"h":66249,"l":[-156.3267,-0.5958],"m":3.38},{"h":63090,"l":[-166.0991,3.3975],"m":3.39},{"h":57757,"l":[177.6738,1.7647],"m":3.59},{"h":72220,"l":[-138.4378,1.8929],"m":3.73},{"h":71957,"l":[-139.2349,-5.6582],"m":3.87},{"h":60129,"l":[-175.0235,-0.6668],"m":3.89},{"h":57380,"l":[176.4648,6.5294],"m":4.04},{"h":69701,"l":[-145.9964,-6.0005],"m":4.07},{"h":58948,"l":[-178.6978,8.733],"m":4.12},{"h":69427,"l":[-146.7761,-10.2737],"m":4.18},{"h":68520,"l":[-149.5884,1.5445],"m":4.23},{"h":64238,"l":[-162.5125,-5.539],"m":4.38},{"h":73620,"l":[-134.2748,2.0913],"m":4.39},{"h":69974,"l":[-145.2225,-13.3711],"m":4.52},{"h":58590,"l":[-179.7817,6.6143],"m":4.65},{"h":61740,"l":[-170.1885,-7.9956],"m":4.66},{"h":66006,"l":[-157.0088,-6.2558],"m":4.68},{"h":64924,"l":[-160.3987,-18.3112],"m":4.74}],"highlights":{"PA":{"l":[-158.7018,-11.1613],"m":0.98,"h":65474}}},"Cão Menor":{"code":"CMi","lines":[[[114.8255,5.225],[111.7877,8.2893]]],"stars":[{"h":37279,"l":[114.8255,5.225],"m":0.4},{"h":36188,"l":[111.7877,8.2893],"m":2.89},{"h":36284,"l":[112.0408,8.9255],"m":4.33},{"h":39311,"l":[120.5664,2.3346],"m":4.39},{"h":36425,"l":[112.4491,12.0066],"m":4.55}],"highlights":{"AM":{"l":[114.8255,5.225],"m":0.4,"h":37279}}},"Hidra Fêmea":{"code":"Hya","lines":[[[131.6938,6.4188],[132.1082,5.8378],[130.8061,3.3987],[129.6893,3.3414],[129.414,5.7038],[131.6938,6.4188],[133.8484,5.9456],[138.5911,2.3143],[144.964,-1.1428],[141.8968,-8.6586],[147.8696,-14.8466],[152.647,-12.3541],[156.5226,-16.8363],[162.4062,-16.1936],[173.2505,-31.8576],[178.2272,-33.9081],[-160.2696,-23.1715],[-148.4071,-26.6824],[-137.4279,-27.9604]]],"stars":[{"h":46390,"l":[141.8968,-8.6586],"m":1.99},{"h":64962,"l":[-160.2696,-23.1715],"m":2.99},{"h":43813,"l":[133.8484,5.9456],"m":3.11},{"h":52943,"l":[162.4062,-16.1936],"m":3.11},{"h":68895,"l":[-148.4071,-26.6824],"m":3.25},{"h":43109,"l":[131.6938,6.4188],"m":3.38},{"h":56343,"l":[173.2505,-31.8576],"m":3.54},{"h":49841,"l":[152.647,-12.3541],"m":3.61},{"h":51069,"l":[156.5226,-16.8363],"m":3.83},{"h":45336,"l":[138.5911,2.3143],"m":3.89},{"h":47431,"l":[144.964,-1.1428],"m":3.9},{"h":41307,"l":[126.4151,-3.9064],"m":3.91},{"h":48356,"l":[147.8696,-14.8466],"m":4.11},{"h":42313,"l":[129.414,5.7038],"m":4.14},{"h":57936,"l":[178.2272,-33.9081],"m":4.29},{"h":42799,"l":[130.8061,3.3987],"m":4.3},{"h":43067,"l":[131.5939,-13.5477],"m":4.32},{"h":43234,"l":[132.1082,5.8378],"m":4.35},{"h":72571,"l":[-137.4279,-27.9604],"m":4.42},{"h":42402,"l":[129.6893,3.3414],"m":4.45},{"h":46776,"l":[142.9955,-1.1847],"m":4.54},{"h":46509,"l":[142.2871,-2.769],"m":4.59},{"h":49402,"l":[151.2811,-13.0646],"m":4.6},{"h":42835,"l":[130.9182,-7.2337],"m":4.63},{"h":56922,"l":[175.0533,-34.7447],"m":4.7},{"h":46371,"l":[141.8267,-22.3438],"m":4.72}],"highlights":{"MS":{"l":[141.8968,-8.6586],"m":1.99,"h":46390},"AC":{"l":[-160.2696,-23.1715],"m":2.99,"h":64962}}},"Cão Maior":{"code":"CMa","lines":[[[95.6749,-17.9559],[101.2872,-16.7161],[105.7561,-23.8333],[107.0979,-26.3932],[105.4298,-27.9348],[104.6565,-28.9721],[95.0783,-30.0634]],[[111.0238,-29.3031],[107.0979,-26.3932]],[[101.2872,-16.7161],[104.0343,-17.0542],[105.9396,-15.6333],[103.5475,-12.0386],[104.0343,-17.0542]]],"stars":[{"h":32349,"l":[101.2872,-16.7161],"m":-1.44},{"h":33579,"l":[104.6565,-28.9721],"m":1.5},{"h":34444,"l":[107.0979,-26.3932],"m":1.83},{"h":30324,"l":[95.6749,-17.9559],"m":1.98},{"h":35904,"l":[111.0238,-29.3031],"m":2.45},{"h":30122,"l":[95.0783,-30.0634],"m":3.02},{"h":33977,"l":[105.7561,-23.8333],"m":3.02},{"h":33856,"l":[105.4298,-27.9348],"m":3.49},{"h":32759,"l":[102.4602,-32.5085],"m":3.5},{"h":33152,"l":[103.5331,-24.1842],"m":3.89},{"h":31592,"l":[99.171,-19.2559],"m":3.95},{"h":35037,"l":[108.7027,-26.7727],"m":4.01},{"h":33160,"l":[103.5475,-12.0386],"m":4.08},{"h":34045,"l":[105.9396,-15.6333],"m":4.11},{"h":31125,"l":[97.964,-23.4184],"m":4.34},{"h":33347,"l":[104.0343,-17.0542],"m":4.36},{"h":35415,"l":[109.677,-24.9544],"m":4.37},{"h":31700,"l":[99.4726,-18.2375],"m":4.42},{"h":34981,"l":[108.5634,-26.3525],"m":4.42},{"h":30788,"l":[97.0425,-32.5801],"m":4.47},{"h":31416,"l":[98.7641,-22.9648],"m":4.54},{"h":33302,"l":[103.906,-20.1365],"m":4.66}],"highlights":{"MT":{"l":[101.2872,-16.7161],"m":-1.44,"h":32349},"AP":{"l":[95.6749,-17.9559],"m":1.98,"h":30324},"RO":{"l":[105.9396,-15.6333],"m":4.11,"h":34045},"RR":{"l":[107.0979,-26.3932],"m":1.83,"h":34444},"TO":{"l":[104.6565,-28.9721],"m":1.5,"h":33579}}},"Carina (Quilha)":{"code":"Car","lines":[[[99.4403,-43.1959],[95.988,-52.6957],[138.2999,-69.7172],[153.4342,-70.0379],[160.7392,-64.3945],[158.0061,-61.6853],[154.2707,-61.3323],[139.2725,-59.2752],[125.6285,-59.5095],[119.1946,-52.9824],[122.3831,-47.3366],[131.1759,-54.7088],[139.2725,-59.2752]],[[160.7392,-64.3945],[166.6351,-62.4241],[167.1417,-61.9472],[168.1501,-60.3176],[167.1475,-58.975],[163.3736,-58.8532],[158.0061,-61.6853]]],"stars":[{"h":30438,"l":[95.988,-52.6957],"m":-0.62},{"h":45238,"l":[138.2999,-69.7172],"m":1.67},{"h":41037,"l":[125.6285,-59.5095],"m":1.86},{"h":45556,"l":[139.2725,-59.2752],"m":2.21},{"h":52419,"l":[160.7392,-64.3945],"m":2.74},{"h":48002,"l":[146.7755,-65.072],"m":2.92},{"h":50099,"l":[153.4342,-70.0379],"m":3.29},{"h":51576,"l":[158.0061,-61.6853],"m":3.3},{"h":50371,"l":[154.2707,-61.3323],"m":3.39},{"h":45080,"l":[137.742,-58.9669],"m":3.43},{"h":38827,"l":[119.1946,-52.9824],"m":3.46},{"h":47854,"l":[146.3117,-62.5079],"m":3.69},{"h":53253,"l":[163.3736,-58.8532],"m":3.78},{"h":51232,"l":[156.9697,-58.7394],"m":3.81},{"h":43783,"l":[133.7618,-60.6446],"m":3.84},{"h":54463,"l":[167.1475,-58.975],"m":3.93},{"h":45101,"l":[137.8197,-62.317],"m":3.96},{"h":50954,"l":[156.0988,-74.0316],"m":3.99},{"h":46974,"l":[143.611,-59.2298],"m":4.08},{"h":42568,"l":[130.1543,-59.761],"m":4.31},{"h":45496,"l":[139.0503,-57.5415],"m":4.34},{"h":31407,"l":[98.7441,-52.9756],"m":4.35},{"h":32761,"l":[102.4638,-53.6224],"m":4.41},{"h":51849,"l":[158.8971,-57.5576],"m":4.45},{"h":44599,"l":[136.2867,-72.6027],"m":4.47},{"h":43105,"l":[131.6773,-56.7698],"m":4.5}],"highlights":{"GO":{"l":[95.988,-52.6957],"m":-0.62,"h":30438}}},"Cruzeiro do Sul":{"code":"Cru","lines":[[[-168.0697,-59.6888],[-176.2137,-58.7489]],[[-173.3504,-63.0991],[-172.2085,-57.1132]]],"stars":[{"h":60718,"l":[-173.3504,-63.0991],"m":0.77},{"h":62434,"l":[-168.0697,-59.6888],"m":1.25},{"h":61084,"l":[-172.2085,-57.1132],"m":1.59},{"h":59747,"l":[-176.2137,-58.7489],"m":2.79},{"h":60260,"l":[-174.66,-60.4011],"m":3.59},{"h":63003,"l":[-166.3516,-57.1779],"m":4.03},{"h":60009,"l":[-175.3906,-64.0031],"m":4.06},{"h":59072,"l":[-178.2796,-64.6137],"m":4.14},{"h":58758,"l":[-179.2437,-63.3129],"m":4.32},{"h":63007,"l":[-166.3367,-59.1467],"m":4.62},{"h":62268,"l":[-168.5915,-60.9813],"m":4.69},{"h":58867,"l":[-178.9199,-63.1657],"m":4.72}],"highlights":{"BA":{"l":[-172.2085,-57.1132],"m":1.59,"h":61084},"MG":{"l":[-176.2137,-58.7489],"m":2.79,"h":59747},"ES":{"l":[-174.66,-60.4011],"m":3.59,"h":60260},"SP":{"l":[-173.3504,-63.0991],"m":0.77,"h":60718},"RJ":{"l":[-168.0697,-59.6888],"m":1.25,"h":62434}}},"Escorpião":{"code":"Sco","lines":[[[-120.287,-26.1141],[-119.9166,-22.6217],[-118.6407,-19.8055]],[[-119.9166,-22.6217],[-114.7028,-25.5928],[-112.6481,-26.432],[-111.0294,-28.216],[-107.4591,-34.2932],[-107.0324,-38.0474],[-106.3541,-42.3613],[-101.9617,-43.2392],[-95.6703,-42.9978],[-93.1038,-40.127],[-94.378,-39.03],[-96.5978,-37.1038]]],"stars":[{"h":80763,"l":[-112.6481,-26.432],"m":1.06},{"h":85927,"l":[-96.5978,-37.1038],"m":1.62},{"h":86228,"l":[-95.6703,-42.9978],"m":1.86},{"h":78401,"l":[-119.9166,-22.6217],"m":2.29},{"h":82396,"l":[-107.4591,-34.2932],"m":2.29},{"h":86670,"l":[-94.378,-39.03],"m":2.39},{"h":78820,"l":[-118.6407,-19.8055],"m":2.56},{"h":85696,"l":[-97.309,-37.2958],"m":2.7},{"h":81266,"l":[-111.0294,-28.216],"m":2.82},{"h":78265,"l":[-120.287,-26.1141],"m":2.89},{"h":80112,"l":[-114.7028,-25.5928],"m":2.9},{"h":87073,"l":[-93.1038,-40.127],"m":2.99},{"h":82514,"l":[-107.0324,-38.0474],"m":3},{"h":87261,"l":[-92.5355,-37.0433],"m":3.19},{"h":84143,"l":[-101.9617,-43.2392],"m":3.32},{"h":82545,"l":[-106.9161,-38.0175],"m":3.56},{"h":82729,"l":[-106.3541,-42.3613],"m":3.62},{"h":78104,"l":[-120.7788,-29.2141],"m":3.87},{"h":78933,"l":[-118.2982,-20.6692],"m":3.93},{"h":79374,"l":[-117.0011,-19.4607],"m":4},{"h":81304,"l":[-110.9064,-35.2553],"m":4.18},{"h":80911,"l":[-112.1544,-34.7044],"m":4.24},{"h":86170,"l":[-95.8632,-38.6353],"m":4.26},{"h":78990,"l":[-118.1486,-20.8688],"m":4.31},{"h":80079,"l":[-114.8409,-24.1693],"m":4.55},{"h":79404,"l":[-116.9241,-27.9264],"m":4.58}],"highlights":{"PI":{"l":[-112.6481,-26.432],"m":1.06,"h":80763},"MA":{"l":[-118.6407,-19.8055],"m":2.56,"h":78820},"CE":{"l":[-107.4591,-34.2932],"m":2.29,"h":82396},"RN":{"l":[-96.5978,-37.1038],"m":1.62,"h":85927},"PB":{"l":[-94.378,-39.03],"m":2.39,"h":86670},"PE":{"l":[-107.0324,-38.0474],"m":3,"h":82514},"AL":{"l":[-95.6703,-42.9978],"m":1.86,"h":86228},"SE":{"l":[-93.1038,-40.127],"m":2.99,"h":87073}}},"Triângulo Austral":{"code":"TrA","lines":[[[-107.8338,-69.0277],[-121.2143,-63.4307],[-130.2726,-68.6795],[-107.8338,-69.0277]]],"stars":[{"h":82273,"l":[-107.8338,-69.0277],"m":1.91},{"h":77952,"l":[-121.2143,-63.4307],"m":2.83},{"h":74946,"l":[-130.2726,-68.6795],"m":2.87},{"h":79664,"l":[-116.1405,-63.6857],"m":3.86},{"h":76440,"l":[-125.8199,-66.317],"m":4.11}],"highlights":{"RS":{"l":[-107.8338,-69.0277],"m":1.91,"h":82273},"SC":{"l":[-121.2143,-63.4307],"m":2.83,"h":77952},"PR":{"l":[-130.2726,-68.6795],"m":2.87,"h":74946}}},"Oitante":{"code":"Oct","lines":[[[-143.2699,-83.6679],[-18.4854,-81.3816],[-34.6306,-77.39],[-143.2699,-83.6679]]],"stars":[{"h":107089,"l":[-34.6306,-77.39],"m":3.73},{"h":112405,"l":[-18.4854,-81.3816],"m":4.13},{"h":70638,"l":[-143.2699,-83.6679],"m":4.31}],"highlights":{"DF":{"l":[-42.8048,-88.9565],"m":5.45,"h":104382}}}};
-const constellationElement=document.querySelector('#constellationMap');
-const constellationCaption=document.querySelector('#constellationCaption');
-const constellationHeading=document.querySelector('#constellation-heading');
-const constellationIndex=document.querySelector('#chart-index');
-const CHARTNS='http://www.w3.org/2000/svg';
-function chartElement(tag,attrs={}){
-  const node=document.createElementNS(CHARTNS,tag);
-  for(const [k,v] of Object.entries(attrs)) node.setAttribute(k,String(v));
-  return node;
-}
-function chartDeltaLon(lon,origin){
-  return ((lon-origin+540)%360+360)%360-180;
-}
-function drawConstellationChart(selectedStar){
-  const chart=constellationCharts[selectedStar.constelacao];
-  if(!chart){constellationCaption.textContent='Carta celeste indisponível.';return;}
-  const marker=chart.highlights[selectedStar.uf];
-  const coords=chart.lines.flat().concat(chart.stars.map(s=>s.l),Object.values(chart.highlights).map(s=>s.l));
-  const origin=Object.values(chart.highlights)[0].l[0];
-  const polar=chart.code==='Oct';
-  // Equiretangular approximation for local charts; polar projection near the South Celestial Pole.
-  const midDec=coords.reduce((v,p)=>v+p[1],0)/coords.length;
-  const cosLat=Math.max(.12,Math.cos(midDec*Math.PI/180));
-  function project(pair){
-    const lon=pair[0],dec=pair[1];
-    if(polar){
-      const radius=90+dec,angle=lon*Math.PI/180;
-      return [radius*Math.cos(angle),radius*Math.sin(angle)];
-    }
-    return [chartDeltaLon(lon,origin)*cosLat,-dec];
-  }
-  const projected=coords.map(project);
-  const xvals=projected.map(p=>p[0]),yvals=projected.map(p=>p[1]);
-  const minX=Math.min(...xvals),maxX=Math.max(...xvals),minY=Math.min(...yvals),maxY=Math.max(...yvals);
-  const dx=Math.max(5,maxX-minX),dy=Math.max(4,maxY-minY);
-  const scale=Math.min(369/dx,221/dy);
-  const xOffset=(440-dx*scale)/2,yOffset=(285-dy*scale)/2;
-  function xy(pair){
-    const p=project(pair);return [xOffset+(p[0]-minX)*scale,yOffset+(p[1]-minY)*scale];
-  }
-  constellationElement.replaceChildren();
-  const title=chartElement('title');title.textContent='Carta celeste de '+selectedStar.constelacao+', estrela '+selectedStar.nome+' destacada';constellationElement.append(title);
-  // Lines from observational coordinates, not invented by connections among the flag positions.
-  for(const segment of chart.lines){
-    const points=segment.map(xy);
-    const path=chartElement('polyline',{points:points.map(p=>p.map(v=>v.toFixed(2)).join(',')).join(' '),class:'chart-line'});
-    constellationElement.append(path);
-  }
-  // Stars with visual diameter approximately scaled to apparent magnitude.
-  for(const star of chart.stars){
-    const [x,y]=xy(star.l);
-    const radius=Math.max(1.4,Math.min(4.4,5.6-star.m*.8));
-    constellationElement.append(chartElement('circle',{cx:x,cy:y,r:radius,class:'chart-star'}));
-  }
-  // All stars represented on the flag within this constellation remain available for context.
-  for(const [uf, star] of Object.entries(chart.highlights)){
-    const [x,y]=xy(star.l);
-    const active=uf===selectedStar.uf;
-    if(!active)constellationElement.append(chartElement('circle',{cx:x,cy:y,r:3,class:'chart-star'}));
-  }
-  const [mx,my]=xy(marker.l);
-  constellationElement.append(chartElement('circle',{cx:mx,cy:my,r:5.2,class:'chart-highlight'}));
-  constellationElement.append(chartElement('circle',{cx:mx,cy:my,r:14,class:'chart-ring'}));
-  const toRight=mx<265;
-  const labelX=Math.max(19,Math.min(421,mx+(toRight?20:-20)));
-  const anchor=toRight?'start':'end';
-  const labelY=Math.max(17,Math.min(276,my-17));
-  constellationElement.append(chartElement('line',{x1:mx+(toRight?10:-10),y1:my-10,x2:labelX,y2:labelY+4,class:'chart-pointer'}));
-  const label=chartElement('text',{x:labelX,y:labelY,'text-anchor':anchor,class:'chart-label'});
-  label.textContent=selectedStar.designacao;
-  constellationElement.append(label);
-  constellationHeading.textContent=selectedStar.constelacao;
-  constellationIndex.textContent=chart.code.toUpperCase();
-  constellationCaption.textContent=selectedStar.nome+' ('+selectedStar.designacao+') representa '+selectedStar.estado+
-    '. Está circulada em dourado na carta celeste.';
-}
-
-function showStar(s, revealDetails=false){
- selected=s.uf;
- starPicker.value=s.uf;
- document.querySelector('#name').textContent=s.nome;
- document.querySelector('#state').replaceChildren();
- const pill=document.createElement('span');pill.className='state';pill.textContent=s.estado+' · '+s.uf;
- document.querySelector('#state').append(pill);
- document.querySelector('#desc').textContent=s.curiosidade;
- document.querySelector('#con').textContent=s.constelacao;
- document.querySelector('#des').textContent=s.designacao;
- document.querySelector('#grade').textContent=s.grandeza+'ª de 5';
- document.querySelector('#uf').textContent=s.estado+' ('+s.uf+')';
- drawConstellationChart(s);
- render();
- // No celular, mostrar a ficha que fica abaixo da bandeira depois do toque.
- if(revealDetails && window.matchMedia('(max-width:860px)').matches){
-  requestAnimationFrame(()=>{
-   document.querySelector('.detail').scrollIntoView({
-    behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',
-    block:'start'
-   });
-  });
- }
-}
-function matches(s){
- const text=[s.nome,s.estado,s.uf,s.constelacao,s.designacao].join(' ').toLocaleLowerCase('pt-BR');
- const q=search.value.trim().toLocaleLowerCase('pt-BR');
- return (!filter.value||filter.value===s.constelacao)&&(!q||text.includes(q));
-}
-function renderResults(){
- const active=Boolean(search.value.trim()||filter.value);
- results.hidden=!active;results.replaceChildren();
- if(!active)return;
- const list=starsData.filter(matches);
- if(!list.length){const span=document.createElement('span');span.textContent='Nenhuma estrela encontrada';results.append(span);return;}
- for(const s of list){
-  const b=document.createElement('button');b.type='button';b.textContent=s.uf+' · '+s.nome;
-  b.addEventListener('click',()=>showStar(s,true));
-  results.append(b);
- }
-}
-function render(){
- layer.replaceChildren();
- for(const s of starsData){
-  const group=svgEl('g',{'class':'star-group'+(selected===s.uf?' is-selected':'')+(!matches(s)?' is-dim':''),
-    'role':'button','tabindex':'0','aria-label':s.nome+' — '+s.estado+', '+s.constelacao});
-  const title=svgEl('title');title.textContent=s.nome+' — '+s.estado;group.append(title);
-  const ring=svgEl('circle',{cx:s.cx,cy:s.cy,r:[15,12.5,10,7,5][s.grandeza-1]+8,'class':'star-ring'});
-  const shape=svgEl('polygon',{points:starPoints(s),'class':'star-shape'});
-  const hit=svgEl('circle',{cx:s.cx,cy:s.cy,r:zoomed?41:24,'class':'star-hit'});
-  group.append(ring,shape,hit);
-  group.addEventListener('click',()=>showStar(s,true));
-  group.addEventListener('keydown',event=>{
-   if(event.key==='Enter'||event.key===' '){event.preventDefault();showStar(s,true);}
-  });
-  layer.append(group);
- }
- renderResults();
-}
-function setZoom(next){
- zoomed=next;wrap.classList.toggle('zoomed',zoomed);
- const viewBox=zoomed?'650 350 700 700':'0 0 2000 1400';
- flag.setAttribute('viewBox',viewBox);layer.setAttribute('viewBox',viewBox);
- zoomButton.textContent=zoomed?'Ver bandeira inteira':'Ampliar céu';
- zoomButton.setAttribute('aria-pressed',String(zoomed));
- render();
-}
-filter.addEventListener('change',render);
-search.addEventListener('input',render);
-zoomButton.addEventListener('click',()=>setZoom(!zoomed));
-document.querySelector('#random').addEventListener('click',()=>{
- const choices=starsData.filter(matches);
- if(choices.length)showStar(choices[Math.floor(Math.random()*choices.length)],true);
-});
-setZoom(zoomed);showStar(starsData[0]);
-</script><!-- Revisão UX + dados: Matemática & Contexto 2026-11-16 -->
-<script>
-/* Incrementos não intrusivos: leitura científica, busca e ajuste de altura. */
+<noscript><p style="padding:20px;text-align:center">Este atlas precisa de JavaScript para funcionar.</p></noscript>
+<script>window.ATLAS={"stars":[{"uf":"PA","estado":"Pará","nome":"Spica","designacao":"α Virginis","constelacao":"Virgem","x":55.2,"y":42.43,"curiosidade":"Estrela azul-branca, uma das mais brilhantes do céu noturno.","cx":1103.95,"cy":593.95,"grandeza":1},{"uf":"AM","estado":"Amazonas","nome":"Procyon","designacao":"α Canis Minoris","constelacao":"Cão Menor","x":35.74,"y":45.5,"curiosidade":"Uma das estrelas próximas do Sol na vizinhança estelar.","cx":714.75,"cy":637,"grandeza":1},{"uf":"MS","estado":"Mato Grosso do Sul","nome":"Alphard","designacao":"α Hydrae","constelacao":"Hidra Fêmea","x":43.53,"y":50.75,"curiosidade":"Uma gigante alaranjada, destaque da constelação de Hidra.","cx":870.5,"cy":710.5,"grandeza":2},{"uf":"AC","estado":"Acre","nome":"Gamma Hydrae","designacao":"γ Hydrae","constelacao":"Hidra Fêmea","x":54.59,"y":48.6,"curiosidade":"Estrela da longa constelação Hidra Fêmea.","cx":1091.7,"cy":680.4,"grandeza":3},{"uf":"MT","estado":"Mato Grosso","nome":"Sirius","designacao":"α Canis Majoris","constelacao":"Cão Maior","x":37.16,"y":56,"curiosidade":"É a estrela mais brilhante do céu noturno, vista da Terra.","cx":743.1,"cy":784,"grandeza":1},{"uf":"AP","estado":"Amapá","nome":"Mirzam","designacao":"β Canis Majoris","constelacao":"Cão Maior","x":35.2,"y":58.18,"curiosidade":"Estrela associada ao Cão Maior, próxima de Sirius no céu.","cx":703.9,"cy":814.45,"grandeza":2},{"uf":"RO","estado":"Rondônia","nome":"Muliphein","designacao":"γ Canis Majoris","constelacao":"Cão Maior","x":38.85,"y":54.38,"curiosidade":"Também identificada pela designação Gamma Canis Majoris.","cx":777.05,"cy":761.25,"grandeza":4},{"uf":"RR","estado":"Roraima","nome":"Wezen","designacao":"δ Canis Majoris","constelacao":"Cão Maior","x":40.88,"y":58.35,"curiosidade":"Supergigante amarela na constelação do Cão Maior.","cx":817.65,"cy":816.9,"grandeza":2},{"uf":"TO","estado":"Tocantins","nome":"Adhara","designacao":"ε Canis Majoris","constelacao":"Cão Maior","x":40.41,"y":60.95,"curiosidade":"Uma estrela azul muito luminosa do Cão Maior.","cx":808.2,"cy":853.3,"grandeza":3},{"uf":"GO","estado":"Goiás","nome":"Canopus","designacao":"α Carinae","constelacao":"Carina (Quilha)","x":43,"y":63.5,"curiosidade":"A segunda estrela mais brilhante do céu noturno.","cx":860,"cy":889,"grandeza":1},{"uf":"BA","estado":"Bahia","nome":"Gacrux","designacao":"γ Crucis","constelacao":"Cruzeiro do Sul","x":49.97,"y":53.88,"curiosidade":"Gigante avermelhada que marca uma ponta do Cruzeiro do Sul.","cx":999.3,"cy":754.25,"grandeza":2},{"uf":"MG","estado":"Minas Gerais","nome":"Delta Crucis","designacao":"δ Crucis","constelacao":"Cruzeiro do Sul","x":48.29,"y":56.48,"curiosidade":"Uma das cinco estrelas representadas no Cruzeiro do Sul da bandeira.","cx":965.7,"cy":790.65,"grandeza":3},{"uf":"ES","estado":"Espírito Santo","nome":"Epsilon Crucis","designacao":"ε Crucis","constelacao":"Cruzeiro do Sul","x":49.25,"y":57.9,"curiosidade":"Conhecida popularmente como a Intrometida.","cx":984.95,"cy":810.6,"grandeza":4},{"uf":"SP","estado":"São Paulo","nome":"Acrux","designacao":"α Crucis","constelacao":"Cruzeiro do Sul","x":50,"y":61.33,"curiosidade":"Sistema estelar que marca a extremidade inferior do Cruzeiro do Sul.","cx":1000,"cy":858.55,"grandeza":1},{"uf":"RJ","estado":"Rio de Janeiro","nome":"Mimosa","designacao":"β Crucis","constelacao":"Cruzeiro do Sul","x":51.94,"y":56.18,"curiosidade":"Estrela azul brilhante do Cruzeiro do Sul.","cx":1038.85,"cy":786.45,"grandeza":2},{"uf":"PI","estado":"Piauí","nome":"Antares","designacao":"α Scorpii","constelacao":"Escorpião","x":62.25,"y":58.58,"curiosidade":"Supergigante vermelha que marca o coração do Escorpião.","cx":1245,"cy":820.05,"grandeza":1},{"uf":"MA","estado":"Maranhão","nome":"Acrab (Graffias)","designacao":"β Scorpii","constelacao":"Escorpião","x":64.72,"y":58.78,"curiosidade":"Sistema estelar conhecido também por Graffias.","cx":1294.35,"cy":822.85,"grandeza":3},{"uf":"CE","estado":"Ceará","nome":"Wei","designacao":"ε Scorpii","constelacao":"Escorpião","x":62.92,"y":61.08,"curiosidade":"Estrela identificada por Epsilon Scorpii.","cx":1258.3,"cy":855.05,"grandeza":2},{"uf":"RN","estado":"Rio Grande do Norte","nome":"Shaula","designacao":"λ Scorpii","constelacao":"Escorpião","x":61.88,"y":62.95,"curiosidade":"Estrela muito luminosa na região do ferrão do Escorpião.","cx":1237.65,"cy":881.3,"grandeza":2},{"uf":"PB","estado":"Paraíba","nome":"Girtab","designacao":"κ Scorpii","constelacao":"Escorpião","x":60.45,"y":64.18,"curiosidade":"Estrela associada à cauda do Escorpião.","cx":1208.95,"cy":898.45,"grandeza":3},{"uf":"PE","estado":"Pernambuco","nome":"Mu Scorpii","designacao":"μ Scorpii","constelacao":"Escorpião","x":58.75,"y":64.03,"curiosidade":"Designação de um sistema estelar do Escorpião.","cx":1175,"cy":896.35,"grandeza":3},{"uf":"AL","estado":"Alagoas","nome":"Sargas","designacao":"θ Scorpii","constelacao":"Escorpião","x":58.75,"y":66.43,"curiosidade":"Estrela brilhante próxima à cauda do Escorpião.","cx":1175,"cy":929.95,"grandeza":2},{"uf":"SE","estado":"Sergipe","nome":"Iota Scorpii","designacao":"ι Scorpii","constelacao":"Escorpião","x":58.77,"y":68.72,"curiosidade":"Identificada pela letra grega iota na constelação do Escorpião.","cx":1175.35,"cy":962.15,"grandeza":3},{"uf":"RS","estado":"Rio Grande do Sul","nome":"Atria","designacao":"α Trianguli Australis","constelacao":"Triângulo Austral","x":55.2,"y":66.93,"curiosidade":"Uma gigante alaranjada do Triângulo Austral.","cx":1103.95,"cy":936.95,"grandeza":2},{"uf":"SC","estado":"Santa Catarina","nome":"Beta Trianguli Australis","designacao":"β Trianguli Australis","constelacao":"Triângulo Austral","x":56.72,"y":64.47,"curiosidade":"Uma das três estrelas principais do Triângulo Austral.","cx":1134.4,"cy":902.65,"grandeza":3},{"uf":"PR","estado":"Paraná","nome":"Gamma Trianguli Australis","designacao":"γ Trianguli Australis","constelacao":"Triângulo Austral","x":53.8,"y":63.88,"curiosidade":"Completa o trio principal do Triângulo Austral.","cx":1075.95,"cy":894.25,"grandeza":3},{"uf":"DF","estado":"Distrito Federal","nome":"Polaris Australis","designacao":"σ Octantis","constelacao":"Oitante","x":50.04,"y":69.38,"curiosidade":"Estrela próxima ao polo sul celeste, menos brilhante que muitas outras na bandeira.","cx":1000.7,"cy":971.25,"grandeza":5}],"charts":{"Virgem":{"code":"Vir","lines":[[[176.4648,6.5294],[177.6738,1.7647],[-175.0235,-0.6668],[-169.5848,-1.4494],[-162.5125,-5.539],[-158.7018,-11.1613],[-145.9964,-6.0005],[-139.2349,-5.6582]],[[-164.4558,10.9592],[-166.0991,3.3975],[-169.5848,-1.4494]],[[-162.5125,-5.539],[-156.3267,-0.5958],[-149.5884,1.5445],[-138.4378,1.8929]]],"stars":[{"h":65474,"l":[-158.7018,-11.1613],"m":0.98},{"h":61941,"l":[-169.5848,-1.4494],"m":2.74},{"h":63608,"l":[-164.4558,10.9592],"m":2.85},{"h":66249,"l":[-156.3267,-0.5958],"m":3.38},{"h":63090,"l":[-166.0991,3.3975],"m":3.39},{"h":57757,"l":[177.6738,1.7647],"m":3.59},{"h":72220,"l":[-138.4378,1.8929],"m":3.73},{"h":71957,"l":[-139.2349,-5.6582],"m":3.87},{"h":60129,"l":[-175.0235,-0.6668],"m":3.89},{"h":57380,"l":[176.4648,6.5294],"m":4.04},{"h":69701,"l":[-145.9964,-6.0005],"m":4.07},{"h":58948,"l":[-178.6978,8.733],"m":4.12},{"h":69427,"l":[-146.7761,-10.2737],"m":4.18},{"h":68520,"l":[-149.5884,1.5445],"m":4.23},{"h":64238,"l":[-162.5125,-5.539],"m":4.38},{"h":73620,"l":[-134.2748,2.0913],"m":4.39},{"h":69974,"l":[-145.2225,-13.3711],"m":4.52},{"h":58590,"l":[-179.7817,6.6143],"m":4.65},{"h":61740,"l":[-170.1885,-7.9956],"m":4.66},{"h":66006,"l":[-157.0088,-6.2558],"m":4.68},{"h":64924,"l":[-160.3987,-18.3112],"m":4.74}],"highlights":{"PA":{"l":[-158.7018,-11.1613],"m":0.98,"h":65474}}},"Cão Menor":{"code":"CMi","lines":[[[114.8255,5.225],[111.7877,8.2893]]],"stars":[{"h":37279,"l":[114.8255,5.225],"m":0.4},{"h":36188,"l":[111.7877,8.2893],"m":2.89},{"h":36284,"l":[112.0408,8.9255],"m":4.33},{"h":39311,"l":[120.5664,2.3346],"m":4.39},{"h":36425,"l":[112.4491,12.0066],"m":4.55}],"highlights":{"AM":{"l":[114.8255,5.225],"m":0.4,"h":37279}}},"Hidra Fêmea":{"code":"Hya","lines":[[[131.6938,6.4188],[132.1082,5.8378],[130.8061,3.3987],[129.6893,3.3414],[129.414,5.7038],[131.6938,6.4188],[133.8484,5.9456],[138.5911,2.3143],[144.964,-1.1428],[141.8968,-8.6586],[147.8696,-14.8466],[152.647,-12.3541],[156.5226,-16.8363],[162.4062,-16.1936],[173.2505,-31.8576],[178.2272,-33.9081],[-160.2696,-23.1715],[-148.4071,-26.6824],[-137.4279,-27.9604]]],"stars":[{"h":46390,"l":[141.8968,-8.6586],"m":1.99},{"h":64962,"l":[-160.2696,-23.1715],"m":2.99},{"h":43813,"l":[133.8484,5.9456],"m":3.11},{"h":52943,"l":[162.4062,-16.1936],"m":3.11},{"h":68895,"l":[-148.4071,-26.6824],"m":3.25},{"h":43109,"l":[131.6938,6.4188],"m":3.38},{"h":56343,"l":[173.2505,-31.8576],"m":3.54},{"h":49841,"l":[152.647,-12.3541],"m":3.61},{"h":51069,"l":[156.5226,-16.8363],"m":3.83},{"h":45336,"l":[138.5911,2.3143],"m":3.89},{"h":47431,"l":[144.964,-1.1428],"m":3.9},{"h":41307,"l":[126.4151,-3.9064],"m":3.91},{"h":48356,"l":[147.8696,-14.8466],"m":4.11},{"h":42313,"l":[129.414,5.7038],"m":4.14},{"h":57936,"l":[178.2272,-33.9081],"m":4.29},{"h":42799,"l":[130.8061,3.3987],"m":4.3},{"h":43067,"l":[131.5939,-13.5477],"m":4.32},{"h":43234,"l":[132.1082,5.8378],"m":4.35},{"h":72571,"l":[-137.4279,-27.9604],"m":4.42},{"h":42402,"l":[129.6893,3.3414],"m":4.45},{"h":46776,"l":[142.9955,-1.1847],"m":4.54},{"h":46509,"l":[142.2871,-2.769],"m":4.59},{"h":49402,"l":[151.2811,-13.0646],"m":4.6},{"h":42835,"l":[130.9182,-7.2337],"m":4.63},{"h":56922,"l":[175.0533,-34.7447],"m":4.7},{"h":46371,"l":[141.8267,-22.3438],"m":4.72}],"highlights":{"MS":{"l":[141.8968,-8.6586],"m":1.99,"h":46390},"AC":{"l":[-160.2696,-23.1715],"m":2.99,"h":64962}}},"Cão Maior":{"code":"CMa","lines":[[[95.6749,-17.9559],[101.2872,-16.7161],[105.7561,-23.8333],[107.0979,-26.3932],[105.4298,-27.9348],[104.6565,-28.9721],[95.0783,-30.0634]],[[111.0238,-29.3031],[107.0979,-26.3932]],[[101.2872,-16.7161],[104.0343,-17.0542],[105.9396,-15.6333],[103.5475,-12.0386],[104.0343,-17.0542]]],"stars":[{"h":32349,"l":[101.2872,-16.7161],"m":-1.44},{"h":33579,"l":[104.6565,-28.9721],"m":1.5},{"h":34444,"l":[107.0979,-26.3932],"m":1.83},{"h":30324,"l":[95.6749,-17.9559],"m":1.98},{"h":35904,"l":[111.0238,-29.3031],"m":2.45},{"h":30122,"l":[95.0783,-30.0634],"m":3.02},{"h":33977,"l":[105.7561,-23.8333],"m":3.02},{"h":33856,"l":[105.4298,-27.9348],"m":3.49},{"h":32759,"l":[102.4602,-32.5085],"m":3.5},{"h":33152,"l":[103.5331,-24.1842],"m":3.89},{"h":31592,"l":[99.171,-19.2559],"m":3.95},{"h":35037,"l":[108.7027,-26.7727],"m":4.01},{"h":33160,"l":[103.5475,-12.0386],"m":4.08},{"h":34045,"l":[105.9396,-15.6333],"m":4.11},{"h":31125,"l":[97.964,-23.4184],"m":4.34},{"h":33347,"l":[104.0343,-17.0542],"m":4.36},{"h":35415,"l":[109.677,-24.9544],"m":4.37},{"h":31700,"l":[99.4726,-18.2375],"m":4.42},{"h":34981,"l":[108.5634,-26.3525],"m":4.42},{"h":30788,"l":[97.0425,-32.5801],"m":4.47},{"h":31416,"l":[98.7641,-22.9648],"m":4.54},{"h":33302,"l":[103.906,-20.1365],"m":4.66}],"highlights":{"MT":{"l":[101.2872,-16.7161],"m":-1.44,"h":32349},"AP":{"l":[95.6749,-17.9559],"m":1.98,"h":30324},"RO":{"l":[105.9396,-15.6333],"m":4.11,"h":34045},"RR":{"l":[107.0979,-26.3932],"m":1.83,"h":34444},"TO":{"l":[104.6565,-28.9721],"m":1.5,"h":33579}}},"Carina (Quilha)":{"code":"Car","lines":[[[99.4403,-43.1959],[95.988,-52.6957],[138.2999,-69.7172],[153.4342,-70.0379],[160.7392,-64.3945],[158.0061,-61.6853],[154.2707,-61.3323],[139.2725,-59.2752],[125.6285,-59.5095],[119.1946,-52.9824],[122.3831,-47.3366],[131.1759,-54.7088],[139.2725,-59.2752]],[[160.7392,-64.3945],[166.6351,-62.4241],[167.1417,-61.9472],[168.1501,-60.3176],[167.1475,-58.975],[163.3736,-58.8532],[158.0061,-61.6853]]],"stars":[{"h":30438,"l":[95.988,-52.6957],"m":-0.62},{"h":45238,"l":[138.2999,-69.7172],"m":1.67},{"h":41037,"l":[125.6285,-59.5095],"m":1.86},{"h":45556,"l":[139.2725,-59.2752],"m":2.21},{"h":52419,"l":[160.7392,-64.3945],"m":2.74},{"h":48002,"l":[146.7755,-65.072],"m":2.92},{"h":50099,"l":[153.4342,-70.0379],"m":3.29},{"h":51576,"l":[158.0061,-61.6853],"m":3.3},{"h":50371,"l":[154.2707,-61.3323],"m":3.39},{"h":45080,"l":[137.742,-58.9669],"m":3.43},{"h":38827,"l":[119.1946,-52.9824],"m":3.46},{"h":47854,"l":[146.3117,-62.5079],"m":3.69},{"h":53253,"l":[163.3736,-58.8532],"m":3.78},{"h":51232,"l":[156.9697,-58.7394],"m":3.81},{"h":43783,"l":[133.7618,-60.6446],"m":3.84},{"h":54463,"l":[167.1475,-58.975],"m":3.93},{"h":45101,"l":[137.8197,-62.317],"m":3.96},{"h":50954,"l":[156.0988,-74.0316],"m":3.99},{"h":46974,"l":[143.611,-59.2298],"m":4.08},{"h":42568,"l":[130.1543,-59.761],"m":4.31},{"h":45496,"l":[139.0503,-57.5415],"m":4.34},{"h":31407,"l":[98.7441,-52.9756],"m":4.35},{"h":32761,"l":[102.4638,-53.6224],"m":4.41},{"h":51849,"l":[158.8971,-57.5576],"m":4.45},{"h":44599,"l":[136.2867,-72.6027],"m":4.47},{"h":43105,"l":[131.6773,-56.7698],"m":4.5}],"highlights":{"GO":{"l":[95.988,-52.6957],"m":-0.62,"h":30438}}},"Cruzeiro do Sul":{"code":"Cru","lines":[[[-168.0697,-59.6888],[-176.2137,-58.7489]],[[-173.3504,-63.0991],[-172.2085,-57.1132]]],"stars":[{"h":60718,"l":[-173.3504,-63.0991],"m":0.77},{"h":62434,"l":[-168.0697,-59.6888],"m":1.25},{"h":61084,"l":[-172.2085,-57.1132],"m":1.59},{"h":59747,"l":[-176.2137,-58.7489],"m":2.79},{"h":60260,"l":[-174.66,-60.4011],"m":3.59},{"h":63003,"l":[-166.3516,-57.1779],"m":4.03},{"h":60009,"l":[-175.3906,-64.0031],"m":4.06},{"h":59072,"l":[-178.2796,-64.6137],"m":4.14},{"h":58758,"l":[-179.2437,-63.3129],"m":4.32},{"h":63007,"l":[-166.3367,-59.1467],"m":4.62},{"h":62268,"l":[-168.5915,-60.9813],"m":4.69},{"h":58867,"l":[-178.9199,-63.1657],"m":4.72}],"highlights":{"BA":{"l":[-172.2085,-57.1132],"m":1.59,"h":61084},"MG":{"l":[-176.2137,-58.7489],"m":2.79,"h":59747},"ES":{"l":[-174.66,-60.4011],"m":3.59,"h":60260},"SP":{"l":[-173.3504,-63.0991],"m":0.77,"h":60718},"RJ":{"l":[-168.0697,-59.6888],"m":1.25,"h":62434}}},"Escorpião":{"code":"Sco","lines":[[[-120.287,-26.1141],[-119.9166,-22.6217],[-118.6407,-19.8055]],[[-119.9166,-22.6217],[-114.7028,-25.5928],[-112.6481,-26.432],[-111.0294,-28.216],[-107.4591,-34.2932],[-107.0324,-38.0474],[-106.3541,-42.3613],[-101.9617,-43.2392],[-95.6703,-42.9978],[-93.1038,-40.127],[-94.378,-39.03],[-96.5978,-37.1038]]],"stars":[{"h":80763,"l":[-112.6481,-26.432],"m":1.06},{"h":85927,"l":[-96.5978,-37.1038],"m":1.62},{"h":86228,"l":[-95.6703,-42.9978],"m":1.86},{"h":78401,"l":[-119.9166,-22.6217],"m":2.29},{"h":82396,"l":[-107.4591,-34.2932],"m":2.29},{"h":86670,"l":[-94.378,-39.03],"m":2.39},{"h":78820,"l":[-118.6407,-19.8055],"m":2.56},{"h":85696,"l":[-97.309,-37.2958],"m":2.7},{"h":81266,"l":[-111.0294,-28.216],"m":2.82},{"h":78265,"l":[-120.287,-26.1141],"m":2.89},{"h":80112,"l":[-114.7028,-25.5928],"m":2.9},{"h":87073,"l":[-93.1038,-40.127],"m":2.99},{"h":82514,"l":[-107.0324,-38.0474],"m":3},{"h":87261,"l":[-92.5355,-37.0433],"m":3.19},{"h":84143,"l":[-101.9617,-43.2392],"m":3.32},{"h":82545,"l":[-106.9161,-38.0175],"m":3.56},{"h":82729,"l":[-106.3541,-42.3613],"m":3.62},{"h":78104,"l":[-120.7788,-29.2141],"m":3.87},{"h":78933,"l":[-118.2982,-20.6692],"m":3.93},{"h":79374,"l":[-117.0011,-19.4607],"m":4},{"h":81304,"l":[-110.9064,-35.2553],"m":4.18},{"h":80911,"l":[-112.1544,-34.7044],"m":4.24},{"h":86170,"l":[-95.8632,-38.6353],"m":4.26},{"h":78990,"l":[-118.1486,-20.8688],"m":4.31},{"h":80079,"l":[-114.8409,-24.1693],"m":4.55},{"h":79404,"l":[-116.9241,-27.9264],"m":4.58}],"highlights":{"PI":{"l":[-112.6481,-26.432],"m":1.06,"h":80763},"MA":{"l":[-118.6407,-19.8055],"m":2.56,"h":78820},"CE":{"l":[-107.4591,-34.2932],"m":2.29,"h":82396},"RN":{"l":[-96.5978,-37.1038],"m":1.62,"h":85927},"PB":{"l":[-94.378,-39.03],"m":2.39,"h":86670},"PE":{"l":[-107.0324,-38.0474],"m":3,"h":82514},"AL":{"l":[-95.6703,-42.9978],"m":1.86,"h":86228},"SE":{"l":[-93.1038,-40.127],"m":2.99,"h":87073}}},"Triângulo Austral":{"code":"TrA","lines":[[[-107.8338,-69.0277],[-121.2143,-63.4307],[-130.2726,-68.6795],[-107.8338,-69.0277]]],"stars":[{"h":82273,"l":[-107.8338,-69.0277],"m":1.91},{"h":77952,"l":[-121.2143,-63.4307],"m":2.83},{"h":74946,"l":[-130.2726,-68.6795],"m":2.87},{"h":79664,"l":[-116.1405,-63.6857],"m":3.86},{"h":76440,"l":[-125.8199,-66.317],"m":4.11}],"highlights":{"RS":{"l":[-107.8338,-69.0277],"m":1.91,"h":82273},"SC":{"l":[-121.2143,-63.4307],"m":2.83,"h":77952},"PR":{"l":[-130.2726,-68.6795],"m":2.87,"h":74946}}},"Oitante":{"code":"Oct","lines":[[[-143.2699,-83.6679],[-18.4854,-81.3816],[-34.6306,-77.39],[-143.2699,-83.6679]]],"stars":[{"h":107089,"l":[-34.6306,-77.39],"m":3.73},{"h":112405,"l":[-18.4854,-81.3816],"m":4.13},{"h":70638,"l":[-143.2699,-83.6679],"m":4.31}],"highlights":{"DF":{"l":[-42.8048,-88.9565],"m":5.45,"h":104382}}}}};</script>
+<script>/* O Céu na Bandeira do Brasil — lógica do atlas.
+   Os dados chegam em window.ATLAS = { stars, charts }, injetado por build.py
+   a partir de estrelas.json e cartas_celestes.json (fonte única dos dados). */
 (() => {
   'use strict';
-  const normalize = (s) => String(s).normalize('NFD')
-    .replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('pt-BR');
-  if (typeof matches === 'function') {
-    matches = function(star) {
-      const query=normalize(document.querySelector('#search').value.trim());
-      const haystack=normalize([star.nome,star.estado,star.uf,star.constelacao,star.designacao].join(' '));
-      const constellation=document.querySelector('#filter').value;
-      return (!constellation || constellation===star.constelacao) && (!query || haystack.includes(query));
+
+  const { stars: STARS, charts: CHARTS } = window.ATLAS;
+
+  /* ---------- Constantes ---------- */
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  const VIEW_FULL = '0 0 2000 1400';   // bandeira inteira (20 × 14 módulos)
+  const VIEW_ZOOM = '650 350 700 700'; // recorte sobre o círculo azul
+  const STAR_RADIUS = [15, 12.5, 10, 7, 5];  // raio do pentagrama por grandeza (1ª a 5ª)
+  const INNER_RATIO = 0.381966;        // raio interno / externo de um pentagrama regular
+  const CHART = { width: 440, height: 285, fitWidth: 369, fitHeight: 221 };
+  const HIT_RADIUS = { full: 24, zoom: 41 };
+
+  const mobileQuery = matchMedia('(max-width: 650px)');
+  const stackedQuery = matchMedia('(max-width: 1050px)');
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+
+  /* ---------- Utilitários ---------- */
+  const $ = (selector) => document.querySelector(selector);
+
+  function svgEl(tag, attrs = {}, parent = null, text = null) {
+    const node = document.createElementNS(SVG_NS, tag);
+    for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, String(value));
+    if (text !== null) node.textContent = text;
+    if (parent) parent.append(node);
+    return node;
+  }
+
+  function htmlEl(tag, className, text) {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+
+  /** Minúsculas e sem acentos: "para" encontra "Pará". */
+  const fold = (text) => text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR');
+
+  /** Pontos de um pentagrama regular centrado em (cx, cy). */
+  function pentagram(cx, cy, radius) {
+    const points = [];
+    for (let i = 0; i < 10; i++) {
+      const angle = -Math.PI / 2 + (i * Math.PI) / 5;
+      const r = i % 2 ? radius * INNER_RATIO : radius;
+      points.push(`${(cx + Math.cos(angle) * r).toFixed(3)},${(cy + Math.sin(angle) * r).toFixed(3)}`);
+    }
+    return points.join(' ');
+  }
+
+  /* ---------- Estado e referências ---------- */
+  const byUf = new Map(STARS.map((s) => [s.uf, s]));
+  const haystack = new Map(
+    STARS.map((s) => [s.uf, fold([s.nome, s.estado, s.uf, s.constelacao, s.designacao].join(' '))])
+  );
+  const state = { selected: null, zoomed: mobileQuery.matches, query: '', constellation: '' };
+  const starParts = new Map(); // uf -> { group, hit }
+  let starLabel = null;
+
+  const ui = {
+    page: $('.page'), detail: $('.detail'),
+    wrap: $('#flag-wrap'), flag: $('#flag'), stars: $('#stars'), mag: $('#mag-legend'),
+    filter: $('#filter'), search: $('#search'), zoom: $('#zoom'), random: $('#random'),
+    results: $('#results'), picker: $('#picker'), prev: $('#prev'), next: $('#next'), counter: $('#counter'),
+    name: $('#name'), state: $('#state'), desc: $('#desc'), con: $('#con'), des: $('#des'),
+    pips: $('#pips'), grade: $('#grade'), uf: $('#uf'), apparentMag: $('#mag-aparente'),
+    chart: $('#chart'), chartTitle: $('#chart-title'), chartCode: $('#chart-code'), chartCaption: $('#chart-caption'),
+  };
+
+  const matches = (s) =>
+    (!state.constellation || state.constellation === s.constelacao) &&
+    (!state.query || haystack.get(s.uf).includes(state.query));
+  const visibleStars = () => STARS.filter(matches);
+
+  /* ---------- Bandeira: camada interativa ---------- */
+  function buildStarLayer() {
+    for (const s of STARS) {
+      const radius = STAR_RADIUS[s.grandeza - 1];
+      const group = svgEl('g', {
+        class: 'star-group', role: 'button', tabindex: 0,
+        'aria-label': `${s.nome} — ${s.estado}, ${s.constelacao}`,
+      }, ui.stars);
+      svgEl('title', {}, group, `${s.nome} — ${s.estado}`);
+      svgEl('circle', { cx: s.cx, cy: s.cy, r: radius + 8, class: 'star-ring' }, group);
+      svgEl('polygon', { points: pentagram(s.cx, s.cy, radius), class: 'star-shape' }, group);
+      const hit = svgEl('circle', { cx: s.cx, cy: s.cy, class: 'star-hit' }, group);
+
+      group.addEventListener('click', () => showStar(s, { reveal: true }));
+      group.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          showStar(s, { reveal: true });
+        }
+      });
+      starParts.set(s.uf, { group, hit });
+    }
+    starLabel = svgEl('text', { class: 'star-label' }, ui.stars); // por cima de todas as estrelas
+  }
+
+  function updateStarLayer() {
+    for (const [uf, { group, hit }] of starParts) {
+      const selected = uf === state.selected;
+      group.classList.toggle('is-selected', selected);
+      group.classList.toggle('is-dim', !matches(byUf.get(uf)));
+      group.setAttribute('aria-pressed', String(selected));
+      hit.setAttribute('r', state.zoomed ? HIT_RADIUS.zoom : HIT_RADIUS.full);
+    }
+    updateStarLabel();
+  }
+
+  /** Nome da estrela selecionada, desenhado ao lado dela na própria bandeira. */
+  function updateStarLabel() {
+    const s = byUf.get(state.selected);
+    if (!s) { starLabel.textContent = ''; return; }
+    const size = state.zoomed ? 24 : 38;
+    const side = s.cx < 1000 ? -1 : 1; // sempre para o lado de fora do eixo central
+    starLabel.setAttribute('x', s.cx + side * (STAR_RADIUS[s.grandeza - 1] + 20));
+    starLabel.setAttribute('y', s.cy + size * 0.35);
+    starLabel.setAttribute('text-anchor', side < 0 ? 'end' : 'start');
+    starLabel.setAttribute('font-size', size);
+    starLabel.setAttribute('stroke-width', size * 0.22);
+    starLabel.textContent = s.nome;
+  }
+
+  function setZoom(on) {
+    state.zoomed = on;
+    ui.wrap.classList.toggle('zoomed', on);
+    const viewBox = on ? VIEW_ZOOM : VIEW_FULL;
+    ui.flag.setAttribute('viewBox', viewBox);
+    ui.stars.setAttribute('viewBox', viewBox);
+    ui.zoom.textContent = on ? 'Ver bandeira inteira' : 'Ampliar céu';
+    ui.zoom.setAttribute('aria-pressed', String(on));
+    updateStarLayer();
+  }
+
+  function buildMagnitudeLegend() {
+    ui.mag.append(htmlEl('span', 'mag-title', 'Grandezas gráficas:'));
+    STAR_RADIUS.forEach((radius, index) => {
+      const item = htmlEl('span', 'mag-item');
+      const icon = svgEl('svg', { viewBox: '-16 -16 32 32', 'aria-hidden': 'true' });
+      svgEl('polygon', { points: pentagram(0, 0, radius) }, icon);
+      item.append(icon, `${index + 1}ª`);
+      ui.mag.append(item);
+    });
+  }
+
+  /* ---------- Controles: filtro, busca, lista de estados ---------- */
+  function buildControls() {
+    const constellations = [...new Set(STARS.map((s) => s.constelacao))]
+      .sort((a, b) => a.localeCompare(b, 'pt-BR'));
+    for (const name of constellations) ui.filter.append(new Option(name, name));
+
+    const byState = [...STARS].sort((a, b) => a.estado.localeCompare(b.estado, 'pt-BR'));
+    for (const s of byState) ui.picker.append(new Option(`${s.estado} — ${s.nome}`, s.uf));
+  }
+
+  function renderResults() {
+    const active = Boolean(state.query || state.constellation);
+    ui.results.hidden = !active;
+    ui.results.replaceChildren();
+    if (!active) return;
+
+    const list = visibleStars();
+    if (!list.length) {
+      ui.results.append(htmlEl('span', 'empty', 'Nenhuma estrela encontrada'));
+      return;
+    }
+    for (const s of list) {
+      const chip = htmlEl('button', 'btn chip', `${s.uf} · ${s.nome}`);
+      chip.type = 'button';
+      chip.addEventListener('click', () => showStar(s, { reveal: true }));
+      ui.results.append(chip);
+    }
+  }
+
+  function updateCounter() {
+    const list = visibleStars();
+    const index = list.findIndex((s) => s.uf === state.selected);
+    ui.counter.textContent = `${index >= 0 ? index + 1 : '—'} / ${list.length}`;
+  }
+
+  /** Reaplica filtro e busca em todos os pontos da interface. */
+  function refresh() {
+    renderResults();
+    updateStarLayer();
+    updateCounter();
+  }
+
+  function step(delta) {
+    const list = visibleStars();
+    if (!list.length) return;
+    const index = list.findIndex((s) => s.uf === state.selected);
+    const next = index < 0 ? (delta > 0 ? 0 : list.length - 1) : (index + delta + list.length) % list.length;
+    showStar(list[next]);
+  }
+
+  /* ---------- Ficha da estrela ---------- */
+  function showStar(s, { reveal = false } = {}) {
+    state.selected = s.uf;
+    ui.name.textContent = s.nome;
+    ui.state.replaceChildren(htmlEl('span', 'state', `${s.estado} · ${s.uf}`));
+    ui.desc.textContent = s.curiosidade;
+    ui.con.textContent = s.constelacao;
+    ui.des.textContent = s.designacao;
+    ui.grade.textContent = `${s.grandeza}ª de 5`;
+    const magnitude = CHARTS[s.constelacao]?.highlights?.[s.uf]?.m;
+    ui.apparentMag.textContent = Number.isFinite(magnitude)
+      ? magnitude.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' mag'
+      : 'Dado não disponível';
+    ui.pips.replaceChildren(
+      ...Array.from({ length: 5 }, (_, i) => htmlEl('i', i < 6 - s.grandeza ? 'on' : ''))
+    );
+    ui.uf.textContent = `${s.estado} (${s.uf})`;
+    ui.picker.value = s.uf;
+
+    drawChart(s);
+    updateStarLayer();
+    updateCounter();
+
+    // Com os painéis empilhados, leva a pessoa até a ficha depois do toque.
+    if (reveal && stackedQuery.matches) {
+      requestAnimationFrame(() =>
+        ui.detail.scrollIntoView({ behavior: reducedMotion.matches ? 'auto' : 'smooth', block: 'start' })
+      );
+    }
+  }
+
+  /* ---------- Carta celeste ---------- */
+  /** Diferença de longitude em (-180, 180], tratando a virada em 360°. */
+  const deltaLongitude = (lon, origin) => ((((lon - origin + 540) % 360) + 360) % 360) - 180;
+
+  /** Escolhe o canto (cima/baixo × direita/esquerda) onde o rótulo da estrela selecionada
+      cobre menos pontos da carta e não ultrapassa a borda. */
+  function placeChartLabel(mx, my, text, occupied) {
+    const width = text.length * 6.6 + 4;
+    let best = null;
+    for (const side of [1, -1]) {       // 1 = direita, -1 = esquerda
+      for (const rise of [-1, 1]) {     // -1 = acima, 1 = abaixo
+        const x = mx + side * 20;
+        const y = my + rise * 17 + (rise > 0 ? 8 : 0);
+        const box = { x0: side > 0 ? x : x - width, x1: side > 0 ? x + width : x, y0: y - 12, y1: y + 4 };
+        let score = occupied.filter(([px, py]) =>
+          px > box.x0 - 4 && px < box.x1 + 4 && py > box.y0 - 4 && py < box.y1 + 4).length;
+        if (box.x0 < 4 || box.x1 > CHART.width - 4 || box.y0 < 4 || box.y1 > CHART.height - 4) score += 100;
+        if (!best || score < best.score) best = { score, side, rise, x, y, lineY: y + (rise < 0 ? 4 : -4) };
+      }
+    }
+    return best;
+  }
+
+  function drawChart(s) {
+    const chart = CHARTS[s.constelacao];
+    const marker = chart && chart.highlights[s.uf];
+    const svg = ui.chart;
+    svg.replaceChildren();
+
+    if (!marker) {
+      svgEl('text', { class: 'chart-empty', x: CHART.width / 2, y: 145, 'text-anchor': 'middle' }, svg, 'Carta celeste indisponível');
+      ui.chartCaption.textContent = 'Carta celeste indisponível para esta constelação.';
+      return;
+    }
+
+    const highlights = Object.entries(chart.highlights);
+    const allPoints = [
+      ...chart.lines.flat(),
+      ...chart.stars.map((star) => star.l),
+      ...highlights.map(([, star]) => star.l),
+    ];
+
+    // Projeção equiretangular local; polar para Oitante, que cerca o polo sul celeste.
+    // A origem é fixa por constelação: o desenho não "salta" ao trocar de estrela.
+    const polar = chart.code === 'Oct';
+    const origin = highlights[0][1].l[0];
+    const meanDec = allPoints.reduce((sum, p) => sum + p[1], 0) / allPoints.length;
+    const cosLat = Math.max(0.12, Math.cos((meanDec * Math.PI) / 180));
+    const project = ([lon, dec]) => {
+      if (polar) {
+        const radius = 90 + dec;
+        const angle = (lon * Math.PI) / 180;
+        return [radius * Math.cos(angle), radius * Math.sin(angle)];
+      }
+      return [deltaLongitude(lon, origin) * cosLat, -dec];
     };
-    if (typeof render==='function') render();
-  }
-  if(typeof showStar==='function' && typeof constellationCharts!=='undefined') {
-    const original=showStar;
-    showStar=function(star,revealDetails=false){
-      original(star,revealDetails);
-      const mag=constellationCharts[star.constelacao]?.highlights?.[star.uf]?.m;
-      const target=document.querySelector('#mag-aparente');
-      if(target) target.textContent=Number.isFinite(mag)
-        ? mag.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+' mag'
-        : 'Não disponível';
-      requestAnimationFrame(adjustHeight);
+
+    const projected = allPoints.map(project);
+    const xs = projected.map((p) => p[0]);
+    const ys = projected.map((p) => p[1]);
+    const minX = Math.min(...xs), minY = Math.min(...ys);
+    const spanX = Math.max(5, Math.max(...xs) - minX);
+    const spanY = Math.max(4, Math.max(...ys) - minY);
+    const scale = Math.min(CHART.fitWidth / spanX, CHART.fitHeight / spanY);
+    const offsetX = (CHART.width - spanX * scale) / 2;
+    const offsetY = (CHART.height - spanY * scale) / 2;
+    const toXY = (pair) => {
+      const [x, y] = project(pair);
+      return [offsetX + (x - minX) * scale, offsetY + (y - minY) * scale];
     };
-    if(typeof starsData!=='undefined' && starsData.length) showStar(starsData[0]);
+
+    svgEl('title', {}, svg, `Carta celeste de ${s.constelacao}, estrela ${s.nome} destacada`);
+
+    // Ligações convencionais entre as estrelas do catálogo.
+    for (const segment of chart.lines) {
+      const points = segment.map(toXY).map(([x, y]) => `${x.toFixed(2)},${y.toFixed(2)}`).join(' ');
+      svgEl('polyline', { points, class: 'chart-line' }, svg);
+    }
+
+    // Estrelas do catálogo, com diâmetro aproximadamente proporcional à magnitude aparente.
+    for (const star of chart.stars) {
+      const [x, y] = toXY(star.l);
+      const radius = Math.max(1.4, Math.min(4.4, 5.6 - star.m * 0.8));
+      svgEl('circle', { cx: x, cy: y, r: radius, class: 'chart-star' }, svg);
+    }
+
+    // Outras estrelas da bandeira nesta constelação: clicáveis.
+    for (const [uf, star] of highlights) {
+      if (uf === s.uf) continue;
+      const peer = byUf.get(uf);
+      const [x, y] = toXY(star.l);
+      const group = svgEl('g', {
+        class: 'chart-peer', role: 'button', tabindex: 0,
+        'aria-label': `${peer.nome} — ${peer.estado}`,
+      }, svg);
+      svgEl('title', {}, group, `${peer.nome} — ${peer.estado}`);
+      svgEl('circle', { cx: x, cy: y, r: 12, class: 'hit' }, group);
+      svgEl('circle', { cx: x, cy: y, r: 3.4, class: 'dot' }, group);
+      svgEl('text', { x: x + 6, y: y - 6, class: 'chart-uf' }, group, uf);
+      group.addEventListener('click', () => showStar(peer));
+      group.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          showStar(peer);
+        }
+      });
+    }
+
+    // Estrela selecionada: marcador, anel, linha de chamada e designação.
+    const [mx, my] = toXY(marker.l);
+    svgEl('circle', { cx: mx, cy: my, r: 5.2, class: 'chart-active' }, svg);
+    svgEl('circle', { cx: mx, cy: my, r: 14, class: 'chart-ring' }, svg);
+    const label = placeChartLabel(mx, my, s.designacao, [
+      ...chart.stars.map((star) => toXY(star.l)),
+      ...highlights.filter(([uf]) => uf !== s.uf).map(([, star]) => toXY(star.l)),
+    ]);
+    svgEl('line', { x1: mx + label.side * 10, y1: my + label.rise * 10, x2: label.x, y2: label.lineY, class: 'chart-pointer' }, svg);
+    svgEl('text', { x: label.x, y: label.y, 'text-anchor': label.side > 0 ? 'start' : 'end', class: 'chart-label' }, svg, s.designacao);
+
+    ui.chartTitle.textContent = s.constelacao;
+    ui.chartCode.textContent = chart.code.toUpperCase();
+    const total = highlights.length;
+    ui.chartCaption.textContent =
+      `${s.nome} (${s.designacao}) representa ${s.estado}. Está circulada em dourado na carta celeste. ` +
+      (total > 1
+        ? `Esta constelação tem ${total} estrelas na bandeira; clique nas outras, em dourado, para explorar.`
+        : 'É a única estrela desta constelação na bandeira.');
   }
-  let lastHeight=0;
-  function adjustHeight(){
-    const main=document.querySelector('main');
-    if(!main) return;
-    const height=Math.ceil(document.body.scrollHeight);
-    if(!height || Math.abs(height-lastHeight)<2) return;
-    lastHeight=height;
-    if(window.parent!==window) window.parent.postMessage({
-      isStreamlitMessage:true,
-      type:'streamlit:setFrameHeight',
-      height
-    },'*');
-    try{if(window.frameElement)window.frameElement.style.height=height+'px';}
-    catch(error){/* O iframe pode ser isolado pelo navegador. */}
+
+  /* ---------- Altura responsiva dentro do Streamlit ---------- */
+  function fitFrameHeight() {
+    let lastHeight = 0;
+    const apply = () => {
+      const height = Math.ceil(ui.page.getBoundingClientRect().height);
+      if (height <= 0 || Math.abs(height - lastHeight) < 2) return;
+      lastHeight = height;
+      // components.html recebe esta mensagem mesmo quando o iframe é isolado.
+      if (window.parent !== window) {
+        window.parent.postMessage({
+          isStreamlitMessage: true,
+          type: 'streamlit:setFrameHeight',
+          height,
+        }, '*');
+      }
+      // Fallback para ambientes em que frameElement é acessível.
+      try { if (window.frameElement) window.frameElement.style.height = `${height}px`; }
+      catch (error) { /* iframe isolado: usa apenas a mensagem acima */ }
+    };
+    if ('ResizeObserver' in window) new ResizeObserver(apply).observe(ui.page);
+    window.addEventListener('load', apply);
+    window.addEventListener('resize', apply, { passive: true });
+    if (document.fonts?.ready) document.fonts.ready.then(apply);
+    apply();
   }
-  if('ResizeObserver' in window) new ResizeObserver(adjustHeight).observe(document.body);
-  window.addEventListener('resize',adjustHeight,{passive:true});
-  window.addEventListener('load',adjustHeight);
-  if(document.fonts?.ready) document.fonts.ready.then(adjustHeight);
-  adjustHeight();
+
+  /* ---------- Eventos e inicialização ---------- */
+  ui.filter.addEventListener('change', () => { state.constellation = ui.filter.value; refresh(); });
+  ui.search.addEventListener('input', () => { state.query = fold(ui.search.value.trim()); refresh(); });
+  ui.zoom.addEventListener('click', () => setZoom(!state.zoomed));
+  ui.prev.addEventListener('click', () => step(-1));
+  ui.next.addEventListener('click', () => step(1));
+  ui.random.addEventListener('click', () => {
+    const list = visibleStars();
+    const others = list.filter((s) => s.uf !== state.selected);
+    const pool = others.length ? others : list;
+    if (pool.length) showStar(pool[Math.floor(Math.random() * pool.length)], { reveal: true });
+  });
+  ui.picker.addEventListener('change', () => {
+    const s = byUf.get(ui.picker.value);
+    if (!s) return;
+    // Escolher pelo estado deve funcionar mesmo com filtro ou busca ativos.
+    ui.filter.value = '';
+    ui.search.value = '';
+    state.constellation = '';
+    state.query = '';
+    showStar(s, { reveal: true });
+    renderResults();
+  });
+
+  buildControls();
+  buildMagnitudeLegend();
+  buildStarLayer();
+  setZoom(state.zoomed);
+  showStar(STARS[0]);
+  fitFrameHeight();
 })();
-</script></body></html>
+</script>
+</body>
+</html>
