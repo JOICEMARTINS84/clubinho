@@ -1,6 +1,8 @@
 """Atlas interativo independente: O Céu na Bandeira do Brasil.
 
 Publicação própria no Streamlit Community Cloud.
+Versão publicada: mesa de consulta astronômica, com índice de estrelas,
+prancha interativa da bandeira e ficha técnica das constelações.
 Ponto de entrada: bandeira-astronomica/streamlit_app.py
 
 O atlas é uma página HTML autossuficiente (index.html), montada por build.py a
