@@ -15,7 +15,6 @@
   const CHART = { width: 440, height: 285, fitWidth: 369, fitHeight: 221 };
   const HIT_RADIUS = { full: 24, zoom: 41 };
 
-  const mobileQuery = matchMedia('(max-width: 650px)');
   const stackedQuery = matchMedia('(max-width: 1050px)');
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -58,7 +57,9 @@
   );
   const state = { selected: null, zoomed: false, query: '', constellation: '' };
   const starParts = new Map(); // uf -> { group, hit }
-  let starLabel = null;
+  const alphabetical = [...STARS].sort((a, b) => a.estado.localeCompare(b.estado, 'pt-BR'));
+  const catalogueNumber = new Map(alphabetical.map((s, i) => [s.uf, String(i + 1).padStart(2, '0')]));
+  let flagCallout;
 
   const ui = {
     page: $('.page'), detail: $('.detail'),
@@ -66,7 +67,7 @@
     filter: $('#filter'), search: $('#search'), zoom: $('#zoom'), random: $('#random'),
     results: $('#results'), index: $('#star-index'), picker: $('#picker'), prev: $('#prev'), next: $('#next'), counter: $('#counter'),
     name: $('#name'), state: $('#state'), desc: $('#desc'), con: $('#con'), des: $('#des'),
-    pips: $('#pips'), grade: $('#grade'), uf: $('#uf'), apparentMag: $('#mag-aparente'),
+    grade: $('#grade'), uf: $('#uf'), apparentMag: $('#mag-aparente'), distance: $('#distance'),
     chart: $('#chart'), chartTitle: $('#chart-title'), chartCode: $('#chart-code'), chartCaption: $('#chart-caption'),
   };
 
@@ -97,7 +98,7 @@
       });
       starParts.set(s.uf, { group, hit });
     }
-    starLabel = svgEl('text', { class: 'star-label' }, ui.stars); // por cima de todas as estrelas
+    flagCallout = svgEl('g', { class: 'flag-callout', 'aria-hidden': 'true' }, ui.stars);
   }
 
   function updateStarLayer() {
@@ -111,18 +112,44 @@
     updateStarLabel();
   }
 
-  /** Nome da estrela selecionada, desenhado ao lado dela na própria bandeira. */
+  // A marcação numérica evita cobrir os dizeres da faixa e remete à legenda sob a figura.
   function updateStarLabel() {
+    flagCallout.replaceChildren();
     const s = byUf.get(state.selected);
-    if (!s) { starLabel.textContent = ''; return; }
-    const size = state.zoomed ? 24 : 38;
-    const side = s.cx < 1000 ? -1 : 1; // sempre para o lado de fora do eixo central
-    starLabel.setAttribute('x', s.cx + side * (STAR_RADIUS[s.grandeza - 1] + 20));
-    starLabel.setAttribute('y', s.cy + size * 0.35);
-    starLabel.setAttribute('text-anchor', side < 0 ? 'end' : 'start');
-    starLabel.setAttribute('font-size', size);
-    starLabel.setAttribute('stroke-width', size * 0.22);
-    starLabel.textContent = s.nome;
+    if (!s) return;
+    const number = catalogueNumber.get(s.uf);
+    $('#flag-number').textContent = number;
+    $('#flag-selection').textContent = `${s.nome} — ${s.estado}`;
+    const [vx, vy, vw, vh] = (state.zoomed ? VIEW_ZOOM : VIEW_FULL).split(' ').map(Number);
+    const size = Math.max(state.zoomed ? 23 : 37, 11 * vw / Math.max(1, ui.wrap.clientWidth));
+    const w = size * 1.75, h = size * 1.3;
+    const band = $('#motto-band');
+    const inBand = (x, y) => band.isPointInFill(new DOMPoint(x, y));
+    const candidates = [];
+    for (const radius of [70, 100, 135, 180, 230, 290, 360, 440]) {
+      for (let i = 0; i < 32; i++) {
+        const angle = i * Math.PI / 16;
+        const x = s.cx + radius * Math.cos(angle), y = s.cy + radius * Math.sin(angle);
+        const left = x - w / 2, top = y - h / 2;
+        if (left < vx + 5 || top < vy + 5 || left + w > vx + vw - 5 || top + h > vy + vh - 5) continue;
+        const samples = [0, .25, .5, .75, 1];
+        if (samples.some(u => samples.some(v => inBand(left + w*u, top + h*v)))) continue;
+        if (STARS.some(t => Math.abs(t.cx-x) < w/2 + 19 && Math.abs(t.cy-y) < h/2 + 19)) continue;
+        const dx = x-s.cx, dy=y-s.cy;
+        const begin = (STAR_RADIUS[s.grandeza-1]+10) / radius;
+        const end = 1 - Math.min(w/(2*Math.abs(dx || .001)), h/(2*Math.abs(dy || .001)));
+        const line = Array.from({length: 13}, (_, k) => begin+(end-begin)*k/12);
+        if (line.some(t => inBand(s.cx+dx*t,s.cy+dy*t))) continue;
+        if (STARS.some(t => t.uf !== s.uf && line.some(k => Math.hypot(t.cx-(s.cx+dx*k),t.cy-(s.cy+dy*k)) < STAR_RADIUS[t.grandeza-1]+5))) continue;
+        candidates.push({x,y,radius,left,top,dx,dy,begin,end});
+      }
+      if(candidates.length) break;
+    }
+    const c = candidates[0];
+    if (!c) return; // A estrela continua circulada e identificada na legenda externa.
+    svgEl('line', {x1:s.cx+c.dx*c.begin,y1:s.cy+c.dy*c.begin,x2:s.cx+c.dx*c.end,y2:s.cy+c.dy*c.end}, flagCallout);
+    svgEl('rect', {x:c.left,y:c.top,width:w,height:h}, flagCallout);
+    svgEl('text', {x:c.x,y:c.y,'font-size':size}, flagCallout, number);
   }
 
   function setZoom(on) {
@@ -153,7 +180,10 @@
       .sort((a, b) => a.localeCompare(b, 'pt-BR'));
     for (const name of constellations) ui.filter.append(new Option(name, name));
 
-    const byState = [...STARS].sort((a, b) => a.estado.localeCompare(b.estado, 'pt-BR'));
+    $('#star-total').textContent = STARS.length;
+    $('#constellation-total').textContent = constellations.length;
+    $('#index-total').textContent = STARS.length;
+    const byState = alphabetical;
     for (const s of byState) ui.picker.append(new Option(`${s.estado} — ${s.nome}`, s.uf));
     byState.forEach((s, number) => {
       const button = htmlEl('button', 'index-entry');
@@ -227,17 +257,20 @@
     state.selected = s.uf;
     ui.name.textContent = s.nome;
     ui.state.replaceChildren(htmlEl('span', 'state', `${s.estado} · ${s.uf}`));
-    ui.desc.textContent = s.curiosidade;
+    // O catálogo é preservado; omitem-se apenas notas que repetem os campos da ficha.
+    const redundant = ['AC', 'RO', 'MG', 'CE', 'PE', 'SE'];
+    ui.desc.textContent = redundant.includes(s.uf) ? '' : (s.curiosidade || '');
+    ui.desc.hidden = !ui.desc.textContent;
     ui.con.textContent = s.constelacao;
     ui.des.textContent = s.designacao;
     ui.grade.textContent = `${s.grandeza}ª de 5`;
     const magnitude = CHARTS[s.constelacao]?.highlights?.[s.uf]?.m;
     ui.apparentMag.textContent = Number.isFinite(magnitude)
       ? magnitude.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' mag'
-      : 'Dado não disponível';
-    ui.pips.replaceChildren(
-      ...Array.from({ length: 5 }, (_, i) => htmlEl('i', i < 6 - s.grandeza ? 'on' : ''))
-    );
+      : '—';
+    // Sem distância na base atual. Não derivar distância da magnitude.
+    const distance = s.distancia_anos_luz;
+    ui.distance.textContent = Number.isFinite(distance) ? distance.toLocaleString('pt-BR') : '—';
     ui.uf.textContent = `${s.estado} (${s.uf})`;
     ui.picker.value = s.uf;
 
@@ -261,7 +294,7 @@
   /** Escolhe o canto (cima/baixo × direita/esquerda) onde o rótulo da estrela selecionada
       cobre menos pontos da carta e não ultrapassa a borda. */
   function placeChartLabel(mx, my, text, occupied) {
-    const width = text.length * 6.6 + 4;
+    const width = text.length * 7.5 + 4;
     let best = null;
     for (const side of [1, -1]) {       // 1 = direita, -1 = esquerda
       for (const rise of [-1, 1]) {     // -1 = acima, 1 = abaixo
@@ -284,6 +317,8 @@
     svg.replaceChildren();
 
     if (!marker) {
+      ui.chartTitle.textContent = s.constelacao;
+      ui.chartCode.textContent = '—';
       svgEl('text', { class: 'chart-empty', x: CHART.width / 2, y: 145, 'text-anchor': 'middle' }, svg, 'Carta celeste indisponível');
       ui.chartCaption.textContent = 'Carta celeste indisponível para esta constelação.';
       return;
@@ -376,11 +411,9 @@
     ui.chartTitle.textContent = s.constelacao;
     ui.chartCode.textContent = chart.code.toUpperCase();
     const total = highlights.length;
-    ui.chartCaption.textContent =
-      `${s.nome} (${s.designacao}) representa ${s.estado}. Está circulada em dourado na carta celeste. ` +
-      (total > 1
-        ? `Esta constelação tem ${total} estrelas na bandeira; clique nas outras, em dourado, para explorar.`
-        : 'É a única estrela desta constelação na bandeira.');
+    ui.chartCaption.textContent = total > 1
+      ? `${total} estrelas desta constelação compõem a bandeira. A estrela selecionada está circulada.`
+      : 'Esta é a única estrela da constelação representada na bandeira.';
   }
 
   /* ---------- Altura responsiva dentro do Streamlit ---------- */
@@ -439,4 +472,5 @@
   setZoom(state.zoomed);
   showStar(STARS[0]);
   fitFrameHeight();
+  window.addEventListener('resize', updateStarLabel, { passive: true });
 })();

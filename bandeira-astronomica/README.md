@@ -106,3 +106,14 @@ A versão usa somente fontes nativas do sistema (sem dependências de fontes da 
 não adiciona dados estelares e mantém as fontes do catálogo. O índice acompanha
 a seleção, a busca e os filtros. A consulta no Streamlit usa o mesmo `index.html`
 proveniente de `build.py`.
+
+## Revisão de legibilidade e apresentação
+
+A interface usa duas famílias tipográficas e uma paleta neutra com azul-escuro.
+Os totais são calculados a partir do catálogo. O marcador numérico da estrela
+na bandeira remete à legenda externa. A distância, ausente dos dados, aparece
+como travessão. Os arquivos `estrelas.json` e `cartas_celestes.json` permanecem
+inalterados.
+
+O CSS da página reside em `src/style.css`; os estilos do contêiner do Streamlit
+são injetados em `streamlit_app.py`, pois o iframe tem um documento isolado.

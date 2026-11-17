@@ -1,8 +1,6 @@
 """Atlas interativo independente: O Céu na Bandeira do Brasil.
 
 Publicação própria no Streamlit Community Cloud.
-Versão publicada: mesa de consulta astronômica, com índice de estrelas,
-prancha interativa da bandeira e ficha técnica das constelações.
 Ponto de entrada: bandeira-astronomica/streamlit_app.py
 
 O atlas é uma página HTML autossuficiente (index.html), montada por build.py a
@@ -20,27 +18,35 @@ HTML_PATH = APP_DIR / "index.html"
 # (veja fitFrameHeight em src/app.js); este valor só vale se o ajuste não puder rodar.
 FALLBACK_HEIGHT = 2400
 
+# Estilos do contêiner externo. O documento no iframe usa src/style.css.
 PAGE_CSS = """
 <style>
-  [data-testid="stAppViewContainer"] { background: #f6f4ee; }
-  [data-testid="stHeader"] { background: #f6f4ee; }
-  [data-testid="stMainBlockContainer"] {
-    max-width: 1500px;
+  /* Estrutura nativa do Streamlit: sem menus ou rodapé decorativo. */
+  #MainMenu, footer, [data-testid="stHeader"],
+  [data-testid="stToolbar"], [data-testid="stDecoration"],
+  [data-testid="stStatusWidget"], [data-testid="stAppDeployButton"] {
+    display: none !important;
+  }
+  [data-testid="stAppViewContainer"], [data-testid="stApp"] {
+    background: #f7f7f5;
+  }
+  /* Retira o recuo reservado ao cabeçalho e evita cortar o atlas. */
+  [data-testid="stMainBlockContainer"], .block-container {
+    max-width: 1680px !important;
+    width: 100% !important;
     padding: 0 !important;
   }
-  @media (max-width: 800px) {
-    [data-testid="stMainBlockContainer"] {
-      padding: 0 !important;
-      max-width: 100% !important;
-      width: 100% !important;
-    }
+  [data-testid="stVerticalBlock"] { gap: 0; }
+  iframe[title="streamlit.components.v1.html"] {
+    display: block;
+    border: 0;
+    width: 100%;
   }
 </style>
 """
 
 st.set_page_config(
     page_title="O Céu na Bandeira do Brasil | Matemática & Contexto",
-    page_icon="🇧🇷",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
