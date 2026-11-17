@@ -138,7 +138,33 @@ button,select,input{touch-action:manipulation}
 .development-notice strong{color:#fff;font-weight:750}
 .development-dot{flex:0 0 8px;width:8px;height:8px;margin-top:.5em;border-radius:50%;background:#82e0b5;box-shadow:0 0 0 4px #82e0b51e}
 @media(max-width:640px){.development-notice{padding:11px 12px;margin:0 0 17px;font-size:.83rem;gap:10px;border-radius:9px}}
-</style></head>
+</style>
+<style>
+/* Revisão pedagógica: navegação responsiva e contraste. */
+.fact #mag-aparente{font-variant-numeric:tabular-nums;color:#f6d884;font-weight:700}
+@media(max-width:650px){
+  body{font-size:15px}
+  header{padding:13px 12px}
+  main{padding:22px 10px 34px}
+  h1{font-size:clamp(2rem,9vw,2.9rem);line-height:1.13}
+  .panel{padding:14px;border-radius:15px;min-width:0}
+  .toolbar{display:grid;grid-template-columns:1fr;gap:9px}
+  .toolbar h2,.toolbar select,.toolbar #zoom{width:100%;max-width:100%;min-width:0}
+  .toolbar button,.toolbar select{min-height:44px;font-size:16px}
+  .flag-wrap,.flag-wrap.zoomed{width:100%;max-width:100%}
+  .star-picker{display:block}
+  .searchbar{display:flex;flex-direction:column;gap:9px}
+  .searchbar input,.searchbar button{width:100%;min-height:44px;font-size:16px}
+  .results{max-height:180px;overflow-y:auto}
+  .results button{min-height:44px}
+  #constellationMap{width:100%;max-width:100%;height:auto}
+  .stats{display:flex;flex-wrap:wrap;gap:8px}
+  .stats span{flex:1 1 120px}
+  .fact{display:flex;flex-wrap:wrap;gap:6px;justify-content:space-between}
+  .fact span{overflow-wrap:anywhere}
+}
+</style>
+</head>
 <body><header><div class="brand">MATEMÁTICA & CONTEXTO <span style="color:#6e8b9e">/ LABORATÓRIO</span></div><div class="tag">Astronomia · História · Educação</div></header>
 <main><div class="development-notice" role="status"><span class="development-dot" aria-hidden="true"></span><span><strong>Projeto em fase de desenvolvimento.</strong> Algumas funcionalidades ainda estão sendo aperfeiçoadas. Obrigada por explorar esta versão.</span></div><div class="eyebrow">Atlas astronômico interativo · edição educativa</div><h1>O céu na<br>Bandeira do Brasil</h1>
 <p class="intro">Cada estrela da bandeira representa uma unidade da Federação e pertence a uma constelação real. Explore a relação entre o símbolo nacional, o céu e a história da República.</p>
@@ -159,7 +185,7 @@ button,select,input{touch-action:manipulation}
 <div class="searchbar"><input id="search" placeholder="Buscar estrela ou estado..." aria-label="Buscar estrela ou estado"><button class="secondary" id="random" type="button">Escolher uma estrela</button></div>
 </div>
 <aside class="panel detail" aria-live="polite"><div class="subtitle">Observatório · ficha da estrela</div><h3 id="name">Selecione uma estrela</h3><div id="state"></div><p id="desc">Clique em uma das estrelas ou busque pelo nome de um estado.</p>
-<div class="fact"><b>Constelação</b><span id="con">—</span></div><div class="fact"><b>Designação astronômica</b><span id="des">—</span></div><div class="fact"><b>Grandeza na bandeira</b><span id="grade">—</span></div><div class="fact"><b>Unidade da Federação</b><span id="uf">—</span></div>
+<div class="fact"><b>Constelação</b><span id="con">—</span></div><div class="fact"><b>Designação astronômica</b><span id="des">—</span></div><div class="fact"><b>Grandeza na bandeira</b><span id="grade">—</span></div><div class="fact"><b>Magnitude aparente (catálogo)</b><span id="mag-aparente">—</span></div><div class="fact"><b>Unidade da Federação</b><span id="uf">—</span></div>
 
 <section class="constellation-panel" aria-labelledby="constellation-heading">
   <div class="constellation-head">
@@ -246,7 +272,7 @@ function drawConstellationChart(selectedStar){
   if(!chart){constellationCaption.textContent='Carta celeste indisponível.';return;}
   const marker=chart.highlights[selectedStar.uf];
   const coords=chart.lines.flat().concat(chart.stars.map(s=>s.l),Object.values(chart.highlights).map(s=>s.l));
-  const origin=marker.l[0];
+  const origin=Object.values(chart.highlights)[0].l[0];
   const polar=chart.code==='Oct';
   // Equiretangular approximation for local charts; polar projection near the South Celestial Pole.
   const midDec=coords.reduce((v,p)=>v+p[1],0)/coords.length;
@@ -380,4 +406,54 @@ document.querySelector('#random').addEventListener('click',()=>{
  if(choices.length)showStar(choices[Math.floor(Math.random()*choices.length)],true);
 });
 setZoom(zoomed);showStar(starsData[0]);
+</script><!-- Revisão UX + dados: Matemática & Contexto 2026-11-16 -->
+<script>
+/* Incrementos não intrusivos: leitura científica, busca e ajuste de altura. */
+(() => {
+  'use strict';
+  const normalize = (s) => String(s).normalize('NFD')
+    .replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('pt-BR');
+  if (typeof matches === 'function') {
+    matches = function(star) {
+      const query=normalize(document.querySelector('#search').value.trim());
+      const haystack=normalize([star.nome,star.estado,star.uf,star.constelacao,star.designacao].join(' '));
+      const constellation=document.querySelector('#filter').value;
+      return (!constellation || constellation===star.constelacao) && (!query || haystack.includes(query));
+    };
+    if (typeof render==='function') render();
+  }
+  if(typeof showStar==='function' && typeof constellationCharts!=='undefined') {
+    const original=showStar;
+    showStar=function(star,revealDetails=false){
+      original(star,revealDetails);
+      const mag=constellationCharts[star.constelacao]?.highlights?.[star.uf]?.m;
+      const target=document.querySelector('#mag-aparente');
+      if(target) target.textContent=Number.isFinite(mag)
+        ? mag.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+' mag'
+        : 'Não disponível';
+      requestAnimationFrame(adjustHeight);
+    };
+    if(typeof starsData!=='undefined' && starsData.length) showStar(starsData[0]);
+  }
+  let lastHeight=0;
+  function adjustHeight(){
+    const main=document.querySelector('main');
+    if(!main) return;
+    const height=Math.ceil(document.body.scrollHeight);
+    if(!height || Math.abs(height-lastHeight)<2) return;
+    lastHeight=height;
+    if(window.parent!==window) window.parent.postMessage({
+      isStreamlitMessage:true,
+      type:'streamlit:setFrameHeight',
+      height
+    },'*');
+    try{if(window.frameElement)window.frameElement.style.height=height+'px';}
+    catch(error){/* O iframe pode ser isolado pelo navegador. */}
+  }
+  if('ResizeObserver' in window) new ResizeObserver(adjustHeight).observe(document.body);
+  window.addEventListener('resize',adjustHeight,{passive:true});
+  window.addEventListener('load',adjustHeight);
+  if(document.fonts?.ready) document.fonts.ready.then(adjustHeight);
+  adjustHeight();
+})();
 </script></body></html>
