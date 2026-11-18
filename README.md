@@ -8,6 +8,7 @@ Projetos de astronomia, matemática, física e programação desenvolvidos por *
 
 | Projeto | Explore | Tecnologias |
 | --- | --- | --- |
+| **Kepler Lab** | [Laboratório interativo da lei das áreas](kepler-lab/README.md) | Python, Streamlit, Plotly |
 | **Horizonte Científico Lunar** | [Efemérides, energia solar e medição de crateras](Horizonte-Cientifico-Lunar/README.md) | Python, Streamlit, NASA/JPL |
 | **O Céu na Bandeira do Brasil** | [Atlas interativo de estrelas e constelações](bandeira-astronomica/README.md) | Python, Streamlit, HTML, SVG |
 | **Bandeira Astronômica — edição web** | [Estrelas, estados e quiz](Bandeira-Astronomica/README.md) | HTML, CSS, JavaScript, Python |
